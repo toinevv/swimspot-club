@@ -119,12 +119,12 @@ const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => {
   return (
     <>
       <Link to="/" className={linkClasses}>
-        {isMobile && <Home className="h-5 w-5" />}
-        Home
-      </Link>
-      <Link to="/map" className={linkClasses}>
         {isMobile && <Map className="h-5 w-5" />}
         Swim Map
+      </Link>
+      <Link to="/home" className={linkClasses}>
+        {isMobile && <Home className="h-5 w-5" />}
+        About
       </Link>
       <Link to="/groups" className={linkClasses}>
         {isMobile && <Users className="h-5 w-5" />}
