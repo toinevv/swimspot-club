@@ -66,10 +66,10 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             preserveAspectRatio="none" 
             viewBox="0 0 1440 80" 
             className="w-full h-8" 
-            fill="#8E9196"
+            fill="rgba(142, 145, 150, 0.3)"
           >
             <path 
-              d="M0,32 Q360,64 720,32 T1440,32 V80 H0 Z" 
+              d="M0,32 Q180,48 360,32 T720,48 T1080,32 T1440,48 V80 H0 Z" 
               className="wave-path" 
             />
           </svg>
