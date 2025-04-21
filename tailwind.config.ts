@@ -61,6 +61,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// SwimSpot brand colors
+				swimspot: {
+					'blue-green': '#0B3D3B', // Deep Blue-Green (primary)
+					'drift-sand': '#E9E4DA', // Drift Sand (neutral background)
+					'burnt-coral': '#DD6E42', // Burnt Coral (accents and CTA)
+					'blue-mist': '#D4E9E2'  // Light Blue Mist (optional tint)
 				}
 			},
 			borderRadius: {
