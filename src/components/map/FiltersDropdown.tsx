@@ -1,5 +1,5 @@
 
-import MapFilters from "./MapFilters";
+import { MapFilters } from "./MapFilters";
 
 interface FiltersDropdownProps {
   isOpen: boolean;

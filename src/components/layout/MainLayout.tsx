@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col min-h-screen bg-swimspot-drift-sand">
       {/* Header */}
-      <header className="relative sticky top-0 z-50 border-b border-swimspot-blue-green/10 bg-swimspot-drift-sand/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-swimspot-blue-green/10 bg-swimspot-drift-sand/80 backdrop-blur-md">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <Droplet className="h-8 w-8 text-swimspot-blue-green" />
@@ -59,21 +60,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             </nav>
           </div>
         )}
-
-        {/* Wave SVG Border - Made more transparent and with smaller waves */}
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden">
-          <svg 
-            preserveAspectRatio="none" 
-            viewBox="0 0 1440 80" 
-            className="w-full h-8" 
-            fill="rgba(142, 145, 150, 0.1)"
-          >
-            <path 
-              d="M0,32 Q90,48 180,32 T360,48 T540,32 T720,48 T900,32 T1080,48 T1260,32 T1440,48 V80 H0 Z" 
-              className="wave-path" 
-            />
-          </svg>
-        </div>
       </header>
 
       {/* Main content */}
