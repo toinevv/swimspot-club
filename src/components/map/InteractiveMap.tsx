@@ -9,19 +9,19 @@ import { createRoot } from 'react-dom/client';
 interface InteractiveMapProps {
   spots: SwimSpot[];
   onSpotClick: (spot: SwimSpot) => void;
+  mapboxToken?: string;
 }
 
-const InteractiveMap = ({ spots, onSpotClick }: InteractiveMapProps) => {
+const InteractiveMap = ({ spots, onSpotClick, mapboxToken }: InteractiveMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
   const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
-    if (!mapContainer.current) return;
+    if (!mapContainer.current || !mapboxToken) return;
 
-    // TODO: In production, use environment variable for token
-    mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN';
+    mapboxgl.accessToken = mapboxToken;
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -37,7 +37,7 @@ const InteractiveMap = ({ spots, onSpotClick }: InteractiveMapProps) => {
     return () => {
       map.current?.remove();
     };
-  }, []);
+  }, [mapboxToken]);
 
   useEffect(() => {
     if (!mapLoaded || !map.current) return;
@@ -65,6 +65,17 @@ const InteractiveMap = ({ spots, onSpotClick }: InteractiveMapProps) => {
       markersRef.current[spot.id] = marker;
     });
   }, [spots, mapLoaded, onSpotClick]);
+
+  if (!mapboxToken) {
+    return (
+      <div className="flex items-center justify-center w-full h-[calc(100vh-64px)] bg-swimspot-drift-sand/10">
+        <div className="text-center p-6 max-w-md">
+          <div className="text-swimspot-blue-green text-xl font-medium mb-4">Mapbox API Key Required</div>
+          <p className="text-gray-600 mb-4">Please provide a Mapbox token in the search bar above to view the map.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full h-[calc(100vh-64px)]">
