@@ -60,16 +60,16 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
         )}
 
-        {/* Wave SVG Border */}
+        {/* Wave SVG Border - Made more transparent and with smaller waves */}
         <div className="absolute bottom-0 left-0 w-full overflow-hidden">
           <svg 
             preserveAspectRatio="none" 
             viewBox="0 0 1440 80" 
             className="w-full h-8" 
-            fill="rgba(142, 145, 150, 0.3)"
+            fill="rgba(142, 145, 150, 0.1)"
           >
             <path 
-              d="M0,32 Q180,48 360,32 T720,48 T1080,32 T1440,48 V80 H0 Z" 
+              d="M0,32 Q90,48 180,32 T360,48 T540,32 T720,48 T900,32 T1080,48 T1260,32 T1440,48 V80 H0 Z" 
               className="wave-path" 
             />
           </svg>
