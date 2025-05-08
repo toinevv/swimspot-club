@@ -1,4 +1,3 @@
-
 // This file contains API functions to connect to Supabase
 
 import { SwimSpot, User, Review, SavedSpot, Group, UserGroup, WaterQualityData } from '@/types';
@@ -57,16 +56,16 @@ export const api = {
         updated_at: spot.updated_at,
         // Parse the JSON fields to ensure they match our expected types
         facilities: {
-          changing_rooms: spot.facilities?.changing_rooms || false,
-          restrooms: spot.facilities?.restrooms || false,
-          lifeguard: spot.facilities?.lifeguard || false,
-          food_drinks: spot.facilities?.food_drinks || false
+          changing_rooms: typeof spot.facilities === 'object' ? !!spot.facilities.changing_rooms : false,
+          restrooms: typeof spot.facilities === 'object' ? !!spot.facilities.restrooms : false,
+          lifeguard: typeof spot.facilities === 'object' ? !!spot.facilities.lifeguard : false,
+          food_drinks: typeof spot.facilities === 'object' ? !!spot.facilities.food_drinks : false
         },
         best_times: {
-          season: spot.best_times?.season || '',
-          time_of_day: spot.best_times?.time_of_day || '',
-          weather: spot.best_times?.weather || '',
-          water_condition: spot.best_times?.water_condition || ''
+          season: typeof spot.best_times === 'object' ? (spot.best_times.season as string || '') : '',
+          time_of_day: typeof spot.best_times === 'object' ? (spot.best_times.time_of_day as string || '') : '',
+          weather: typeof spot.best_times === 'object' ? (spot.best_times.weather as string || '') : '',
+          water_condition: typeof spot.best_times === 'object' ? (spot.best_times.water_condition as string || '') : ''
         }
       }));
     } catch (error) {
@@ -250,4 +249,3 @@ export const api = {
     return Promise.resolve(true);
   }
 };
-
