@@ -38,10 +38,16 @@ export const api = {
       // Transform Supabase data to match our SwimSpot type
       return data.map(spot => {
         // Parse facilities as an object with default values
-        const facilitiesObj = typeof spot.facilities === 'object' && spot.facilities !== null ? spot.facilities : {};
+        let facilitiesObj: Record<string, boolean> = {};
+        if (typeof spot.facilities === 'object' && spot.facilities !== null && !Array.isArray(spot.facilities)) {
+          facilitiesObj = spot.facilities as Record<string, any>;
+        }
         
         // Parse best_times as an object with default values
-        const bestTimesObj = typeof spot.best_times === 'object' && spot.best_times !== null ? spot.best_times : {};
+        let bestTimesObj: Record<string, string> = {};
+        if (typeof spot.best_times === 'object' && spot.best_times !== null && !Array.isArray(spot.best_times)) {
+          bestTimesObj = spot.best_times as Record<string, any>;
+        }
         
         return {
           id: parseInt(spot.id.split('-')[0], 16), // Generate numeric ID from UUID
