@@ -10,6 +10,7 @@ import SwimMap from "./pages/SwimMap";
 import SwimSpotDetail from "./pages/SwimSpotDetail";
 import Profile from "./pages/Profile";
 import Groups from "./pages/Groups";
+import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/spot/:id" element={<MainLayout><SwimSpotDetail /></MainLayout>} />
             <Route path="/profile" element={<MainLayout><Profile /></MainLayout>} />
             <Route path="/groups" element={<MainLayout><Groups /></MainLayout>} />
+            <Route path="/blog" element={<MainLayout><Blog /></MainLayout>} />
             <Route path="/auth" element={<Auth />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

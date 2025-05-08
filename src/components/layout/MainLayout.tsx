@@ -98,6 +98,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 <li><Link to="/" className="hover:text-swimspot-drift-sand">Swim Map</Link></li>
                 <li><Link to="/about" className="hover:text-swimspot-drift-sand">About</Link></li>
                 <li><Link to="/groups" className="hover:text-swimspot-drift-sand">Groups</Link></li>
+                <li><Link to="/blog" className="hover:text-swimspot-drift-sand">Blog</Link></li>
                 <li><a href="#" className="hover:text-swimspot-drift-sand">Premium Access</a></li>
               </ul>
             </div>
@@ -107,6 +108,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 <li><Link to="/about" className="hover:text-swimspot-drift-sand">Our Story</Link></li>
                 <li><a href="#" className="hover:text-swimspot-drift-sand">Community Guidelines</a></li>
                 <li><a href="#" className="hover:text-swimspot-drift-sand">Safety Tips</a></li>
+                <li><Link to="/blog" className="hover:text-swimspot-drift-sand">Blog</Link></li>
               </ul>
             </div>
             <div>

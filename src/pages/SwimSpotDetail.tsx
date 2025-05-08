@@ -51,10 +51,10 @@ const SwimSpotDetail = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
         
-        {/* Back button */}
+        {/* Back button - Fixed to point to / instead of /map */}
         <div className="absolute top-4 left-4">
           <Link 
-            to="/map" 
+            to="/" 
             className="flex items-center gap-2 px-4 py-2 bg-black/30 backdrop-blur-sm text-white rounded-full hover:bg-black/40 transition-colors"
           >
             <Map className="h-4 w-4" />
