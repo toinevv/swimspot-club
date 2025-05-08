@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { SwimSpot } from "@/types";
-import { api } from "@/services/api";
+import { api } from "@/services/api"; // This import remains the same, thanks to our re-export
 import InteractiveMap from "@/components/map/InteractiveMap";
 import SearchBar from "@/components/map/SearchBar";
 import FiltersDropdown from "@/components/map/FiltersDropdown";
