@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -95,7 +94,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <div>
               <h4 className="font-medium mb-3">Explore</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/map" className="hover:text-swimspot-drift-sand">Swim Map</Link></li>
+                <li><Link to="/" className="hover:text-swimspot-drift-sand">Swim Map</Link></li>
                 <li><Link to="/groups" className="hover:text-swimspot-drift-sand">Groups</Link></li>
                 <li><a href="#" className="hover:text-swimspot-drift-sand">Premium Access</a></li>
               </ul>
@@ -103,7 +102,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <div>
               <h4 className="font-medium mb-3">About</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-swimspot-drift-sand">Our Story</a></li>
+                <li><Link to="/about" className="hover:text-swimspot-drift-sand">Our Story</Link></li>
                 <li><a href="#" className="hover:text-swimspot-drift-sand">Community Guidelines</a></li>
                 <li><a href="#" className="hover:text-swimspot-drift-sand">Safety Tips</a></li>
               </ul>
@@ -137,7 +136,7 @@ const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => {
         {isMobile && <Map className="h-5 w-5" />}
         Swim Map
       </Link>
-      <Link to="/home" className={linkClasses}>
+      <Link to="/about" className={linkClasses}>
         {isMobile && <Home className="h-5 w-5" />}
         About
       </Link>

@@ -63,6 +63,69 @@ export type Database = {
         }
         Relationships: []
       }
+      swim_spots: {
+        Row: {
+          address: string
+          best_times: Json
+          created_at: string
+          current: string | null
+          current_temperature: number | null
+          description: string
+          facilities: Json
+          id: string
+          image_url: string
+          latitude: number
+          longitude: number
+          name: string
+          summary: string
+          tags: string[]
+          updated_at: string
+          visibility: string
+          water_quality: string
+          water_type: string
+        }
+        Insert: {
+          address: string
+          best_times?: Json
+          created_at?: string
+          current?: string | null
+          current_temperature?: number | null
+          description: string
+          facilities?: Json
+          id?: string
+          image_url: string
+          latitude: number
+          longitude: number
+          name: string
+          summary: string
+          tags?: string[]
+          updated_at?: string
+          visibility?: string
+          water_quality: string
+          water_type: string
+        }
+        Update: {
+          address?: string
+          best_times?: Json
+          created_at?: string
+          current?: string | null
+          current_temperature?: number | null
+          description?: string
+          facilities?: Json
+          id?: string
+          image_url?: string
+          latitude?: number
+          longitude?: number
+          name?: string
+          summary?: string
+          tags?: string[]
+          updated_at?: string
+          visibility?: string
+          water_quality?: string
+          water_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
