@@ -11,6 +11,7 @@ import SwimSpotDetail from "./pages/SwimSpotDetail";
 import Profile from "./pages/Profile";
 import Groups from "./pages/Groups";
 import Blog from "./pages/Blog";
+import BlogArticle from "./pages/BlogArticle";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/profile" element={<MainLayout><Profile /></MainLayout>} />
             <Route path="/groups" element={<MainLayout><Groups /></MainLayout>} />
             <Route path="/blog" element={<MainLayout><Blog /></MainLayout>} />
+            <Route path="/blog/:slug" element={<MainLayout><BlogArticle /></MainLayout>} />
             <Route path="/auth" element={<Auth />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
