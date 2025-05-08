@@ -1,3 +1,4 @@
+
 // This file contains API functions to connect to Supabase
 
 import { SwimSpot, User, Review, SavedSpot, Group, UserGroup, WaterQualityData } from '@/types';
@@ -35,39 +36,47 @@ export const api = {
       }
       
       // Transform Supabase data to match our SwimSpot type
-      return data.map(spot => ({
-        id: parseInt(spot.id.split('-')[0], 16), // Generate numeric ID from UUID
-        name: spot.name,
-        description: spot.description,
-        summary: spot.summary,
-        image_url: spot.image_url,
-        water_type: spot.water_type,
-        location: {
-          latitude: Number(spot.latitude),
-          longitude: Number(spot.longitude),
-          address: spot.address
-        },
-        tags: spot.tags,
-        water_quality: spot.water_quality,
-        current_temperature: spot.current_temperature ? Number(spot.current_temperature) : undefined,
-        current: spot.current,
-        visibility: spot.visibility,
-        created_at: spot.created_at,
-        updated_at: spot.updated_at,
-        // Parse the JSON fields to ensure they match our expected types
-        facilities: {
-          changing_rooms: typeof spot.facilities === 'object' ? !!spot.facilities.changing_rooms : false,
-          restrooms: typeof spot.facilities === 'object' ? !!spot.facilities.restrooms : false,
-          lifeguard: typeof spot.facilities === 'object' ? !!spot.facilities.lifeguard : false,
-          food_drinks: typeof spot.facilities === 'object' ? !!spot.facilities.food_drinks : false
-        },
-        best_times: {
-          season: typeof spot.best_times === 'object' ? (spot.best_times.season as string || '') : '',
-          time_of_day: typeof spot.best_times === 'object' ? (spot.best_times.time_of_day as string || '') : '',
-          weather: typeof spot.best_times === 'object' ? (spot.best_times.weather as string || '') : '',
-          water_condition: typeof spot.best_times === 'object' ? (spot.best_times.water_condition as string || '') : ''
-        }
-      }));
+      return data.map(spot => {
+        // Parse facilities as an object with default values
+        const facilitiesObj = typeof spot.facilities === 'object' && spot.facilities !== null ? spot.facilities : {};
+        
+        // Parse best_times as an object with default values
+        const bestTimesObj = typeof spot.best_times === 'object' && spot.best_times !== null ? spot.best_times : {};
+        
+        return {
+          id: parseInt(spot.id.split('-')[0], 16), // Generate numeric ID from UUID
+          name: spot.name,
+          description: spot.description,
+          summary: spot.summary,
+          image_url: spot.image_url,
+          water_type: spot.water_type,
+          location: {
+            latitude: Number(spot.latitude),
+            longitude: Number(spot.longitude),
+            address: spot.address
+          },
+          tags: spot.tags,
+          water_quality: spot.water_quality,
+          current_temperature: spot.current_temperature ? Number(spot.current_temperature) : undefined,
+          current: spot.current,
+          visibility: spot.visibility,
+          created_at: spot.created_at,
+          updated_at: spot.updated_at,
+          // Parse the JSON fields with safe access
+          facilities: {
+            changing_rooms: Boolean(facilitiesObj.changing_rooms),
+            restrooms: Boolean(facilitiesObj.restrooms),
+            lifeguard: Boolean(facilitiesObj.lifeguard),
+            food_drinks: Boolean(facilitiesObj.food_drinks)
+          },
+          best_times: {
+            season: String(bestTimesObj.season || ''),
+            time_of_day: String(bestTimesObj.time_of_day || ''),
+            weather: String(bestTimesObj.weather || ''),
+            water_condition: String(bestTimesObj.water_condition || '')
+          }
+        };
+      });
     } catch (error) {
       console.error("Unexpected error fetching swim spots:", error);
       return [];
