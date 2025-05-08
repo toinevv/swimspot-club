@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 interface InteractiveMapProps {
   spots: SwimSpot[];
   onSpotClick: (spot: SwimSpot) => void;
-  mapboxToken?: string | null;
+  mapboxToken?: string;
 }
 
 const InteractiveMap = ({ spots, onSpotClick, mapboxToken }: InteractiveMapProps) => {
@@ -17,54 +17,41 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken }: InteractiveMapProps
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [mapError, setMapError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!mapContainer.current || !mapboxToken) return;
 
-    try {
-      mapboxgl.accessToken = mapboxToken;
-      
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/outdoors-v12', // Changed to outdoors style which is better for swim spots
-        center: [4.9041, 52.3676], // Amsterdam coordinates
-        zoom: 12
-      });
+    mapboxgl.accessToken = mapboxToken;
+    
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/outdoors-v12', // Changed to outdoors style which is better for swim spots
+      center: [4.9041, 52.3676], // Amsterdam coordinates
+      zoom: 12
+    });
 
-      // Add error handling for map
-      map.current.on('error', (e) => {
-        console.error('Mapbox error:', e);
-        setMapError('There was an error loading the map. Please check your Mapbox token.');
-      });
+    // Add navigation controls
+    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    
+    // Add geolocation control
+    map.current.addControl(
+      new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true,
+        showUserHeading: true
+      }),
+      'top-right'
+    );
 
-      // Add navigation controls
-      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-      
-      // Add geolocation control
-      map.current.addControl(
-        new mapboxgl.GeolocateControl({
-          positionOptions: {
-            enableHighAccuracy: true
-          },
-          trackUserLocation: true,
-          showUserHeading: true
-        }),
-        'top-right'
-      );
+    map.current.on('load', () => {
+      setMapLoaded(true);
+    });
 
-      map.current.on('load', () => {
-        console.log('Map loaded successfully');
-        setMapLoaded(true);
-      });
-
-      return () => {
-        map.current?.remove();
-      };
-    } catch (error) {
-      console.error('Error initializing Mapbox map:', error);
-      setMapError('Failed to initialize the map. Please try again later.');
-    }
+    return () => {
+      map.current?.remove();
+    };
   }, [mapboxToken]);
 
   useEffect(() => {
@@ -99,18 +86,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken }: InteractiveMapProps
       <div className="flex items-center justify-center w-full h-[calc(100vh-64px)] bg-swimspot-drift-sand/10">
         <div className="text-center p-6 max-w-md">
           <div className="text-swimspot-blue-green text-xl font-medium mb-4">Mapbox API Key Required</div>
-          <p className="text-gray-600 mb-4">Please contact the administrator to provide the Mapbox token.</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (mapError) {
-    return (
-      <div className="flex items-center justify-center w-full h-[calc(100vh-64px)] bg-swimspot-drift-sand/10">
-        <div className="text-center p-6 max-w-md">
-          <div className="text-swimspot-blue-green text-xl font-medium mb-4">Map Error</div>
-          <p className="text-gray-600 mb-4">{mapError}</p>
+          <p className="text-gray-600 mb-4">Please provide a Mapbox token in the search bar above to view the map.</p>
         </div>
       </div>
     );
