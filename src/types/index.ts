@@ -1,4 +1,3 @@
-
 // Supabase table types for our SwimSpot application
 
 export interface User {
@@ -20,17 +19,17 @@ export interface SwimSpot {
   description: string;
   summary: string; // AI-generated
   image_url: string;
-  water_type: 'River' | 'Lake' | 'Canal' | 'Pond' | 'Beach';
+  water_type: string; // Changed from union type to string to match database
   location: {
     latitude: number;
     longitude: number;
     address: string;
   };
   tags: string[];
-  water_quality: 'Excellent' | 'Good' | 'Moderate' | 'Poor';
+  water_quality: string; // Changed from union type to string to match database
   current_temperature?: number;
-  current?: 'None' | 'Mild' | 'Moderate' | 'Strong';
-  visibility: 'public' | 'premium';
+  current?: string; // Changed from union type to string to match database
+  visibility: string; // Changed from union type to string to match database
   created_at: string;
   updated_at: string;
   facilities: {

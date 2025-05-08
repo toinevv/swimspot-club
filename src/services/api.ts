@@ -1,3 +1,4 @@
+
 // This file contains API functions to connect to Supabase
 
 import { SwimSpot, User, Review, SavedSpot, Group, UserGroup, WaterQualityData } from '@/types';
@@ -27,6 +28,10 @@ export const api = {
       
       if (error) {
         console.error("Error fetching swim spots:", error);
+        return [];
+      }
+      
+      if (!data) {
         return [];
       }
       
