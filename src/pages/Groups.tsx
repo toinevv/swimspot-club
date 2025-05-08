@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -184,16 +183,16 @@ const Groups = () => {
           </div>
         </Tabs>
         
-        {/* Premium Info */}
+        {/* Bay Watcher Info (Previously Premium Info) */}
         <div className="mt-10 bg-swimspot-blue-green rounded-2xl p-6 text-white">
           <div className="flex flex-col md:flex-row items-center gap-6">
             <div className="md:w-2/3">
               <h2 className="font-serif text-2xl mb-3">Create Your Own Swim Group</h2>
               <p className="text-white/80 mb-4">
-                Premium members can create private swim groups, host events, and build a community of like-minded swimmers.
+                Bay Watchers can create private swim groups, host events, and build a community of like-minded swimmers.
               </p>
               <Button className="bg-swimspot-burnt-coral hover:bg-swimspot-burnt-coral/90">
-                Upgrade to Premium
+                Record Your Swims
               </Button>
             </div>
             <div className="md:w-1/3 flex justify-center">
@@ -219,7 +218,7 @@ const GroupCard = ({ group }: { group: any }) => {
         />
         {group.premium && (
           <div className="absolute top-3 right-3 px-2 py-1 bg-swimspot-burnt-coral text-white rounded-full text-xs font-medium">
-            Premium
+            Bay Watcher
           </div>
         )}
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">

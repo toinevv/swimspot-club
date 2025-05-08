@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -37,7 +36,7 @@ const Profile = () => {
                   <h1 className="font-serif text-3xl text-swimspot-blue-green mb-2">Robin Dykstra</h1>
                   <div className="flex items-center flex-wrap gap-2">
                     <Badge variant="outline" className="bg-swimspot-blue-mist border-none text-swimspot-blue-green">
-                      Premium Member
+                      Bay Watcher
                     </Badge>
                     <span className="text-gray-500 text-sm">Amsterdam, NL</span>
                   </div>
@@ -393,7 +392,7 @@ const userGroups = [
   },
   {
     id: 3,
-    name: "Canal Swimmers",
+2 name: "Canal Swimmers",
     image: "https://source.unsplash.com/photo-1482938289607-e9573fc25ebb",
     description: "Urban swimmers focusing on Amsterdam's historic canals.",
     members: 16,
