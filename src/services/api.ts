@@ -55,8 +55,19 @@ export const api = {
         visibility: spot.visibility,
         created_at: spot.created_at,
         updated_at: spot.updated_at,
-        facilities: spot.facilities,
-        best_times: spot.best_times
+        // Parse the JSON fields to ensure they match our expected types
+        facilities: {
+          changing_rooms: spot.facilities?.changing_rooms || false,
+          restrooms: spot.facilities?.restrooms || false,
+          lifeguard: spot.facilities?.lifeguard || false,
+          food_drinks: spot.facilities?.food_drinks || false
+        },
+        best_times: {
+          season: spot.best_times?.season || '',
+          time_of_day: spot.best_times?.time_of_day || '',
+          weather: spot.best_times?.weather || '',
+          water_condition: spot.best_times?.water_condition || ''
+        }
       }));
     } catch (error) {
       console.error("Unexpected error fetching swim spots:", error);
@@ -239,3 +250,4 @@ export const api = {
     return Promise.resolve(true);
   }
 };
+
