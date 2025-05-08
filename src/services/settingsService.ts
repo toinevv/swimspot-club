@@ -35,7 +35,7 @@ export const getSecureSetting = async (key: string): Promise<string | null> => {
 export const updateSetting = async (key: string, value: string, isPublic: boolean = false): Promise<boolean> => {
   const { error } = await supabase
     .from('app_settings')
-    .update({ value, is_public: isPublic, updated_at: new Date() })
+    .update({ value, is_public: isPublic, updated_at: new Date().toISOString() })
     .eq('key', key);
   
   if (error) {
