@@ -392,7 +392,7 @@ const userGroups = [
   },
   {
     id: 3,
-2 name: "Canal Swimmers",
+    name: "Canal Swimmers",
     image: "https://source.unsplash.com/photo-1482938289607-e9573fc25ebb",
     description: "Urban swimmers focusing on Amsterdam's historic canals.",
     members: 16,
