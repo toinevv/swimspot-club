@@ -1,3 +1,4 @@
+
 // Supabase table types for our SwimSpot application
 
 export interface User {
@@ -66,7 +67,7 @@ export interface SavedSpot {
 }
 
 export interface Group {
-  id: number;
+  id: string; // Changed from number to string to match UUID from database
   name: string;
   description: string;
   image_url: string;
@@ -79,9 +80,9 @@ export interface Group {
 }
 
 export interface UserGroup {
-  id: number;
+  id: string; // Changed from number to string to match UUID from database
   user_id: string;
-  group_id: number;
+  group_id: string; // Changed from number to string to match UUID from database
   role: 'member' | 'admin' | 'owner';
   joined_at: string;
 }
