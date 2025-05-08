@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Droplet, Map, Users } from "lucide-react";
@@ -146,19 +147,19 @@ const About = () => {
         </div>
       </section>
 
-      {/* Premium Section */}
+      {/* Bay Watcher Section (Previously Premium Section) */}
       <section className="py-20 bg-swimspot-blue-green text-white">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="font-serif text-3xl md:text-4xl mb-6">Upgrade to Premium Access</h2>
+            <h2 className="font-serif text-3xl md:text-4xl mb-6">Become a Bay Watcher</h2>
             <p className="text-lg text-white/80 mb-8">
-              Get exclusive access to hidden swim gems, premium-only spots, and special community events.
+              Gain access to exclusive swim spots and special community events by recording 100 registered dips.
             </p>
             <Button 
               size="lg" 
               className="bg-swimspot-burnt-coral hover:bg-swimspot-burnt-coral/90 text-white font-medium"
             >
-              Join Premium
+              Start Your Journey
             </Button>
           </div>
         </div>

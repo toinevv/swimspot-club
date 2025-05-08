@@ -1,3 +1,4 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -94,8 +95,8 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <div>
               <h4 className="font-medium mb-3">Explore</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/map" className="hover:text-swimspot-drift-sand">Swim Map</Link></li>
-                <li><Link to="/" className="hover:text-swimspot-drift-sand">Home</Link></li>
+                <li><Link to="/" className="hover:text-swimspot-drift-sand">Swim Map</Link></li>
+                <li><Link to="/about" className="hover:text-swimspot-drift-sand">About</Link></li>
                 <li><Link to="/groups" className="hover:text-swimspot-drift-sand">Groups</Link></li>
                 <li><a href="#" className="hover:text-swimspot-drift-sand">Premium Access</a></li>
               </ul>
@@ -133,13 +134,13 @@ const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => {
 
   return (
     <>
-      <Link to="/map" className={linkClasses}>
+      <Link to="/" className={linkClasses}>
         {isMobile && <Map className="h-5 w-5" />}
         Swim Map
       </Link>
-      <Link to="/" className={linkClasses}>
+      <Link to="/about" className={linkClasses}>
         {isMobile && <Home className="h-5 w-5" />}
-        Home
+        About
       </Link>
       <Link to="/groups" className={linkClasses}>
         {isMobile && <Users className="h-5 w-5" />}
