@@ -39,15 +39,40 @@ export const getSecureSetting = async (key: string): Promise<string | null> => {
 };
 
 export const updateSetting = async (key: string, value: string, isPublic: boolean = false): Promise<boolean> => {
-  const { error } = await supabase
-    .from('app_settings')
-    .update({ value, is_public: isPublic, updated_at: new Date().toISOString() })
-    .eq('key', key);
-  
-  if (error) {
-    console.error(`Error updating setting ${key}:`, error);
+  try {
+    // First check if the setting exists
+    const { data } = await supabase
+      .from('app_settings')
+      .select('id')
+      .eq('key', key)
+      .maybeSingle();
+    
+    if (data) {
+      // Update existing setting
+      const { error } = await supabase
+        .from('app_settings')
+        .update({ value, is_public: isPublic, updated_at: new Date().toISOString() })
+        .eq('key', key);
+      
+      if (error) {
+        console.error(`Error updating setting ${key}:`, error);
+        return false;
+      }
+    } else {
+      // Create new setting if it doesn't exist
+      const { error } = await supabase
+        .from('app_settings')
+        .insert({ key, value, is_public: isPublic });
+      
+      if (error) {
+        console.error(`Error creating setting ${key}:`, error);
+        return false;
+      }
+    }
+    
+    return true;
+  } catch (err) {
+    console.error(`Exception updating/creating setting ${key}:`, err);
     return false;
   }
-  
-  return true;
 };
