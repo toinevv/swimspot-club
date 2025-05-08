@@ -11,15 +11,25 @@ import FiltersDropdown from "@/components/map/FiltersDropdown";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+// Default Mapbox token provided by the user
+const DEFAULT_MAPBOX_TOKEN = "pk.eyJ1IjoidG9pbmV2IiwiYSI6ImNtYWZtaThoZDAzamEyanI2M3ZqOW5qcXkifQ.Cbm2AuiD07FcctvHIxz-DA";
+
 const SwimMap = () => {
   const navigate = useNavigate();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState({});
   const [mapboxToken, setMapboxToken] = useState<string>(() => {
-    return localStorage.getItem("mapboxToken") || "";
+    return localStorage.getItem("mapboxToken") || DEFAULT_MAPBOX_TOKEN;
   });
   const [tokenInput, setTokenInput] = useState(mapboxToken);
-  const [showTokenInput, setShowTokenInput] = useState(!mapboxToken);
+  const [showTokenInput, setShowTokenInput] = useState(false);
+  
+  // Store the default token in localStorage if it's not already set
+  useEffect(() => {
+    if (!localStorage.getItem("mapboxToken")) {
+      localStorage.setItem("mapboxToken", DEFAULT_MAPBOX_TOKEN);
+    }
+  }, []);
   
   const { data: spots = [] } = useQuery<SwimSpot[]>({
     queryKey: ['swimSpots', filters],
@@ -65,11 +75,9 @@ const SwimMap = () => {
                 <Button onClick={saveToken} className="bg-swimspot-blue-green hover:bg-swimspot-blue-green/90">
                   Save Token
                 </Button>
-                {mapboxToken && (
-                  <Button variant="outline" onClick={() => setShowTokenInput(false)}>
-                    Cancel
-                  </Button>
-                )}
+                <Button variant="outline" onClick={() => setShowTokenInput(false)}>
+                  Cancel
+                </Button>
               </div>
             </div>
             <div className="mt-2 text-xs text-gray-500">
@@ -79,18 +87,16 @@ const SwimMap = () => {
         </div>
       )}
 
-      {mapboxToken && !showTokenInput && (
-        <div className="absolute top-16 right-4 z-10">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setShowTokenInput(true)}
-            className="text-xs bg-white/80 backdrop-blur-sm"
-          >
-            Change Mapbox Token
-          </Button>
-        </div>
-      )}
+      <div className="absolute top-16 right-4 z-10">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setShowTokenInput(true)}
+          className="text-xs bg-white/80 backdrop-blur-sm"
+        >
+          Change Mapbox Token
+        </Button>
+      </div>
       
       <FiltersDropdown 
         isOpen={isFilterOpen}

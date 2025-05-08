@@ -25,10 +25,25 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken }: InteractiveMapProps
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
+      style: 'mapbox://styles/mapbox/outdoors-v12', // Changed to outdoors style which is better for swim spots
       center: [4.9041, 52.3676], // Amsterdam coordinates
       zoom: 12
     });
+
+    // Add navigation controls
+    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    
+    // Add geolocation control
+    map.current.addControl(
+      new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true,
+        showUserHeading: true
+      }),
+      'top-right'
+    );
 
     map.current.on('load', () => {
       setMapLoaded(true);
