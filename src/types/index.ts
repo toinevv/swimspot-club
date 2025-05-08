@@ -15,7 +15,7 @@ export interface User {
 }
 
 export interface SwimSpot {
-  id: number;
+  id: string; // Changed from number to string to match UUID from database
   name: string;
   description: string;
   summary: string; // AI-generated
@@ -97,4 +97,18 @@ export interface WaterQualityData {
   bacteria_level?: number;
   clarity?: number;
   notes?: string;
+}
+
+// New types for Blog feature
+export interface BlogArticle {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  cover_image_url: string;
+  tags?: string[];
+  created_at: string;
+  published_at: string;
+  keyword?: string;
+  author: string;
 }
