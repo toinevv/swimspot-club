@@ -1,17 +1,32 @@
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Menu, X, Map, User, Users, Droplet, Home } from "lucide-react";
+import { Menu, X, Map, User, Users, Droplet, Home, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const [navOpen, setNavOpen] = useState(false);
   const isMobile = useIsMobile();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const toggleNav = () => {
     setNavOpen(!navOpen);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
   };
 
   return (
@@ -44,7 +59,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           {!isMobile && (
             <nav className="hidden md:flex items-center gap-6">
               <NavLinks />
-              <UserMenu />
+              <UserMenu user={user} onSignOut={handleSignOut} />
             </nav>
           )}
         </div>
@@ -55,7 +70,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <nav className="flex flex-col items-center gap-6 p-6">
               <NavLinks isMobile={true} />
               <div className="mt-4">
-                <UserMenu isMobile={true} />
+                <UserMenu user={user} onSignOut={handleSignOut} isMobile={true} />
               </div>
             </nav>
           </div>
@@ -138,32 +153,110 @@ const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => {
   );
 };
 
-const UserMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
+const UserMenu = ({ 
+  user, 
+  onSignOut,
+  isMobile = false 
+}: { 
+  user: any;
+  onSignOut: () => void;
+  isMobile?: boolean 
+}) => {
+  
+  if (!user) {
+    return isMobile ? (
+      <div className="flex flex-col items-center gap-4">
+        <Button 
+          variant="outline" 
+          className="w-full text-swimspot-blue-green border-swimspot-blue-green hover:bg-swimspot-blue-green hover:text-white"
+          onClick={() => window.location.href = '/auth'}
+        >
+          Sign In
+        </Button>
+        <Button 
+          className="w-full bg-swimspot-burnt-coral hover:bg-swimspot-burnt-coral/90 text-white"
+          onClick={() => window.location.href = '/auth?tab=signup'}
+        >
+          Join SwimSpot
+        </Button>
+      </div>
+    ) : (
+      <div className="flex items-center gap-4">
+        <Button 
+          variant="ghost" 
+          className="text-swimspot-blue-green hover:text-swimspot-blue-green hover:bg-swimspot-blue-green/10"
+          onClick={() => window.location.href = '/auth'}
+        >
+          Sign In
+        </Button>
+        <Button 
+          className="bg-swimspot-burnt-coral hover:bg-swimspot-burnt-coral/90 text-white"
+          onClick={() => window.location.href = '/auth?tab=signup'}
+        >
+          Join
+        </Button>
+      </div>
+    );
+  }
+
+  const userInitial = user.email ? user.email[0].toUpperCase() : 'U';
+
   return isMobile ? (
     <div className="flex flex-col items-center gap-4">
-      <Button variant="outline" className="w-full text-swimspot-blue-green border-swimspot-blue-green hover:bg-swimspot-blue-green hover:text-white">
-        Sign In
-      </Button>
-      <Button className="w-full bg-swimspot-burnt-coral hover:bg-swimspot-burnt-coral/90 text-white">
-        Join SwimSpot
-      </Button>
-    </div>
-  ) : (
-    <div className="flex items-center gap-4">
-      <Button variant="ghost" className="text-swimspot-blue-green hover:text-swimspot-blue-green hover:bg-swimspot-blue-green/10">
-        Sign In
-      </Button>
-      <Button className="bg-swimspot-burnt-coral hover:bg-swimspot-burnt-coral/90 text-white">
-        Join
-      </Button>
-      <Link to="/profile">
+      <div className="flex items-center gap-3">
         <Avatar>
           <AvatarFallback className="bg-swimspot-blue-green text-white">
-            U
+            {userInitial}
           </AvatarFallback>
         </Avatar>
-      </Link>
+        <span className="font-medium">{user.email}</span>
+      </div>
+      <div className="w-full">
+        <Link to="/profile">
+          <Button variant="outline" className="w-full text-swimspot-blue-green mb-2">
+            <User className="mr-2 h-4 w-4" />
+            Profile
+          </Button>
+        </Link>
+        <Button 
+          variant="outline" 
+          className="w-full text-swimspot-burnt-coral border-swimspot-burnt-coral"
+          onClick={onSignOut}
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Sign Out
+        </Button>
+      </div>
     </div>
+  ) : (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Avatar className="cursor-pointer">
+          <AvatarFallback className="bg-swimspot-blue-green text-white">
+            {userInitial}
+          </AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <div className="px-2 py-1.5 text-sm font-medium">
+          {user.email}
+        </div>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/profile" className="cursor-pointer flex items-center">
+            <User className="mr-2 h-4 w-4" />
+            Profile
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem 
+          className="text-swimspot-burnt-coral focus:text-swimspot-burnt-coral cursor-pointer"
+          onClick={onSignOut}
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Sign Out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
