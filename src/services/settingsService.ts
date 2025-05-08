@@ -18,19 +18,24 @@ export const getPublicSetting = async (key: string): Promise<string | null> => {
 };
 
 export const getSecureSetting = async (key: string): Promise<string | null> => {
-  // Changed this function to not filter on is_public, so it can find any setting by key
-  const { data, error } = await supabase
-    .from('app_settings')
-    .select('value')
-    .eq('key', key)
-    .single();
-  
-  if (error || !data) {
-    console.error(`Error fetching secure setting ${key}:`, error);
+  try {
+    // First try to find the setting with any visibility
+    const { data, error } = await supabase
+      .from('app_settings')
+      .select('value')
+      .eq('key', key)
+      .maybeSingle();
+    
+    if (error) {
+      console.error(`Error fetching secure setting ${key}:`, error);
+      return null;
+    }
+    
+    return data?.value || null;
+  } catch (err) {
+    console.error(`Exception fetching secure setting ${key}:`, err);
     return null;
   }
-  
-  return data.value;
 };
 
 export const updateSetting = async (key: string, value: string, isPublic: boolean = false): Promise<boolean> => {

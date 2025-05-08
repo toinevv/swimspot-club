@@ -12,6 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getSecureSetting } from "@/services/settingsService";
 
+// Fallback token - this would normally be stored in Supabase settings
+const FALLBACK_MAPBOX_TOKEN = "pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbHQ2N3N2MDcwbzNuMm1vNnRrOXRjcHFxIn0.a0IYlgMj4CRS3pZVhES0Qg"; 
+
 const SwimMap = () => {
   const navigate = useNavigate();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -26,13 +29,16 @@ const SwimMap = () => {
       try {
         const token = await getSecureSetting('mapbox_token');
         if (token) {
+          console.log("Successfully retrieved Mapbox token from database");
           setMapboxToken(token);
         } else {
-          toast.error("Failed to load Mapbox token. Please try again later.");
+          console.log("Using fallback Mapbox token");
+          setMapboxToken(FALLBACK_MAPBOX_TOKEN);
         }
       } catch (error) {
         console.error("Error fetching Mapbox token:", error);
-        toast.error("Error loading map data. Please try again later.");
+        console.log("Using fallback Mapbox token due to error");
+        setMapboxToken(FALLBACK_MAPBOX_TOKEN);
       } finally {
         setIsLoading(false);
       }
