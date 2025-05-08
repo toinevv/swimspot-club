@@ -72,7 +72,7 @@ export interface Group {
   description: string;
   image_url: string;
   location: string;
-  type: 'Public' | 'Private' | 'Invite Only';
+  type: string; // Changed from union type to string to match database
   preferred_spots?: string;
   created_at: string;
   updated_at: string;
