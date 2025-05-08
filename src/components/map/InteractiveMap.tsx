@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 interface InteractiveMapProps {
   spots: SwimSpot[];
   onSpotClick: (spot: SwimSpot) => void;
-  mapboxToken?: string;
+  mapboxToken?: string | null;
 }
 
 const InteractiveMap = ({ spots, onSpotClick, mapboxToken }: InteractiveMapProps) => {
@@ -86,7 +86,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken }: InteractiveMapProps
       <div className="flex items-center justify-center w-full h-[calc(100vh-64px)] bg-swimspot-drift-sand/10">
         <div className="text-center p-6 max-w-md">
           <div className="text-swimspot-blue-green text-xl font-medium mb-4">Mapbox API Key Required</div>
-          <p className="text-gray-600 mb-4">Please provide a Mapbox token in the search bar above to view the map.</p>
+          <p className="text-gray-600 mb-4">Please contact the administrator to provide the Mapbox token.</p>
         </div>
       </div>
     );
