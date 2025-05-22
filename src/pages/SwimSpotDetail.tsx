@@ -1,7 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Heart,
@@ -202,22 +202,12 @@ const SwimSpotDetail = () => {
                           <span className="font-medium">{swimSpot.water_type}</span>
                         </li>
                         <li className="flex justify-between">
-                          <span>Current Quality:</span>
-                          <span className={`font-medium ${
-                            swimSpot.water_quality === 'Excellent' 
-                              ? 'text-green-600' 
-                              : swimSpot.water_quality === 'Good' 
-                              ? 'text-blue-600' 
-                              : 'text-orange-600'
-                          }`}>{swimSpot.water_quality}</span>
-                        </li>
-                        <li className="flex justify-between">
                           <span>Temperature:</span>
-                          <span className="font-medium">{swimSpot.current_temperature}°C</span>
+                          <span className="font-medium">{swimSpot.current_temperature ? `${swimSpot.current_temperature}°C` : 'Not available'}</span>
                         </li>
                         <li className="flex justify-between">
                           <span>Current:</span>
-                          <span className="font-medium">{swimSpot.current || 'Unknown'}</span>
+                          <span className="font-medium">{swimSpot.current || 'Not available'}</span>
                         </li>
                       </ul>
                     </div>
@@ -235,10 +225,6 @@ const SwimSpotDetail = () => {
                         <li className="flex justify-between">
                           <span>Restrooms:</span>
                           <span className="font-medium">{swimSpot.facilities.restrooms ? 'Available' : 'Not available'}</span>
-                        </li>
-                        <li className="flex justify-between">
-                          <span>Lifeguard:</span>
-                          <span className="font-medium">{swimSpot.facilities.lifeguard ? 'Yes' : 'No'}</span>
                         </li>
                         <li className="flex justify-between">
                           <span>Food & Drinks:</span>
@@ -326,14 +312,6 @@ const SwimSpotDetail = () => {
                             <div className="flex items-center text-xs text-gray-600 mb-1">
                               <Droplet className="h-3 w-3 mr-1" />
                               {spot.water_type}
-                              <span className="mx-2">•</span>
-                              <span className={`${
-                                spot.water_quality === 'Excellent' 
-                                  ? 'text-green-600' 
-                                  : spot.water_quality === 'Good' 
-                                  ? 'text-blue-600' 
-                                  : 'text-orange-600'
-                              }`}>{spot.water_quality}</span>
                             </div>
                             <p className="text-xs text-gray-500">Nearby</p>
                           </div>
@@ -365,19 +343,6 @@ const SwimSpotDetail = () => {
                 <Map className="h-4 w-4 mr-2" />
                 Get Directions
               </Button>
-            </div>
-            
-            <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
-              <h3 className="font-serif text-xl text-swimspot-blue-green mb-4">Water Quality History</h3>
-              
-              {/* Chart placeholder */}
-              <div className="h-48 bg-swimspot-blue-mist/30 rounded-lg flex items-center justify-center mb-4">
-                <p className="text-sm text-swimspot-blue-green">Quality chart will be displayed here</p>
-              </div>
-              
-              <div className="text-xs text-gray-500 text-center">
-                Data from the past 90 days
-              </div>
             </div>
             
             <div className="bg-swimspot-blue-green rounded-2xl p-6 shadow-sm text-white">

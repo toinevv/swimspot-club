@@ -8,18 +8,8 @@ interface SwimSpotMarkerProps {
 }
 
 const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
-  const getQualityColor = (quality: string) => {
-    switch (quality) {
-      case 'Excellent':
-        return 'text-green-500';
-      case 'Good':
-        return 'text-blue-500';
-      case 'Moderate':
-        return 'text-orange-500';
-      default:
-        return 'text-gray-500';
-    }
-  };
+  // Use a standard color instead of quality-based colors
+  const markerColor = spot.visibility === 'premium' ? 'text-swimspot-burnt-coral' : 'text-swimspot-blue-green';
 
   return (
     <div 
@@ -27,7 +17,7 @@ const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
       className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
     >
       <MapPin 
-        className={`h-8 w-8 ${getQualityColor(spot.water_quality)}`}
+        className={`h-8 w-8 ${markerColor}`}
         fill="currentColor"
         fillOpacity={0.2}
       />
@@ -37,10 +27,12 @@ const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
           <h3 className="font-medium text-swimspot-blue-green mb-1">{spot.name}</h3>
           <div className="flex items-center text-xs text-gray-600">
             <span>{spot.water_type}</span>
-            <span className="mx-1">•</span>
-            <span className={getQualityColor(spot.water_quality)}>
-              {spot.water_quality}
-            </span>
+            {spot.visibility === 'premium' && (
+              <>
+                <span className="mx-1">•</span>
+                <span className="text-swimspot-burnt-coral">Premium</span>
+              </>
+            )}
           </div>
         </div>
         <div className="w-3 h-3 bg-white transform rotate-45 absolute -bottom-1.5 left-1/2 -translate-x-1/2" />
