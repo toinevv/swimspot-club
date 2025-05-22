@@ -69,9 +69,9 @@ const About = () => {
               <div className="bg-swimspot-blue-mist p-6 rounded-2xl mb-6">
                 <Droplet className="h-12 w-12 text-swimspot-blue-green" />
               </div>
-              <h3 className="font-serif text-xl mb-3 text-swimspot-blue-green">Check Water Quality</h3>
+              <h3 className="font-serif text-xl mb-3 text-swimspot-blue-green">Find Hidden Gems</h3>
               <p className="text-gray-600">
-                Real-time water quality data and conditions for a safe swimming experience.
+                Discover secret swimming locations that only locals know about.
               </p>
             </div>
             
@@ -120,13 +120,11 @@ const About = () => {
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-serif font-medium text-xl text-swimspot-blue-green">{spot.name}</h3>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      spot.quality === 'Excellent' 
-                        ? 'bg-green-100 text-green-800' 
-                        : spot.quality === 'Good' 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : 'bg-orange-100 text-orange-800'
+                      spot.visibility === 'premium' 
+                        ? 'bg-swimspot-burnt-coral/20 text-swimspot-burnt-coral' 
+                        : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {spot.quality}
+                      {spot.visibility === 'premium' ? 'Premium' : 'Public'}
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-2 mb-4">
@@ -173,11 +171,11 @@ const About = () => {
                   </li>
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-gray-400 mr-2" />
-                    <span className="text-gray-600">Basic water quality info</span>
+                    <span className="text-gray-600">Join one swim group</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-gray-400 mr-2" />
-                    <span className="text-gray-600">Join one swim group</span>
+                    <span className="text-gray-600">Basic community features</span>
                   </li>
                 </ul>
                 <div className="mt-6">
@@ -219,7 +217,7 @@ const About = () => {
                   </li>
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-swimspot-burnt-coral mr-2" />
-                    <span className="text-gray-800">Detailed water quality analytics</span>
+                    <span className="text-gray-800">Enhanced community features</span>
                   </li>
                 </ul>
                 <div className="mt-6">
@@ -315,19 +313,19 @@ const About = () => {
         </div>
       </section>
 
-      {/* Bay Watcher Section (Previously Premium Section) */}
+      {/* Community Banner (Previously Bay Watcher Section) */}
       <section className="py-20 bg-swimspot-blue-green text-white">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="font-serif text-3xl md:text-4xl mb-6">Become a Bay Watcher</h2>
+            <h2 className="font-serif text-3xl md:text-4xl mb-6">Join Our Swimming Community</h2>
             <p className="text-lg text-white/80 mb-8">
-              Gain access to exclusive swim spots and special community events by recording 100 registered dips.
+              Connect with fellow swimmers, find new spots, and enjoy exclusive benefits as part of our growing community.
             </p>
             <Button 
               size="lg" 
               className="bg-swimspot-burnt-coral hover:bg-swimspot-burnt-coral/90 text-white font-medium"
             >
-              Start Your Journey
+              Join The Community
             </Button>
           </div>
         </div>
@@ -341,7 +339,7 @@ const featuredSpots = [
     id: 1,
     name: "Amstel River Oasis",
     image: "https://source.unsplash.com/photo-1500375592092-40eb2168fd21",
-    quality: "Excellent",
+    visibility: "public",
     tags: ["River", "Family-friendly", "Picnic Area"],
     description: "A peaceful swimming spot along the Amstel with clear waters and grassy banks perfect for picnics and sunbathing."
   },
@@ -349,7 +347,7 @@ const featuredSpots = [
     id: 2,
     name: "Nieuwe Meer Beach",
     image: "https://source.unsplash.com/photo-1506744038136-46273834b3fb",
-    quality: "Good",
+    visibility: "premium",
     tags: ["Lake", "Sandy Beach", "Sunset Views"],
     description: "Popular lake beach with sandy shores and beautiful sunset views. Family-friendly with designated swimming areas."
   },
@@ -357,7 +355,7 @@ const featuredSpots = [
     id: 3,
     name: "Hidden Canal Gem",
     image: "https://source.unsplash.com/photo-1482938289607-e9573fc25ebb",
-    quality: "Good",
+    visibility: "public",
     tags: ["Canal", "Historic", "Urban"],
     description: "A lesser-known urban swimming spot in a clean canal section with easy access and historic surroundings."
   }
