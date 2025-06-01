@@ -6,13 +6,14 @@ import MapFilters from "./MapFilters";
 
 interface FiltersDropdownProps {
   onFilterChange: (filters: any) => void;
+  currentCity?: string;
 }
 
-const FiltersDropdown = ({ onFilterChange }: FiltersDropdownProps) => {
+const FiltersDropdown = ({ onFilterChange, currentCity }: FiltersDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="absolute top-4 left-4 z-10">
+    <div className="absolute top-4 left-4 z-20">
       <Button
         variant="ghost"
         size="icon"
@@ -24,7 +25,7 @@ const FiltersDropdown = ({ onFilterChange }: FiltersDropdownProps) => {
       
       {isOpen && (
         <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-lg border">
-          <MapFilters onFilterChange={onFilterChange} />
+          <MapFilters onFilterChange={onFilterChange} currentCity={currentCity} />
         </div>
       )}
     </div>

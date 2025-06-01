@@ -12,7 +12,6 @@ import SEOHead from "@/components/seo/SEOHead";
 import CityContent from "@/components/seo/CityContent";
 import { useMapboxToken } from "@/hooks/useMapboxToken";
 import { useUserLocation } from "@/hooks/useUserLocation";
-import { useCityRedirect } from "@/hooks/useCityRedirect";
 
 const SwimMap = () => {
   const navigate = useNavigate();
@@ -23,17 +22,7 @@ const SwimMap = () => {
   
   // Custom hooks
   const { mapboxToken, isTokenLoading } = useMapboxToken();
-  const { userLocation, locationPermissionDenied } = useUserLocation(city);
-  
-  // Fetch all swim spots to find city with most spots
-  const { data: allSpots = [] } = useQuery<SwimSpot[]>({
-    queryKey: ['allSwimSpots'],
-    queryFn: () => api.getSwimSpots(),
-    enabled: !city // Only fetch when no city is selected
-  });
-  
-  // Handle city redirect logic
-  useCityRedirect(city, locationPermissionDenied, allSpots);
+  const { userLocation } = useUserLocation(city);
   
   // Fetch city data from database
   const { data: cityData } = useQuery({
@@ -46,18 +35,10 @@ const SwimMap = () => {
     enabled: !!city
   });
   
-  // Fetch swim spots - don't filter by city if city is empty or undefined
+  // Fetch all swim spots - always show all spots, let filters handle the filtering
   const { data: spots = [] } = useQuery<SwimSpot[]>({
-    queryKey: ['swimSpots', filters, city],
-    queryFn: () => {
-      // Create filters object with city if it exists
-      const queryFilters = { ...filters };
-      // Only add city filter if city exists and is not empty
-      if (city && city.trim() !== '') {
-        return api.getSwimSpots({ ...queryFilters, city });
-      }
-      return api.getSwimSpots(queryFilters);
-    }
+    queryKey: ['swimSpots', filters],
+    queryFn: () => api.getSwimSpots(filters)
   });
 
   const handleSpotClick = (spot: SwimSpot, mapCenter: [number, number], zoom: number) => {
@@ -132,6 +113,7 @@ const SwimMap = () => {
       <div className="relative h-[calc(100vh-64px)]">
         <FiltersDropdown 
           onFilterChange={handleFilterChange}
+          currentCity={city}
         />
         
         <InteractiveMap 

@@ -9,17 +9,46 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/services/api";
 
 interface MapFiltersProps {
   onFilterChange: (filters: any) => void;
+  currentCity?: string;
 }
 
-const MapFilters = ({ onFilterChange }: MapFiltersProps) => {
+const MapFilters = ({ onFilterChange, currentCity }: MapFiltersProps) => {
+  // Fetch all cities for the city filter
+  const { data: cities = [] } = useQuery({
+    queryKey: ['cities'],
+    queryFn: () => api.getAllCities()
+  });
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg space-y-4">
       <div>
+        <Label>City</Label>
+        <Select 
+          defaultValue={currentCity || "all"} 
+          onValueChange={(value) => onFilterChange({ city: value === "all" ? undefined : value })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select city" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Cities</SelectItem>
+            {cities.map((city) => (
+              <SelectItem key={city.id} value={city.slug}>
+                {city.display_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
         <Label>Water Type</Label>
-        <Select onValueChange={(value) => onFilterChange({ waterType: value })}>
+        <Select onValueChange={(value) => onFilterChange({ waterType: value === "all" ? undefined : value })}>
           <SelectTrigger>
             <SelectValue placeholder="Select water type" />
           </SelectTrigger>
@@ -35,7 +64,7 @@ const MapFilters = ({ onFilterChange }: MapFiltersProps) => {
 
       <div>
         <Label>Water Quality</Label>
-        <Select onValueChange={(value) => onFilterChange({ quality: value })}>
+        <Select onValueChange={(value) => onFilterChange({ quality: value === "all" ? undefined : value })}>
           <SelectTrigger>
             <SelectValue placeholder="Select quality" />
           </SelectTrigger>
