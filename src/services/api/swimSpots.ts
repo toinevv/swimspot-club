@@ -13,13 +13,9 @@ export const swimSpotsApi = {
           query = query.eq('city', filters.city);
         }
         
-        // Apply other filters (water type, quality, etc.)
+        // Apply other filters (water type, etc.)
         if (filters.waterType) {
           query = query.eq('water_type', filters.waterType);
-        }
-        
-        if (filters.quality) {
-          query = query.eq('water_quality', filters.quality);
         }
         
         // Add more filters as needed
@@ -63,7 +59,6 @@ export const swimSpotsApi = {
             address: spot.address
           },
           tags: spot.tags,
-          water_quality: spot.water_quality,
           current_temperature: spot.current_temperature ? Number(spot.current_temperature) : undefined,
           current: spot.current,
           visibility: spot.visibility,
@@ -139,7 +134,6 @@ export const swimSpotsApi = {
           address: data.address
         },
         tags: data.tags,
-        water_quality: data.water_quality,
         current_temperature: data.current_temperature ? Number(data.current_temperature) : undefined,
         current: data.current,
         visibility: data.visibility,

@@ -26,7 +26,6 @@ export interface SwimSpot {
     address: string;
   };
   tags: string[];
-  water_quality: string; // Changed from union type to string to match database
   current_temperature?: number;
   current?: string; // Changed from union type to string to match database
   visibility: string; // Changed from union type to string to match database

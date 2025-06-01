@@ -208,7 +208,6 @@ export type Database = {
           tags: string[]
           updated_at: string
           visibility: string
-          water_quality: string
           water_type: string
         }
         Insert: {
@@ -229,7 +228,6 @@ export type Database = {
           tags?: string[]
           updated_at?: string
           visibility?: string
-          water_quality: string
           water_type: string
         }
         Update: {
@@ -250,7 +248,6 @@ export type Database = {
           tags?: string[]
           updated_at?: string
           visibility?: string
-          water_quality?: string
           water_type?: string
         }
         Relationships: []
