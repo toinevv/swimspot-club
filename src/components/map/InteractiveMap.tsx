@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -10,9 +9,10 @@ interface InteractiveMapProps {
   spots: SwimSpot[];
   onSpotClick: (spot: SwimSpot) => void;
   mapboxToken?: string;
+  initialCenter?: [number, number];
 }
 
-const InteractiveMap = ({ spots, onSpotClick, mapboxToken }: InteractiveMapProps) => {
+const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter }: InteractiveMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
@@ -27,9 +27,9 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken }: InteractiveMapProps
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/outdoors-v12', // Changed to outdoors style which is better for swim spots
-        center: [4.9041, 52.3676], // Amsterdam coordinates
-        zoom: 12
+        style: 'mapbox://styles/mapbox/outdoors-v12',
+        center: initialCenter || [4.9041, 52.3676], // Use city center or default to Amsterdam
+        zoom: initialCenter ? 13 : 12 // Zoom in more for specific cities
       });
 
       // Add navigation controls
@@ -67,7 +67,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken }: InteractiveMapProps
         console.error('Error cleaning up map:', error);
       }
     };
-  }, [mapboxToken]);
+  }, [mapboxToken, initialCenter]);
 
   useEffect(() => {
     if (!mapLoaded || !map.current) return;

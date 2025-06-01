@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HelmetProvider } from 'react-helmet-async';
 import MainLayout from "./components/layout/MainLayout";
 import About from "./pages/About";
 import SwimMap from "./pages/SwimMap";
@@ -21,23 +22,27 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<MainLayout><SwimMap /></MainLayout>} />
-            <Route path="/about" element={<MainLayout><About /></MainLayout>} />
-            <Route path="/spot/:id" element={<MainLayout><SwimSpotDetail /></MainLayout>} />
-            <Route path="/profile" element={<MainLayout><Profile /></MainLayout>} />
-            <Route path="/groups" element={<MainLayout><Groups /></MainLayout>} />
-            <Route path="/blog" element={<MainLayout><Blog /></MainLayout>} />
-            <Route path="/blog/:slug" element={<MainLayout><BlogArticle /></MainLayout>} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <HelmetProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<MainLayout><SwimMap /></MainLayout>} />
+              <Route path="/map" element={<MainLayout><SwimMap /></MainLayout>} />
+              <Route path="/map/:city" element={<MainLayout><SwimMap /></MainLayout>} />
+              <Route path="/about" element={<MainLayout><About /></MainLayout>} />
+              <Route path="/spot/:id" element={<MainLayout><SwimSpotDetail /></MainLayout>} />
+              <Route path="/profile" element={<MainLayout><Profile /></MainLayout>} />
+              <Route path="/groups" element={<MainLayout><Groups /></MainLayout>} />
+              <Route path="/blog" element={<MainLayout><Blog /></MainLayout>} />
+              <Route path="/blog/:slug" element={<MainLayout><BlogArticle /></MainLayout>} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </HelmetProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
