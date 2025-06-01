@@ -1,4 +1,3 @@
-
 // Supabase table types for our SwimSpot application
 
 export interface User {
@@ -31,6 +30,7 @@ export interface SwimSpot {
   current_temperature?: number;
   current?: string; // Changed from union type to string to match database
   visibility: string; // Changed from union type to string to match database
+  city?: string; // Added city property to match database
   created_at: string;
   updated_at: string;
   facilities: {

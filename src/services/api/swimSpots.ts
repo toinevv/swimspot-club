@@ -1,4 +1,3 @@
-
 import { SwimSpot } from '@/types';
 import { apiClient } from './client';
 
@@ -68,6 +67,7 @@ export const swimSpotsApi = {
           current_temperature: spot.current_temperature ? Number(spot.current_temperature) : undefined,
           current: spot.current,
           visibility: spot.visibility,
+          city: spot.city, // Include city field
           created_at: spot.created_at,
           updated_at: spot.updated_at,
           // Parse the JSON fields with safe access
@@ -143,6 +143,7 @@ export const swimSpotsApi = {
         current_temperature: data.current_temperature ? Number(data.current_temperature) : undefined,
         current: data.current,
         visibility: data.visibility,
+        city: data.city, // Include city field
         created_at: data.created_at,
         updated_at: data.updated_at,
         facilities: {
