@@ -46,9 +46,17 @@ const SwimMap = () => {
     enabled: !!city
   });
   
+  // Fetch swim spots - don't filter by city if city is empty or undefined
   const { data: spots = [] } = useQuery<SwimSpot[]>({
     queryKey: ['swimSpots', filters, city],
-    queryFn: () => api.getSwimSpots({ ...filters, city })
+    queryFn: () => {
+      const queryFilters = { ...filters };
+      // Only add city filter if city exists and is not empty
+      if (city && city.trim() !== '') {
+        queryFilters.city = city;
+      }
+      return api.getSwimSpots(queryFilters);
+    }
   });
 
   const handleSpotClick = (spot: SwimSpot, mapCenter: [number, number], zoom: number) => {
@@ -108,6 +116,9 @@ const SwimMap = () => {
   if (isTokenLoading) {
     return <MapLoadingState />;
   }
+
+  console.log('Current city parameter:', city);
+  console.log('Fetched spots:', spots.length);
 
   return (
     <>

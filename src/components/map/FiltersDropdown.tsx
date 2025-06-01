@@ -12,7 +12,7 @@ const FiltersDropdown = ({ onFilterChange }: FiltersDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="absolute top-4 right-4 z-10">
+    <div className="absolute top-4 left-4 z-10">
       <Button
         variant="ghost"
         size="icon"
@@ -23,7 +23,7 @@ const FiltersDropdown = ({ onFilterChange }: FiltersDropdownProps) => {
       </Button>
       
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-80">
+        <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-lg border">
           <MapFilters onFilterChange={onFilterChange} />
         </div>
       )}
