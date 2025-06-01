@@ -23,7 +23,7 @@ export const useMapState = () => {
     }
   }, []);
 
-  // Simple save map position - save immediately
+  // Save map position when user moves the map
   const saveMapPosition = (center: [number, number], zoom: number) => {
     const state = { center, zoom };
     localStorage.setItem(MAP_STATE_KEY, JSON.stringify(state));
@@ -31,8 +31,17 @@ export const useMapState = () => {
     console.log('Map position saved:', state);
   };
 
+  // Save position when clicking on a spot (before navigation)
+  const saveMapPositionBeforeNavigation = (center: [number, number], zoom: number) => {
+    const state = { center, zoom };
+    localStorage.setItem(MAP_STATE_KEY, JSON.stringify(state));
+    setSavedMapState(state);
+    console.log('Map position saved before navigation:', state);
+  };
+
   return {
     savedMapState,
-    saveMapPosition
+    saveMapPosition,
+    saveMapPositionBeforeNavigation
   };
 };

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -25,7 +26,7 @@ const SwimMap = () => {
   // Custom hooks
   const { mapboxToken, isTokenLoading } = useMapboxToken();
   const { userLocation, locationPermissionDenied } = useUserLocation(city);
-  const { savedMapState, saveMapPosition } = useMapState();
+  const { savedMapState, saveMapPosition, saveMapPositionBeforeNavigation } = useMapState();
   
   // Fetch all swim spots to find city with most spots
   const { data: allSpots = [] } = useQuery<SwimSpot[]>({
@@ -128,6 +129,7 @@ const SwimMap = () => {
           mapboxToken={mapboxToken || undefined}
           initialCenter={getMapCenter()}
           onMapMove={handleMapMove}
+          onSpotClickSavePosition={saveMapPositionBeforeNavigation}
         />
         
         {cityData && (

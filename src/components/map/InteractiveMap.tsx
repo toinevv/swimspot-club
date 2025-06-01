@@ -11,9 +11,10 @@ interface InteractiveMapProps {
   mapboxToken?: string;
   initialCenter?: [number, number];
   onMapMove?: (center: [number, number], zoom: number) => void;
+  onSpotClickSavePosition?: (center: [number, number], zoom: number) => void;
 }
 
-const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapMove }: InteractiveMapProps) => {
+const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapMove, onSpotClickSavePosition }: InteractiveMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
@@ -52,7 +53,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapM
         setMapLoaded(true);
       });
 
-      // Save map position whenever the map moves (much more lenient)
+      // Save map position whenever the map moves
       map.current.on('moveend', () => {
         if (map.current && onMapMove) {
           const center = map.current.getCenter();
@@ -94,7 +95,15 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapM
       root.render(
         <SwimSpotMarker 
           spot={spot}
-          onClick={() => onSpotClick(spot)}
+          onClick={() => {
+            // Save current map position before navigating
+            if (map.current && onSpotClickSavePosition) {
+              const center = map.current.getCenter();
+              const zoom = map.current.getZoom();
+              onSpotClickSavePosition([center.lng, center.lat], zoom);
+            }
+            onSpotClick(spot);
+          }}
         />
       );
 
@@ -104,7 +113,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapM
 
       markersRef.current[spot.id] = marker;
     });
-  }, [spots, mapLoaded, onSpotClick]);
+  }, [spots, mapLoaded, onSpotClick, onSpotClickSavePosition]);
 
   if (mapError) {
     return (
