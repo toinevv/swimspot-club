@@ -20,12 +20,6 @@ export const generateSitemap = async (): Promise<string> => {
       priority: '1.0'
     },
     {
-      url: `${baseUrl}/map`,
-      lastmod: currentDate,
-      changefreq: 'daily',
-      priority: '0.9'
-    },
-    {
       url: `${baseUrl}/about`,
       lastmod: currentDate,
       changefreq: 'weekly',
@@ -45,12 +39,12 @@ export const generateSitemap = async (): Promise<string> => {
     }
   ];
 
-  // Add city-specific map pages from database
+  // Add city-specific pages from database
   try {
     const cities = await api.getAllCities();
     cities.forEach(city => {
       urls.push({
-        url: `${baseUrl}/map/${city.slug}`,
+        url: `${baseUrl}/${city.slug}`,
         lastmod: currentDate,
         changefreq: 'daily',
         priority: city.featured ? '0.8' : '0.7'

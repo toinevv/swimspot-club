@@ -30,8 +30,6 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<MainLayout><SwimMap /></MainLayout>} />
-              <Route path="/map" element={<MainLayout><SwimMap /></MainLayout>} />
-              <Route path="/map/:city" element={<MainLayout><SwimMap /></MainLayout>} />
               <Route path="/about" element={<MainLayout><About /></MainLayout>} />
               <Route path="/spot/:id" element={<MainLayout><SwimSpotDetail /></MainLayout>} />
               <Route path="/profile" element={<MainLayout><Profile /></MainLayout>} />
@@ -40,6 +38,7 @@ const App = () => (
               <Route path="/blog/:slug" element={<MainLayout><BlogArticle /></MainLayout>} />
               <Route path="/sitemap" element={<MainLayout><Sitemap /></MainLayout>} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/:city" element={<MainLayout><SwimMap /></MainLayout>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
