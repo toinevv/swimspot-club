@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Heart,
   Bookmark,
@@ -17,9 +18,11 @@ import {
   Waves,
   Info,
   Star,
-  Loader2
+  Loader2,
+  Users,
+  Eye
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import { SwimSpot } from "@/types";
 import { toast } from "sonner";
@@ -27,9 +30,8 @@ import { toast } from "sonner";
 const SwimSpotDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
-  const [liked, setLiked] = useState(false);
-  const [saved, setSaved] = useState(false);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   
   const { data: swimSpot, isLoading, error } = useQuery({
     queryKey: ['swimSpot', id],
@@ -42,6 +44,57 @@ const SwimSpotDetail = () => {
     enabled: !!swimSpot,
   });
 
+  const { data: likeData } = useQuery({
+    queryKey: ['spotLikes', id],
+    queryFn: () => api.getSpotLikes(id!),
+    enabled: !!id,
+  });
+
+  const { data: visitData } = useQuery({
+    queryKey: ['spotVisits', id],
+    queryFn: () => api.getSpotVisits(id!),
+    enabled: !!id,
+  });
+
+  const { data: isSaved } = useQuery({
+    queryKey: ['spotSaved', id],
+    queryFn: () => api.checkIfSaved(id!),
+    enabled: !!id,
+  });
+
+  const likeMutation = useMutation({
+    mutationFn: () => api.toggleLikeSpot(id!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spotLikes', id] });
+      toast.success(likeData?.userHasLiked ? "Removed from favorites" : "Added to favorites");
+    },
+    onError: () => {
+      toast.error("Please sign in to like spots");
+    }
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: () => api.toggleSaveSpot(id!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spotSaved', id] });
+      toast.success(isSaved ? "Removed from saved spots" : "Added to saved spots");
+    },
+    onError: () => {
+      toast.error("Please sign in to save spots");
+    }
+  });
+
+  const visitMutation = useMutation({
+    mutationFn: () => api.markAsVisited(id!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spotVisits', id] });
+      toast.success("Marked as visited!");
+    },
+    onError: () => {
+      toast.error("Please sign in to mark as visited");
+    }
+  });
+
   useEffect(() => {
     if (error) {
       toast.error("Failed to load swim spot details");
@@ -50,11 +103,15 @@ const SwimSpotDetail = () => {
   }, [error, navigate]);
 
   const handleLike = () => {
-    setLiked(!liked);
+    likeMutation.mutate();
   };
 
   const handleSave = () => {
-    setSaved(!saved);
+    saveMutation.mutate();
+  };
+
+  const handleMarkVisited = () => {
+    visitMutation.mutate();
   };
 
   const handleReport = () => {
@@ -140,6 +197,18 @@ const SwimSpotDetail = () => {
                     </span>
                   ))}
                 </div>
+                
+                {/* Stats */}
+                <div className="flex items-center gap-4 mt-2">
+                  <div className="flex items-center gap-1 text-sm">
+                    <Heart className="h-4 w-4" />
+                    <span>{likeData?.count || 0} likes</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm">
+                    <Eye className="h-4 w-4" />
+                    <span>{visitData?.count || 0} visits</span>
+                  </div>
+                </div>
               </div>
               
               <div className="flex items-center gap-3">
@@ -147,24 +216,35 @@ const SwimSpotDetail = () => {
                   variant="outline"
                   size="icon"
                   onClick={handleLike}
+                  disabled={likeMutation.isPending}
                   className={`rounded-full border-white bg-black/20 backdrop-blur-sm ${
-                    liked ? "text-red-500" : "text-white"
+                    likeData?.userHasLiked ? "text-red-500" : "text-white"
                   }`}
                 >
-                  <Heart className="h-5 w-5" fill={liked ? "currentColor" : "none"} />
+                  <Heart className="h-5 w-5" fill={likeData?.userHasLiked ? "currentColor" : "none"} />
                 </Button>
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={handleSave}
+                  disabled={saveMutation.isPending}
                   className={`rounded-full border-white bg-black/20 backdrop-blur-sm ${
-                    saved ? "text-swimspot-burnt-coral" : "text-white"
+                    isSaved ? "text-swimspot-burnt-coral" : "text-white"
                   }`}
                 >
                   <Bookmark
                     className="h-5 w-5"
-                    fill={saved ? "currentColor" : "none"}
+                    fill={isSaved ? "currentColor" : "none"}
                   />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleMarkVisited}
+                  disabled={visitMutation.isPending}
+                  className="rounded-full border-white bg-black/20 backdrop-blur-sm text-white"
+                >
+                  <Eye className="h-5 w-5" />
                 </Button>
                 <Button
                   variant="outline"
@@ -193,7 +273,7 @@ const SwimSpotDetail = () => {
             <Tabs defaultValue="details" className="w-full">
               <TabsList className="w-full bg-white mb-6">
                 <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
-                <TabsTrigger value="reviews" className="flex-1">Reviews</TabsTrigger>
+                <TabsTrigger value="community" className="flex-1">Community</TabsTrigger>
                 <TabsTrigger value="nearby" className="flex-1">Nearby</TabsTrigger>
               </TabsList>
               
@@ -282,19 +362,53 @@ const SwimSpotDetail = () => {
                 </div>
               </TabsContent>
               
-              <TabsContent value="reviews" className="space-y-6">
+              <TabsContent value="community" className="space-y-6">
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="font-serif text-2xl text-swimspot-blue-green">Reviews</h2>
-                    <Button className="bg-swimspot-burnt-coral hover:bg-swimspot-burnt-coral/90">
-                      Write a Review
-                    </Button>
-                  </div>
+                  <h2 className="font-serif text-2xl text-swimspot-blue-green mb-6">Community Activity</h2>
                   
-                  <div className="space-y-6">
-                    {/* Placeholder for reviews - will implement later */}
-                    <div className="flex items-center justify-center p-8 text-gray-500">
-                      <p>No reviews yet. Be the first to review this swim spot!</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div className="bg-swimspot-blue-mist/30 rounded-xl p-4">
+                      <h3 className="font-medium text-swimspot-blue-green mb-3 flex items-center">
+                        <Heart className="h-5 w-5 mr-2" />
+                        Loved by ({likeData?.count || 0})
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {likeData?.likedBy.slice(0, 6).map((like, index) => (
+                          <Avatar key={index} className="h-8 w-8">
+                            <AvatarImage src={like.profiles?.avatar_url} />
+                            <AvatarFallback className="bg-swimspot-blue-green text-white text-xs">
+                              {(like.profiles?.username || like.profiles?.full_name || 'U').charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        ))}
+                        {(likeData?.count || 0) > 6 && (
+                          <div className="h-8 w-8 rounded-full bg-swimspot-drift-sand flex items-center justify-center text-xs text-swimspot-blue-green">
+                            +{(likeData?.count || 0) - 6}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="bg-swimspot-drift-sand/50 rounded-xl p-4">
+                      <h3 className="font-medium text-swimspot-blue-green mb-3 flex items-center">
+                        <Eye className="h-5 w-5 mr-2" />
+                        Recent Visitors ({visitData?.count || 0})
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {visitData?.recentVisitors.slice(0, 6).map((visit, index) => (
+                          <Avatar key={index} className="h-8 w-8">
+                            <AvatarImage src={visit.profiles?.avatar_url} />
+                            <AvatarFallback className="bg-swimspot-blue-green text-white text-xs">
+                              {(visit.profiles?.username || visit.profiles?.full_name || 'U').charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        ))}
+                        {(visitData?.count || 0) > 6 && (
+                          <div className="h-8 w-8 rounded-full bg-swimspot-drift-sand flex items-center justify-center text-xs text-swimspot-blue-green">
+                            +{(visitData?.count || 0) - 6}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

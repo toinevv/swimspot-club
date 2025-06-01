@@ -165,29 +165,128 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           created_at: string
+          explorer_level: string | null
           full_name: string | null
           id: string
+          is_premium: boolean | null
+          location: string | null
           updated_at: string
           username: string | null
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
+          explorer_level?: string | null
           full_name?: string | null
           id: string
+          is_premium?: boolean | null
+          location?: string | null
           updated_at?: string
           username?: string | null
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
+          explorer_level?: string | null
           full_name?: string | null
           id?: string
+          is_premium?: boolean | null
+          location?: string | null
           updated_at?: string
           username?: string | null
         }
         Relationships: []
+      }
+      swim_spot_likes: {
+        Row: {
+          created_at: string
+          id: string
+          swim_spot_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          swim_spot_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          swim_spot_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "swim_spot_likes_swim_spot_id_fkey"
+            columns: ["swim_spot_id"]
+            isOneToOne: false
+            referencedRelation: "swim_spots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      swim_spot_saves: {
+        Row: {
+          created_at: string
+          id: string
+          swim_spot_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          swim_spot_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          swim_spot_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "swim_spot_saves_swim_spot_id_fkey"
+            columns: ["swim_spot_id"]
+            isOneToOne: false
+            referencedRelation: "swim_spots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      swim_spot_visits: {
+        Row: {
+          id: string
+          swim_spot_id: string
+          user_id: string
+          visited_at: string
+        }
+        Insert: {
+          id?: string
+          swim_spot_id: string
+          user_id: string
+          visited_at?: string
+        }
+        Update: {
+          id?: string
+          swim_spot_id?: string
+          user_id?: string
+          visited_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "swim_spot_visits_swim_spot_id_fkey"
+            columns: ["swim_spot_id"]
+            isOneToOne: false
+            referencedRelation: "swim_spots"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       swim_spots: {
         Row: {

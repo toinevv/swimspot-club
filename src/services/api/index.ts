@@ -6,6 +6,8 @@ import { groupsApi } from './groups';
 import { usersApi } from './users';
 import { blogPostsApi } from './blogPosts';
 import { citiesApi } from './cities';
+import { userInteractionsApi } from './userInteractions';
+import { profilesApi } from './profiles';
 
 export const api = {
   ...swimSpotsApi,
@@ -14,7 +16,19 @@ export const api = {
   ...groupsApi,
   ...usersApi,
   ...blogPostsApi,
-  ...citiesApi
+  ...citiesApi,
+  ...userInteractionsApi,
+  ...profilesApi
 };
 
-export { swimSpotsApi, waterQualityApi, reviewsApi, groupsApi, usersApi, blogPostsApi, citiesApi };
+export { 
+  swimSpotsApi, 
+  waterQualityApi, 
+  reviewsApi, 
+  groupsApi, 
+  usersApi, 
+  blogPostsApi, 
+  citiesApi,
+  userInteractionsApi,
+  profilesApi
+};
