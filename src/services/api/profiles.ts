@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 export interface UserProfile {
@@ -19,7 +18,7 @@ export interface UserStats {
   groupsJoined: number;
   reviewsWritten: number;
   savedSpots: number;
-  likesGiven: number;
+  totalVisits: number;
 }
 
 export const profilesApi = {
@@ -58,7 +57,7 @@ export const profilesApi = {
       groupsJoined: 0,
       reviewsWritten: 0,
       savedSpots: 0,
-      likesGiven: 0
+      totalVisits: 0
     };
 
     // Get unique visited spots count
@@ -82,18 +81,12 @@ export const profilesApi = {
       .select('id')
       .eq('user_id', user.id);
 
-    // Get likes given count
-    const { data: likes } = await supabase
-      .from('swim_spot_likes')
-      .select('id')
-      .eq('user_id', user.id);
-
     return {
       spotsVisited,
       groupsJoined: groups?.length || 0,
       reviewsWritten: 0, // TODO: implement when reviews are added
       savedSpots: saves?.length || 0,
-      likesGiven: likes?.length || 0
+      totalVisits: visits?.length || 0
     };
   },
 

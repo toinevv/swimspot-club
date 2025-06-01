@@ -2,65 +2,12 @@
 import { supabase } from '@/integrations/supabase/client';
 
 export const userInteractionsApi = {
-  // Like functionality
-  async toggleLikeSpot(spotId: string): Promise<boolean> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not authenticated');
-
-    // Check if already liked
-    const { data: existingLike } = await supabase
-      .from('swim_spot_likes')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('swim_spot_id', spotId)
-      .single();
-
-    if (existingLike) {
-      // Unlike
-      await supabase
-        .from('swim_spot_likes')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('swim_spot_id', spotId);
-      return false;
-    } else {
-      // Like
-      await supabase
-        .from('swim_spot_likes')
-        .insert({ user_id: user.id, swim_spot_id: spotId });
-      return true;
-    }
-  },
-
-  async getSpotLikes(spotId: string): Promise<{ count: number; userHasLiked: boolean; likedBy: any[] }> {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    const { data: likes } = await supabase
-      .from('swim_spot_likes')
-      .select(`
-        *,
-        profiles:user_id (
-          username,
-          full_name,
-          avatar_url
-        )
-      `)
-      .eq('swim_spot_id', spotId);
-
-    const userHasLiked = user ? likes?.some(like => like.user_id === user.id) || false : false;
-    
-    return {
-      count: likes?.length || 0,
-      userHasLiked,
-      likedBy: likes || []
-    };
-  },
-
-  // Save functionality
+  // Save functionality (replacing like)
   async toggleSaveSpot(spotId: string): Promise<boolean> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
+    // Check if already saved
     const { data: existingSave } = await supabase
       .from('swim_spot_saves')
       .select('*')
@@ -69,6 +16,7 @@ export const userInteractionsApi = {
       .single();
 
     if (existingSave) {
+      // Remove from saved
       await supabase
         .from('swim_spot_saves')
         .delete()
@@ -76,6 +24,7 @@ export const userInteractionsApi = {
         .eq('swim_spot_id', spotId);
       return false;
     } else {
+      // Save spot
       await supabase
         .from('swim_spot_saves')
         .insert({ user_id: user.id, swim_spot_id: spotId });
@@ -97,17 +46,38 @@ export const userInteractionsApi = {
     return !!data;
   },
 
-  // Visit functionality
-  async markAsVisited(spotId: string): Promise<void> {
+  // Visit functionality (now acts like likes - total visit count)
+  async markAsVisited(spotId: string): Promise<boolean> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
+    // Check if user has visited in the last hour (realistic limitation)
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    
+    const { data: recentVisit } = await supabase
+      .from('swim_spot_visits')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('swim_spot_id', spotId)
+      .gt('visited_at', oneHourAgo)
+      .single();
+
+    if (recentVisit) {
+      // Already visited within the last hour
+      return false;
+    }
+
+    // Record new visit
     await supabase
       .from('swim_spot_visits')
       .insert({ user_id: user.id, swim_spot_id: spotId });
+    
+    return true;
   },
 
-  async getSpotVisits(spotId: string): Promise<{ count: number; recentVisitors: any[] }> {
+  async getSpotVisits(spotId: string): Promise<{ count: number; userHasVisited: boolean; recentVisitors: any[] }> {
+    const { data: { user } } = await supabase.auth.getUser();
+    
     const { data: visits } = await supabase
       .from('swim_spot_visits')
       .select(`
@@ -121,9 +91,38 @@ export const userInteractionsApi = {
       .eq('swim_spot_id', spotId)
       .order('visited_at', { ascending: false });
 
+    const userHasVisited = user ? visits?.some(visit => visit.user_id === user.id) || false : false;
+    
     return {
       count: visits?.length || 0,
+      userHasVisited,
       recentVisitors: visits?.slice(0, 10) || []
     };
+  },
+
+  async getUserSavedSpots(): Promise<any[]> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    const { data: saves } = await supabase
+      .from('swim_spot_saves')
+      .select(`
+        *,
+        swim_spots:swim_spot_id (
+          id,
+          name,
+          image_url,
+          water_type,
+          address,
+          tags
+        )
+      `)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    return saves?.map(save => ({
+      ...save.swim_spots,
+      savedAt: save.created_at
+    })) || [];
   }
 };

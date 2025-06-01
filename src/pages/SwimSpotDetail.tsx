@@ -20,7 +20,7 @@ import {
   Star,
   Loader2,
   Users,
-  Eye
+  Plus
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -44,12 +44,6 @@ const SwimSpotDetail = () => {
     enabled: !!swimSpot,
   });
 
-  const { data: likeData } = useQuery({
-    queryKey: ['spotLikes', id],
-    queryFn: () => api.getSpotLikes(id!),
-    enabled: !!id,
-  });
-
   const { data: visitData } = useQuery({
     queryKey: ['spotVisits', id],
     queryFn: () => api.getSpotVisits(id!),
@@ -60,17 +54,6 @@ const SwimSpotDetail = () => {
     queryKey: ['spotSaved', id],
     queryFn: () => api.checkIfSaved(id!),
     enabled: !!id,
-  });
-
-  const likeMutation = useMutation({
-    mutationFn: () => api.toggleLikeSpot(id!),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['spotLikes', id] });
-      toast.success(likeData?.userHasLiked ? "Removed from favorites" : "Added to favorites");
-    },
-    onError: () => {
-      toast.error("Please sign in to like spots");
-    }
   });
 
   const saveMutation = useMutation({
@@ -86,12 +69,16 @@ const SwimSpotDetail = () => {
 
   const visitMutation = useMutation({
     mutationFn: () => api.markAsVisited(id!),
-    onSuccess: () => {
+    onSuccess: (wasRecorded) => {
       queryClient.invalidateQueries({ queryKey: ['spotVisits', id] });
-      toast.success("Marked as visited!");
+      if (wasRecorded) {
+        toast.success("Visit recorded!");
+      } else {
+        toast.info("You've already visited this spot recently (within the last hour)");
+      }
     },
     onError: () => {
-      toast.error("Please sign in to mark as visited");
+      toast.error("Please sign in to record visits");
     }
   });
 
@@ -101,10 +88,6 @@ const SwimSpotDetail = () => {
       navigate("/");
     }
   }, [error, navigate]);
-
-  const handleLike = () => {
-    likeMutation.mutate();
-  };
 
   const handleSave = () => {
     saveMutation.mutate();
@@ -201,28 +184,13 @@ const SwimSpotDetail = () => {
                 {/* Stats */}
                 <div className="flex items-center gap-4 mt-2">
                   <div className="flex items-center gap-1 text-sm">
-                    <Heart className="h-4 w-4" />
-                    <span>{likeData?.count || 0} likes</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-sm">
-                    <Eye className="h-4 w-4" />
+                    <Plus className="h-4 w-4" />
                     <span>{visitData?.count || 0} visits</span>
                   </div>
                 </div>
               </div>
               
               <div className="flex items-center gap-3">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleLike}
-                  disabled={likeMutation.isPending}
-                  className={`rounded-full border-white bg-black/20 backdrop-blur-sm ${
-                    likeData?.userHasLiked ? "text-red-500" : "text-white"
-                  }`}
-                >
-                  <Heart className="h-5 w-5" fill={likeData?.userHasLiked ? "currentColor" : "none"} />
-                </Button>
                 <Button
                   variant="outline"
                   size="icon"
@@ -244,7 +212,7 @@ const SwimSpotDetail = () => {
                   disabled={visitMutation.isPending}
                   className="rounded-full border-white bg-black/20 backdrop-blur-sm text-white"
                 >
-                  <Eye className="h-5 w-5" />
+                  <Plus className="h-5 w-5" />
                 </Button>
                 <Button
                   variant="outline"
@@ -391,7 +359,7 @@ const SwimSpotDetail = () => {
                     
                     <div className="bg-swimspot-drift-sand/50 rounded-xl p-4">
                       <h3 className="font-medium text-swimspot-blue-green mb-3 flex items-center">
-                        <Eye className="h-5 w-5 mr-2" />
+                        <Plus className="h-5 w-5 mr-2" />
                         Recent Visitors ({visitData?.count || 0})
                       </h3>
                       <div className="flex flex-wrap gap-2">
