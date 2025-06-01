@@ -9,6 +9,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { api } from "@/services/api";
 
 interface MapFiltersProps {
@@ -17,11 +18,21 @@ interface MapFiltersProps {
 }
 
 const MapFilters = ({ onFilterChange, currentCity }: MapFiltersProps) => {
+  const navigate = useNavigate();
+  
   // Fetch all cities for the city filter
   const { data: cities = [] } = useQuery({
     queryKey: ['cities'],
     queryFn: () => api.getAllCities()
   });
+
+  const handleCityChange = (value: string) => {
+    if (value === "all") {
+      navigate('/');
+    } else {
+      navigate(`/${value}`);
+    }
+  };
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg space-y-4">
@@ -29,7 +40,7 @@ const MapFilters = ({ onFilterChange, currentCity }: MapFiltersProps) => {
         <Label>City</Label>
         <Select 
           defaultValue={currentCity || "all"} 
-          onValueChange={(value) => onFilterChange({ city: value === "all" ? undefined : value })}
+          onValueChange={handleCityChange}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select city" />
