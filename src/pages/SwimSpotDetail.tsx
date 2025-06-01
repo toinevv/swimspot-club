@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -27,6 +26,7 @@ import { toast } from "sonner";
 
 const SwimSpotDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const navigate = useNavigate();
@@ -61,6 +61,18 @@ const SwimSpotDetail = () => {
     toast("Report functionality will be implemented soon");
   };
 
+  // Generate back to map URL with preserved coordinates
+  const getBackToMapUrl = () => {
+    const lat = searchParams.get('lat');
+    const lng = searchParams.get('lng');
+    const zoom = searchParams.get('zoom');
+    
+    if (lat && lng && zoom) {
+      return `/?lat=${lat}&lng=${lng}&zoom=${zoom}`;
+    }
+    return "/";
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -93,10 +105,10 @@ const SwimSpotDetail = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
         
-        {/* Back button - Fixed to point to / instead of /map */}
+        {/* Back button - Now uses preserved coordinates */}
         <div className="absolute top-4 left-4">
           <Link 
-            to="/" 
+            to={getBackToMapUrl()}
             className="flex items-center gap-2 px-4 py-2 bg-black/30 backdrop-blur-sm text-white rounded-full hover:bg-black/40 transition-colors"
           >
             <Map className="h-4 w-4" />

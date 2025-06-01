@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -7,14 +8,13 @@ import { createRoot } from 'react-dom/client';
 
 interface InteractiveMapProps {
   spots: SwimSpot[];
-  onSpotClick: (spot: SwimSpot) => void;
+  onSpotClick: (spot: SwimSpot, mapCenter: [number, number], zoom: number) => void;
   mapboxToken?: string;
   initialCenter?: [number, number];
-  onMapMove?: (center: [number, number], zoom: number) => void;
-  onSpotClickSavePosition?: (center: [number, number], zoom: number) => void;
+  initialZoom?: number;
 }
 
-const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapMove, onSpotClickSavePosition }: InteractiveMapProps) => {
+const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initialZoom = 12 }: InteractiveMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
@@ -30,8 +30,8 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapM
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/outdoors-v12',
-        center: initialCenter || [4.9041, 52.3676], // Use city center or default to Amsterdam
-        zoom: initialCenter ? 13 : 12 // Zoom in more for specific cities
+        center: initialCenter || [4.9041, 52.3676],
+        zoom: initialZoom
       });
 
       // Add navigation controls
@@ -53,15 +53,6 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapM
         setMapLoaded(true);
       });
 
-      // Save map position whenever the map moves
-      map.current.on('moveend', () => {
-        if (map.current && onMapMove) {
-          const center = map.current.getCenter();
-          const zoom = map.current.getZoom();
-          onMapMove([center.lng, center.lat], zoom);
-        }
-      });
-
       map.current.on('error', (e) => {
         console.error('Mapbox error:', e);
         setMapError('There was an error loading the map. Please check your Mapbox token.');
@@ -78,7 +69,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapM
         console.error('Error cleaning up map:', error);
       }
     };
-  }, [mapboxToken, initialCenter, onMapMove]);
+  }, [mapboxToken, initialCenter, initialZoom]);
 
   useEffect(() => {
     if (!mapLoaded || !map.current) return;
@@ -96,13 +87,12 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapM
         <SwimSpotMarker 
           spot={spot}
           onClick={() => {
-            // Save current map position before navigating
-            if (map.current && onSpotClickSavePosition) {
+            // Get current map center and zoom when clicking a spot
+            if (map.current) {
               const center = map.current.getCenter();
               const zoom = map.current.getZoom();
-              onSpotClickSavePosition([center.lng, center.lat], zoom);
+              onSpotClick(spot, [center.lng, center.lat], zoom);
             }
-            onSpotClick(spot);
           }}
         />
       );
@@ -113,7 +103,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapM
 
       markersRef.current[spot.id] = marker;
     });
-  }, [spots, mapLoaded, onSpotClick, onSpotClickSavePosition]);
+  }, [spots, mapLoaded, onSpotClick]);
 
   if (mapError) {
     return (
