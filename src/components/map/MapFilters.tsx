@@ -1,4 +1,3 @@
-
 import {
   Select,
   SelectContent,
@@ -57,6 +56,7 @@ const MapFilters = ({ onFilterChange, currentCity }: MapFiltersProps) => {
             <SelectItem value="River">River</SelectItem>
             <SelectItem value="Lake">Lake</SelectItem>
             <SelectItem value="Beach">Beach</SelectItem>
+            <SelectItem value="Urban">Urban</SelectItem>
           </SelectContent>
         </Select>
       </div>
