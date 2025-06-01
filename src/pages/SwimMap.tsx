@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -26,7 +25,7 @@ const SwimMap = () => {
   // Custom hooks
   const { mapboxToken, isTokenLoading } = useMapboxToken();
   const { userLocation, locationPermissionDenied } = useUserLocation(city);
-  const { mapState, saveMapState } = useMapState();
+  const { savedMapState, saveMapPosition } = useMapState();
   
   // Fetch all swim spots to find city with most spots
   const { data: allSpots = [] } = useQuery<SwimSpot[]>({
@@ -55,12 +54,10 @@ const SwimMap = () => {
   });
 
   const handleSpotClick = (spot: SwimSpot) => {
-    // Save current map state before navigating
     navigate(`/spot/${spot.id}`);
   };
 
   const handleSpotSelect = (spot: SwimSpot) => {
-    // Center map on selected spot and navigate to it
     setMapCenter([spot.location.longitude, spot.location.latitude]);
     navigate(`/spot/${spot.id}`);
   };
@@ -70,7 +67,7 @@ const SwimMap = () => {
   };
 
   const handleMapMove = (center: [number, number], zoom: number) => {
-    saveMapState(center, zoom);
+    saveMapPosition(center, zoom);
   };
 
   // Generate SEO content
@@ -82,10 +79,10 @@ const SwimMap = () => {
     ? cityData.description
     : 'Discover the best wild swimming locations across the Netherlands. Explore natural swim spots, lakes, and canals with our interactive map.';
 
-  // Determine map center - prioritize saved state, then selected spot, city coordinates, user location, or default to Netherlands
+  // Determine map center - use saved position first, then city coordinates, user location, or default
   const getMapCenter = (): [number, number] => {
-    if (mapState) {
-      return mapState.center;
+    if (savedMapState) {
+      return savedMapState.center;
     }
     if (mapCenter) {
       return mapCenter;

@@ -6,40 +6,32 @@ interface MapState {
   zoom: number;
 }
 
-const MAP_STATE_KEY = 'swimmap_state';
+const MAP_STATE_KEY = 'map_position';
 
 export const useMapState = () => {
-  const [mapState, setMapState] = useState<MapState | null>(null);
+  const [savedMapState, setSavedMapState] = useState<MapState | null>(null);
 
-  // Load map state from sessionStorage on mount
+  // Load saved map position on mount
   useEffect(() => {
-    const savedState = sessionStorage.getItem(MAP_STATE_KEY);
-    if (savedState) {
+    const saved = localStorage.getItem(MAP_STATE_KEY);
+    if (saved) {
       try {
-        const parsed = JSON.parse(savedState);
-        setMapState(parsed);
+        setSavedMapState(JSON.parse(saved));
       } catch (error) {
-        console.error('Error parsing saved map state:', error);
+        console.error('Error loading saved map position:', error);
       }
     }
   }, []);
 
-  // Save map state to sessionStorage
-  const saveMapState = (center: [number, number], zoom: number) => {
-    const state: MapState = { center, zoom };
-    setMapState(state);
-    sessionStorage.setItem(MAP_STATE_KEY, JSON.stringify(state));
-  };
-
-  // Clear map state
-  const clearMapState = () => {
-    setMapState(null);
-    sessionStorage.removeItem(MAP_STATE_KEY);
+  // Save map position
+  const saveMapPosition = (center: [number, number], zoom: number) => {
+    const state = { center, zoom };
+    localStorage.setItem(MAP_STATE_KEY, JSON.stringify(state));
+    setSavedMapState(state);
   };
 
   return {
-    mapState,
-    saveMapState,
-    clearMapState
+    savedMapState,
+    saveMapPosition
   };
 };

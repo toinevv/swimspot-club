@@ -53,7 +53,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapM
         setMapLoaded(true);
       });
 
-      // Save map state when user moves the map
+      // Save map position when user stops moving the map
       map.current.on('moveend', () => {
         if (map.current && onMapMove) {
           const center = map.current.getCenter();
