@@ -14,6 +14,7 @@ import CityContent from "@/components/seo/CityContent";
 import { useMapboxToken } from "@/hooks/useMapboxToken";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { useCityRedirect } from "@/hooks/useCityRedirect";
+import { useMapState } from "@/hooks/useMapState";
 
 const SwimMap = () => {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ const SwimMap = () => {
   // Custom hooks
   const { mapboxToken, isTokenLoading } = useMapboxToken();
   const { userLocation, locationPermissionDenied } = useUserLocation(city);
+  const { mapState, saveMapState } = useMapState();
   
   // Fetch all swim spots to find city with most spots
   const { data: allSpots = [] } = useQuery<SwimSpot[]>({
@@ -53,6 +55,7 @@ const SwimMap = () => {
   });
 
   const handleSpotClick = (spot: SwimSpot) => {
+    // Save current map state before navigating
     navigate(`/spot/${spot.id}`);
   };
 
@@ -66,6 +69,10 @@ const SwimMap = () => {
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
 
+  const handleMapMove = (center: [number, number], zoom: number) => {
+    saveMapState(center, zoom);
+  };
+
   // Generate SEO content
   const seoTitle = cityData 
     ? `Swim Spots in ${cityData.displayName}` 
@@ -75,8 +82,11 @@ const SwimMap = () => {
     ? cityData.description
     : 'Discover the best wild swimming locations across the Netherlands. Explore natural swim spots, lakes, and canals with our interactive map.';
 
-  // Determine map center - use selected spot, city coordinates, user location, or default to Netherlands
+  // Determine map center - prioritize saved state, then selected spot, city coordinates, user location, or default to Netherlands
   const getMapCenter = (): [number, number] => {
+    if (mapState) {
+      return mapState.center;
+    }
     if (mapCenter) {
       return mapCenter;
     }
@@ -120,6 +130,7 @@ const SwimMap = () => {
           onSpotClick={handleSpotClick}
           mapboxToken={mapboxToken || undefined}
           initialCenter={getMapCenter()}
+          onMapMove={handleMapMove}
         />
         
         {cityData && (

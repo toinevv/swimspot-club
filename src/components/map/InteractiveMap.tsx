@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -10,9 +11,10 @@ interface InteractiveMapProps {
   onSpotClick: (spot: SwimSpot) => void;
   mapboxToken?: string;
   initialCenter?: [number, number];
+  onMapMove?: (center: [number, number], zoom: number) => void;
 }
 
-const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter }: InteractiveMapProps) => {
+const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapMove }: InteractiveMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
@@ -51,6 +53,15 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter }: Inte
         setMapLoaded(true);
       });
 
+      // Save map state when user moves the map
+      map.current.on('moveend', () => {
+        if (map.current && onMapMove) {
+          const center = map.current.getCenter();
+          const zoom = map.current.getZoom();
+          onMapMove([center.lng, center.lat], zoom);
+        }
+      });
+
       map.current.on('error', (e) => {
         console.error('Mapbox error:', e);
         setMapError('There was an error loading the map. Please check your Mapbox token.');
@@ -67,7 +78,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter }: Inte
         console.error('Error cleaning up map:', error);
       }
     };
-  }, [mapboxToken, initialCenter]);
+  }, [mapboxToken, initialCenter, onMapMove]);
 
   useEffect(() => {
     if (!mapLoaded || !map.current) return;
