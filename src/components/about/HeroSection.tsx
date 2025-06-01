@@ -16,10 +16,10 @@ const HeroSection = () => {
       <div className="absolute inset-0 bg-gradient-to-t from-swimspot-blue-green/80 to-transparent" />
       <div className="relative h-full container mx-auto px-4 flex flex-col justify-center">
         <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold text-white mb-6 max-w-3xl">
-          Discover Amsterdam's Hidden Natural Swimming Spots
+          Discover Europe's Natural Swimming Spots
         </h1>
         <p className="text-lg sm:text-xl text-white/90 mb-8 max-w-2xl">
-          Find pristine waters across the city, curated by local experts and swimming enthusiasts.
+          Find pristine natural waters across Europe, curated by local experts and swimming enthusiasts.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
           <Button 
@@ -36,7 +36,7 @@ const HeroSection = () => {
             asChild
             size="lg" 
             variant="outline" 
-            className="border-white text-white hover:bg-white/10"
+            className="border-white text-white hover:bg-white hover:text-swimspot-blue-green"
           >
             <Link to="/groups">
               Join a Swim Group
