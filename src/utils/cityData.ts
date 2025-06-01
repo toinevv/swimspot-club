@@ -1,11 +1,28 @@
 
+import { City } from '@/services/api/cities';
+
 export interface CityData {
   name: string;
   displayName: string;
   description: string;
   coordinates?: [number, number];
+  imageUrl?: string;
+  region?: string;
+  featured?: boolean;
 }
 
+// Convert database city to CityData format
+export const convertCityToCityData = (city: City): CityData => ({
+  name: city.name,
+  displayName: city.display_name,
+  description: city.description,
+  coordinates: [city.coordinates_lng, city.coordinates_lat],
+  imageUrl: city.image_url,
+  region: city.region || undefined,
+  featured: city.featured
+});
+
+// Legacy cityDatabase for backward compatibility - will be replaced by database queries
 export const cityDatabase: Record<string, CityData> = {
   amsterdam: {
     name: 'amsterdam',

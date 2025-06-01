@@ -5,13 +5,13 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { SwimSpot } from "@/types";
 import { api } from "@/services/api";
+import { convertCityToCityData } from "@/utils/cityData";
 import InteractiveMap from "@/components/map/InteractiveMap";
 import SearchBar from "@/components/map/SearchBar";
 import FiltersDropdown from "@/components/map/FiltersDropdown";
 import SEOHead from "@/components/seo/SEOHead";
 import CityContent from "@/components/seo/CityContent";
 import { settingsService } from "@/services/settingsService";
-import { getCityData } from "@/utils/cityData";
 
 // Fallback token if we can't retrieve from Supabase
 const FALLBACK_TOKEN = "pk.eyJ1IjoidG9pbmV2IiwiYSI6ImNtYWZtaThoZDAzamEyanI2M3ZqOW5qcXkifQ.Cbm2AuiD07FcctvHIxz-DA";
@@ -23,8 +23,34 @@ const SwimMap = () => {
   const [filters, setFilters] = useState({});
   const [mapboxToken, setMapboxToken] = useState<string | null>(null);
   const [isTokenLoading, setIsTokenLoading] = useState(true);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   
-  const cityData = getCityData(city);
+  // Fetch city data from database
+  const { data: cityData } = useQuery({
+    queryKey: ['city', city],
+    queryFn: async () => {
+      if (!city) return null;
+      const cityFromDb = await api.getCityBySlug(city);
+      return cityFromDb ? convertCityToCityData(cityFromDb) : null;
+    },
+    enabled: !!city
+  });
+  
+  // Get user's location for homepage map centering
+  useEffect(() => {
+    if (!city && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation([position.coords.longitude, position.coords.latitude]);
+        },
+        (error) => {
+          console.log("Geolocation error:", error);
+          // Default to Netherlands center if geolocation fails
+          setUserLocation([5.2913, 52.1326]);
+        }
+      );
+    }
+  }, [city]);
   
   // Fetch Mapbox token from Supabase
   useEffect(() => {
@@ -73,6 +99,18 @@ const SwimMap = () => {
     ? cityData.description
     : 'Discover the best wild swimming locations across the Netherlands. Explore natural swim spots, lakes, and canals with our interactive map.';
 
+  // Determine map center - use city coordinates, user location, or default to Netherlands
+  const getMapCenter = (): [number, number] => {
+    if (cityData?.coordinates) {
+      return cityData.coordinates;
+    }
+    if (userLocation) {
+      return userLocation;
+    }
+    // Default to Netherlands center
+    return [5.2913, 52.1326];
+  };
+
   // Show loading state while token is being fetched
   if (isTokenLoading) {
     return (
@@ -104,7 +142,7 @@ const SwimMap = () => {
           spots={spots}
           onSpotClick={handleSpotClick}
           mapboxToken={mapboxToken || undefined}
-          initialCenter={cityData?.coordinates}
+          initialCenter={getMapCenter()}
         />
         
         {cityData && (

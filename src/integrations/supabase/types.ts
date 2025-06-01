@@ -75,6 +75,54 @@ export type Database = {
         }
         Relationships: []
       }
+      cities: {
+        Row: {
+          coordinates_lat: number
+          coordinates_lng: number
+          created_at: string
+          description: string
+          display_name: string
+          featured: boolean
+          id: string
+          image_url: string
+          name: string
+          population: number | null
+          region: string | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          coordinates_lat: number
+          coordinates_lng: number
+          created_at?: string
+          description: string
+          display_name: string
+          featured?: boolean
+          id?: string
+          image_url: string
+          name: string
+          population?: number | null
+          region?: string | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          coordinates_lat?: number
+          coordinates_lng?: number
+          created_at?: string
+          description?: string
+          display_name?: string
+          featured?: boolean
+          id?: string
+          image_url?: string
+          name?: string
+          population?: number | null
+          region?: string | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       groups: {
         Row: {
           created_at: string

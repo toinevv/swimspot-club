@@ -1,17 +1,44 @@
 
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download, ExternalLink } from "lucide-react";
 import { generateSitemap, downloadSitemap } from "@/utils/sitemapGenerator";
-import { cityDatabase } from "@/utils/cityData";
+import { api } from "@/services/api";
 
 const Sitemap = () => {
-  const handleViewSitemap = () => {
-    const sitemapContent = generateSitemap();
-    const newWindow = window.open();
-    if (newWindow) {
-      newWindow.document.write(`<pre>${sitemapContent}</pre>`);
-      newWindow.document.title = 'SwimSpot Sitemap';
+  const [isGenerating, setIsGenerating] = useState(false);
+  
+  const { data: cities = [] } = useQuery({
+    queryKey: ['cities'],
+    queryFn: () => api.getAllCities()
+  });
+
+  const handleViewSitemap = async () => {
+    try {
+      setIsGenerating(true);
+      const sitemapContent = await generateSitemap();
+      const newWindow = window.open();
+      if (newWindow) {
+        newWindow.document.write(`<pre>${sitemapContent}</pre>`);
+        newWindow.document.title = 'SwimSpot Sitemap';
+      }
+    } catch (error) {
+      console.error("Error generating sitemap:", error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleDownloadSitemap = async () => {
+    try {
+      setIsGenerating(true);
+      await downloadSitemap();
+    } catch (error) {
+      console.error("Error downloading sitemap:", error);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -36,13 +63,22 @@ const Sitemap = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button onClick={downloadSitemap} className="w-full">
+              <Button 
+                onClick={handleDownloadSitemap} 
+                className="w-full"
+                disabled={isGenerating}
+              >
                 <Download className="h-4 w-4 mr-2" />
-                Download sitemap.xml
+                {isGenerating ? "Generating..." : "Download sitemap.xml"}
               </Button>
-              <Button variant="outline" onClick={handleViewSitemap} className="w-full">
+              <Button 
+                variant="outline" 
+                onClick={handleViewSitemap} 
+                className="w-full"
+                disabled={isGenerating}
+              >
                 <ExternalLink className="h-4 w-4 mr-2" />
-                View Sitemap
+                {isGenerating ? "Generating..." : "View Sitemap"}
               </Button>
             </CardContent>
           </Card>
@@ -71,7 +107,7 @@ const Sitemap = () => {
           <CardHeader>
             <CardTitle className="text-swimspot-blue-green">All Pages</CardTitle>
             <CardDescription>
-              Complete list of indexed pages ({Object.keys(cityDatabase).length + 5} total pages)
+              Complete list of indexed pages ({cities.length + 5} total pages)
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -90,8 +126,11 @@ const Sitemap = () => {
               <div className="space-y-1 md:col-span-2">
                 <h4 className="font-medium text-swimspot-blue-green">City Pages</h4>
                 <div className="text-sm text-gray-600 grid grid-cols-2 gap-1">
-                  {Object.entries(cityDatabase).map(([slug, city]) => (
-                    <div key={slug}>/map/{slug} ({city.displayName})</div>
+                  {cities.map((city) => (
+                    <div key={city.id}>
+                      /map/{city.slug} ({city.display_name})
+                      {city.featured && <span className="ml-1 text-xs text-swimspot-blue-green">★</span>}
+                    </div>
                   ))}
                 </div>
               </div>

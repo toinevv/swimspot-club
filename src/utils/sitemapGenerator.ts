@@ -1,5 +1,5 @@
 
-import { cityDatabase } from './cityData';
+import { api } from '@/services/api';
 
 interface SitemapUrl {
   url: string;
@@ -8,7 +8,7 @@ interface SitemapUrl {
   priority: string;
 }
 
-export const generateSitemap = (): string => {
+export const generateSitemap = async (): Promise<string> => {
   const baseUrl = window.location.origin;
   const currentDate = new Date().toISOString().split('T')[0];
   
@@ -45,15 +45,20 @@ export const generateSitemap = (): string => {
     }
   ];
 
-  // Add city-specific map pages
-  Object.keys(cityDatabase).forEach(citySlug => {
-    urls.push({
-      url: `${baseUrl}/map/${citySlug}`,
-      lastmod: currentDate,
-      changefreq: 'daily',
-      priority: '0.8'
+  // Add city-specific map pages from database
+  try {
+    const cities = await api.getAllCities();
+    cities.forEach(city => {
+      urls.push({
+        url: `${baseUrl}/map/${city.slug}`,
+        lastmod: currentDate,
+        changefreq: 'daily',
+        priority: city.featured ? '0.8' : '0.7'
+      });
     });
-  });
+  } catch (error) {
+    console.error("Error fetching cities for sitemap:", error);
+  }
 
   const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -68,8 +73,8 @@ ${urls.map(url => `  <url>
   return xmlContent;
 };
 
-export const downloadSitemap = () => {
-  const sitemapContent = generateSitemap();
+export const downloadSitemap = async () => {
+  const sitemapContent = await generateSitemap();
   const blob = new Blob([sitemapContent], { type: 'application/xml' });
   const url = URL.createObjectURL(blob);
   
