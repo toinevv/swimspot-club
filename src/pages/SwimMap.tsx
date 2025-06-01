@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -24,6 +23,7 @@ const SwimMap = () => {
   const [mapboxToken, setMapboxToken] = useState<string | null>(null);
   const [isTokenLoading, setIsTokenLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   
   // Fetch city data from database
   const { data: cityData } = useQuery({
@@ -86,6 +86,12 @@ const SwimMap = () => {
     navigate(`/spot/${spot.id}`);
   };
 
+  const handleSpotSelect = (spot: SwimSpot) => {
+    // Center map on selected spot and navigate to it
+    setMapCenter([spot.location.longitude, spot.location.latitude]);
+    navigate(`/spot/${spot.id}`);
+  };
+
   const handleFilterChange = (newFilters: any) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
@@ -99,8 +105,11 @@ const SwimMap = () => {
     ? cityData.description
     : 'Discover the best wild swimming locations across the Netherlands. Explore natural swim spots, lakes, and canals with our interactive map.';
 
-  // Determine map center - use city coordinates, user location, or default to Netherlands
+  // Determine map center - use selected spot, city coordinates, user location, or default to Netherlands
   const getMapCenter = (): [number, number] => {
+    if (mapCenter) {
+      return mapCenter;
+    }
     if (cityData?.coordinates) {
       return cityData.coordinates;
     }
@@ -131,7 +140,11 @@ const SwimMap = () => {
       />
       
       <div className="relative h-[calc(100vh-64px)]">
-        <SearchBar onFilterToggle={() => setIsFilterOpen(!isFilterOpen)} />
+        <SearchBar 
+          onFilterToggle={() => setIsFilterOpen(!isFilterOpen)}
+          spots={spots}
+          onSpotSelect={handleSpotSelect}
+        />
         
         <FiltersDropdown 
           isOpen={isFilterOpen}
