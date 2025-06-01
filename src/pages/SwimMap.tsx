@@ -81,8 +81,8 @@ const SwimMap = () => {
     if (userLocation) {
       return userLocation;
     }
-    // Default to Netherlands center
-    return [5.2913, 52.1326];
+    // Default to Western Europe center (more zoomed out view)
+    return [10.0, 54.0];
   };
 
   // Get initial zoom from URL params or use default
@@ -91,7 +91,11 @@ const SwimMap = () => {
     if (zoom) {
       return parseFloat(zoom);
     }
-    return cityData?.coordinates ? 13 : 12;
+    // Use different zoom levels based on context
+    if (cityData?.coordinates) return 13;
+    if (userLocation) return 12;
+    // Lower zoom for Western Europe overview
+    return 5;
   };
 
   // Show loading state while token is being fetched
