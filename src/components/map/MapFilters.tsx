@@ -56,23 +56,7 @@ const MapFilters = ({ onFilterChange, currentCity }: MapFiltersProps) => {
             <SelectItem value="all">All Types</SelectItem>
             <SelectItem value="River">River</SelectItem>
             <SelectItem value="Lake">Lake</SelectItem>
-            <SelectItem value="Canal">Canal</SelectItem>
             <SelectItem value="Beach">Beach</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div>
-        <Label>Water Quality</Label>
-        <Select onValueChange={(value) => onFilterChange({ quality: value === "all" ? undefined : value })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select quality" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Qualities</SelectItem>
-            <SelectItem value="Excellent">Excellent</SelectItem>
-            <SelectItem value="Good">Good</SelectItem>
-            <SelectItem value="Moderate">Moderate</SelectItem>
           </SelectContent>
         </Select>
       </div>
