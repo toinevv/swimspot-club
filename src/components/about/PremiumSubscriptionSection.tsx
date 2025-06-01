@@ -9,8 +9,11 @@ const PremiumSubscriptionSection = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center text-center mb-12">
           <h2 className="font-serif text-3xl md:text-4xl text-white mb-4">Support SwimSpot</h2>
-          <p className="text-lg text-white/90 max-w-2xl">
-            Support our mission for just €4,99 per month - the price of a coffee - and help us maintain the best swimming community in Europe
+          <p className="text-lg text-white/90 max-w-2xl mb-4">
+            Support our mission for the price of a coffee - and help us maintain the best swimming community in Europe.
+          </p>
+          <p className="text-sm text-white/80 max-w-2xl">
+            Contact us if you want a free account to become an admin, moderator or just be a platform enthusiast.
           </p>
         </div>
 
@@ -26,7 +29,7 @@ const PremiumSubscriptionSection = () => {
               <ul className="space-y-3">
                 <li className="flex items-center">
                   <CheckCircle2 className="h-5 w-5 text-white/60 mr-2" />
-                  <span className="text-white/80">Access to public swim spots</span>
+                  <span className="text-white/80">Access to all swim spots</span>
                 </li>
                 <li className="flex items-center">
                   <CheckCircle2 className="h-5 w-5 text-white/60 mr-2" />
@@ -60,11 +63,11 @@ const PremiumSubscriptionSection = () => {
               <ul className="space-y-3">
                 <li className="flex items-center">
                   <CheckCircle2 className="h-5 w-5 text-swimspot-burnt-coral mr-2" />
-                  <span className="text-gray-800">Access to all swim spots</span>
+                  <span className="text-gray-800">Access to community added hidden swimspots</span>
                 </li>
                 <li className="flex items-center">
                   <CheckCircle2 className="h-5 w-5 text-swimspot-burnt-coral mr-2" />
-                  <span className="text-gray-800">Discount codes at featured spots</span>
+                  <span className="text-gray-800">Discount codes at all our partner cafes and shops</span>
                 </li>
                 <li className="flex items-center">
                   <CheckCircle2 className="h-5 w-5 text-swimspot-burnt-coral mr-2" />
@@ -72,11 +75,7 @@ const PremiumSubscriptionSection = () => {
                 </li>
                 <li className="flex items-center">
                   <CheckCircle2 className="h-5 w-5 text-swimspot-burnt-coral mr-2" />
-                  <span className="text-gray-800">Supporter-only swim spots</span>
-                </li>
-                <li className="flex items-center">
-                  <CheckCircle2 className="h-5 w-5 text-swimspot-burnt-coral mr-2" />
-                  <span className="text-gray-800">Enhanced community features</span>
+                  <span className="text-gray-800">Enhanced community features to customize your public profile</span>
                 </li>
               </ul>
               <div className="mt-6">

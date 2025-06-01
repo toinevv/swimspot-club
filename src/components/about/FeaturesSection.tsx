@@ -13,9 +13,6 @@ const FeaturesSection = () => {
               <Map className="h-12 w-12 text-swimspot-blue-green" />
             </div>
             <h3 className="font-serif text-xl mb-3 text-swimspot-blue-green">Discover Swim Spots</h3>
-            <p className="text-gray-600">
-              Explore our curated map of Europe's most beautiful swimming locations.
-            </p>
           </div>
           
           <div className="flex flex-col items-center text-center">
@@ -23,9 +20,6 @@ const FeaturesSection = () => {
               <Droplet className="h-12 w-12 text-swimspot-blue-green" />
             </div>
             <h3 className="font-serif text-xl mb-3 text-swimspot-blue-green">Find Hidden Gems</h3>
-            <p className="text-gray-600">
-              Discover secret swimming locations that only locals know about.
-            </p>
           </div>
           
           <div className="flex flex-col items-center text-center">
@@ -33,9 +27,6 @@ const FeaturesSection = () => {
               <Users className="h-12 w-12 text-swimspot-blue-green" />
             </div>
             <h3 className="font-serif text-xl mb-3 text-swimspot-blue-green">Join Swim Groups</h3>
-            <p className="text-gray-600">
-              Connect with other swimming enthusiasts and join local swim groups.
-            </p>
           </div>
         </div>
       </div>
