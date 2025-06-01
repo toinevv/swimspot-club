@@ -50,10 +50,11 @@ const SwimMap = () => {
   const { data: spots = [] } = useQuery<SwimSpot[]>({
     queryKey: ['swimSpots', filters, city],
     queryFn: () => {
+      // Create filters object with city if it exists
       const queryFilters = { ...filters };
       // Only add city filter if city exists and is not empty
       if (city && city.trim() !== '') {
-        queryFilters.city = city;
+        return api.getSwimSpots({ ...queryFilters, city });
       }
       return api.getSwimSpots(queryFilters);
     }
