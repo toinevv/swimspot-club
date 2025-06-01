@@ -6,7 +6,6 @@ import type { SwimSpot } from "@/types";
 import { api } from "@/services/api";
 import { convertCityToCityData } from "@/utils/cityData";
 import InteractiveMap from "@/components/map/InteractiveMap";
-import SearchBar from "@/components/map/SearchBar";
 import FiltersDropdown from "@/components/map/FiltersDropdown";
 import MapLoadingState from "@/components/map/MapLoadingState";
 import SEOHead from "@/components/seo/SEOHead";
@@ -19,7 +18,6 @@ const SwimMap = () => {
   const navigate = useNavigate();
   const { city } = useParams();
   const [searchParams] = useSearchParams();
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState({});
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   
@@ -60,11 +58,6 @@ const SwimMap = () => {
     params.set('lng', mapCenter[0].toString());
     params.set('zoom', zoom.toString());
     navigate(`/spot/${spot.id}?${params.toString()}`);
-  };
-
-  const handleSpotSelect = (spot: SwimSpot) => {
-    setMapCenter([spot.location.longitude, spot.location.latitude]);
-    // Don't navigate immediately, just center the map
   };
 
   const handleFilterChange = (newFilters: any) => {
@@ -125,14 +118,7 @@ const SwimMap = () => {
       />
       
       <div className="relative h-[calc(100vh-64px)]">
-        <SearchBar 
-          onFilterToggle={() => setIsFilterOpen(!isFilterOpen)}
-          spots={spots}
-          onSpotSelect={handleSpotSelect}
-        />
-        
         <FiltersDropdown 
-          isOpen={isFilterOpen}
           onFilterChange={handleFilterChange}
         />
         
