@@ -24,6 +24,33 @@ const SwimMap = () => {
   const [isTokenLoading, setIsTokenLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
+  const [locationPermissionDenied, setLocationPermissionDenied] = useState(false);
+  
+  // Fetch all swim spots to find city with most spots
+  const { data: allSpots = [] } = useQuery<SwimSpot[]>({
+    queryKey: ['allSwimSpots'],
+    queryFn: () => api.getSwimSpots(),
+    enabled: !city // Only fetch when no city is selected
+  });
+  
+  // Find city with most swim spots
+  const getCityWithMostSpots = () => {
+    if (!allSpots.length) return null;
+    
+    const cityCount = allSpots.reduce((acc, spot) => {
+      if (spot.city) {
+        acc[spot.city] = (acc[spot.city] || 0) + 1;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const topCity = Object.entries(cityCount).reduce((max, [city, count]) => 
+      count > max.count ? { city, count } : max, 
+      { city: '', count: 0 }
+    );
+    
+    return topCity.city || null;
+  };
   
   // Fetch city data from database
   const { data: cityData } = useQuery({
@@ -42,15 +69,34 @@ const SwimMap = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setUserLocation([position.coords.longitude, position.coords.latitude]);
+          setLocationPermissionDenied(false);
         },
         (error) => {
           console.log("Geolocation error:", error);
-          // Default to Netherlands center if geolocation fails
-          setUserLocation([5.2913, 52.1326]);
+          setLocationPermissionDenied(true);
+          
+          // If location is denied and we have spots data, redirect to city with most spots
+          const topCity = getCityWithMostSpots();
+          if (topCity) {
+            navigate(`/${topCity}`, { replace: true });
+          } else {
+            // Default to Netherlands center if no spots data yet
+            setUserLocation([5.2913, 52.1326]);
+          }
         }
       );
     }
-  }, [city]);
+  }, [city, allSpots, navigate]);
+  
+  // Redirect to city with most spots if no location and no city selected
+  useEffect(() => {
+    if (!city && locationPermissionDenied && allSpots.length > 0) {
+      const topCity = getCityWithMostSpots();
+      if (topCity) {
+        navigate(`/${topCity}`, { replace: true });
+      }
+    }
+  }, [city, locationPermissionDenied, allSpots, navigate]);
   
   // Fetch Mapbox token from Supabase
   useEffect(() => {
