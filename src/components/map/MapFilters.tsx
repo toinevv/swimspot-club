@@ -1,3 +1,4 @@
+
 import {
   Select,
   SelectContent,
@@ -5,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useQuery } from "@tanstack/react-query";
@@ -59,22 +59,6 @@ const MapFilters = ({ onFilterChange, currentCity }: MapFiltersProps) => {
             <SelectItem value="Urban">Urban</SelectItem>
           </SelectContent>
         </Select>
-      </div>
-
-      <div>
-        <Label>Distance (km)</Label>
-        <Slider
-          defaultValue={[5]}
-          max={20}
-          step={1}
-          onValueChange={(value) => onFilterChange({ distance: value[0] })}
-        />
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>1 km</span>
-          <span>5 km</span>
-          <span>10 km</span>
-          <span>20+ km</span>
-        </div>
       </div>
 
       <div className="flex items-center space-x-2">
