@@ -145,6 +145,7 @@ export type Database = {
         Row: {
           address: string
           best_times: Json
+          city: string | null
           created_at: string
           current: string | null
           current_temperature: number | null
@@ -165,6 +166,7 @@ export type Database = {
         Insert: {
           address: string
           best_times?: Json
+          city?: string | null
           created_at?: string
           current?: string | null
           current_temperature?: number | null
@@ -185,6 +187,7 @@ export type Database = {
         Update: {
           address?: string
           best_times?: Json
+          city?: string | null
           created_at?: string
           current?: string | null
           current_temperature?: number | null

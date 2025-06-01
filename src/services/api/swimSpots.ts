@@ -1,3 +1,4 @@
+
 import { SwimSpot } from '@/types';
 import { apiClient } from './client';
 
@@ -8,7 +9,12 @@ export const swimSpotsApi = {
       let query = apiClient.supabase.from('swim_spots').select('*');
       
       if (filters) {
-        // Apply filters (water type, quality, etc.)
+        // Apply city filter if provided
+        if (filters.city) {
+          query = query.eq('city', filters.city);
+        }
+        
+        // Apply other filters (water type, quality, etc.)
         if (filters.waterType) {
           query = query.eq('water_type', filters.waterType);
         }
