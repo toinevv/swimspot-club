@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -20,6 +19,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapM
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
+  const [userInteracting, setUserInteracting] = useState(false);
 
   useEffect(() => {
     if (!mapContainer.current || !mapboxToken) return;
@@ -53,13 +53,23 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapM
         setMapLoaded(true);
       });
 
-      // Save map position when user stops moving the map
+      // Track user interaction to prevent saving during automatic movements
+      map.current.on('dragstart', () => {
+        setUserInteracting(true);
+      });
+
+      map.current.on('zoomstart', () => {
+        setUserInteracting(true);
+      });
+
+      // Only save map position when user has finished interacting
       map.current.on('moveend', () => {
-        if (map.current && onMapMove) {
+        if (map.current && onMapMove && userInteracting) {
           const center = map.current.getCenter();
           const zoom = map.current.getZoom();
           onMapMove([center.lng, center.lat], zoom);
         }
+        setUserInteracting(false);
       });
 
       map.current.on('error', (e) => {
@@ -78,7 +88,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, onMapM
         console.error('Error cleaning up map:', error);
       }
     };
-  }, [mapboxToken, initialCenter, onMapMove]);
+  }, [mapboxToken, initialCenter, onMapMove, userInteracting]);
 
   useEffect(() => {
     if (!mapLoaded || !map.current) return;
