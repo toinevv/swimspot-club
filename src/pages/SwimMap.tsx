@@ -81,8 +81,8 @@ const SwimMap = () => {
     if (userLocation) {
       return userLocation;
     }
-    // Default to Western Europe center (more zoomed out view)
-    return [10.0, 54.0];
+    // Default to France-Switzerland border area
+    return [6.0, 48.7];
   };
 
   // Get initial zoom from URL params or use default
@@ -94,8 +94,8 @@ const SwimMap = () => {
     // Use different zoom levels based on context
     if (cityData?.coordinates) return 13;
     if (userLocation) return 12;
-    // Lower zoom for Western Europe overview
-    return 5;
+    // More zoomed out view for Central Europe
+    return 4;
   };
 
   // Show loading state while token is being fetched

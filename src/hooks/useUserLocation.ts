@@ -25,8 +25,8 @@ export const useUserLocation = (city?: string) => {
         (error) => {
           console.log("Geolocation error:", error);
           setLocationPermissionDenied(true);
-          // Default to Western Europe center if no location access
-          setUserLocation([10.0, 54.0]);
+          // Default to France-Switzerland border area
+          setUserLocation([6.0, 48.7]);
         }
       );
     }
