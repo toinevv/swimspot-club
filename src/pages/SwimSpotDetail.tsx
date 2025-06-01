@@ -334,29 +334,7 @@ const SwimSpotDetail = () => {
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
                   <h2 className="font-serif text-2xl text-swimspot-blue-green mb-6">Community Activity</h2>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div className="bg-swimspot-blue-mist/30 rounded-xl p-4">
-                      <h3 className="font-medium text-swimspot-blue-green mb-3 flex items-center">
-                        <Heart className="h-5 w-5 mr-2" />
-                        Loved by ({likeData?.count || 0})
-                      </h3>
-                      <div className="flex flex-wrap gap-2">
-                        {likeData?.likedBy.slice(0, 6).map((like, index) => (
-                          <Avatar key={index} className="h-8 w-8">
-                            <AvatarImage src={like.profiles?.avatar_url} />
-                            <AvatarFallback className="bg-swimspot-blue-green text-white text-xs">
-                              {(like.profiles?.username || like.profiles?.full_name || 'U').charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                        ))}
-                        {(likeData?.count || 0) > 6 && (
-                          <div className="h-8 w-8 rounded-full bg-swimspot-drift-sand flex items-center justify-center text-xs text-swimspot-blue-green">
-                            +{(likeData?.count || 0) - 6}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
+                  <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-6">
                     <div className="bg-swimspot-drift-sand/50 rounded-xl p-4">
                       <h3 className="font-medium text-swimspot-blue-green mb-3 flex items-center">
                         <Plus className="h-5 w-5 mr-2" />
