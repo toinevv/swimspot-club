@@ -8,6 +8,7 @@ import { blogPostsApi } from './blogPosts';
 import { citiesApi } from './cities';
 import { userInteractionsApi } from './userInteractions';
 import { profilesApi } from './profiles';
+import { partnersApi } from './partners';
 
 export const api = {
   ...swimSpotsApi,
@@ -18,7 +19,8 @@ export const api = {
   ...blogPostsApi,
   ...citiesApi,
   ...userInteractionsApi,
-  ...profilesApi
+  ...profilesApi,
+  ...partnersApi
 };
 
 export { 
@@ -30,5 +32,6 @@ export {
   blogPostsApi, 
   citiesApi,
   userInteractionsApi,
-  profilesApi
+  profilesApi,
+  partnersApi
 };

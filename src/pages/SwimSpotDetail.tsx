@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,10 @@ import {
   Star,
   Loader2,
   Users,
-  Plus
+  Plus,
+  MapPin,
+  Phone,
+  ExternalLink
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -37,12 +41,6 @@ const SwimSpotDetail = () => {
     queryKey: ['swimSpot', id],
     queryFn: () => api.getSwimSpotById(id!),
   });
-  
-  const { data: nearbySpots = [] } = useQuery({
-    queryKey: ['nearbySpots', id],
-    queryFn: () => api.getNearbySpotsById(id!, 4),
-    enabled: !!swimSpot,
-  });
 
   const { data: visitData } = useQuery({
     queryKey: ['spotVisits', id],
@@ -54,6 +52,17 @@ const SwimSpotDetail = () => {
     queryKey: ['spotSaved', id],
     queryFn: () => api.checkIfSaved(id!),
     enabled: !!id,
+  });
+
+  const { data: partners = [] } = useQuery({
+    queryKey: ['spotPartners', id],
+    queryFn: () => api.getSpotPartners(id!),
+    enabled: !!id,
+  });
+
+  const { data: groups = [] } = useQuery({
+    queryKey: ['userGroups'],
+    queryFn: api.getUserGroups,
   });
 
   const saveMutation = useMutation({
@@ -181,11 +190,15 @@ const SwimSpotDetail = () => {
                   ))}
                 </div>
                 
-                {/* Stats */}
+                {/* Stats - Updated with saves and visits */}
                 <div className="flex items-center gap-4 mt-2">
                   <div className="flex items-center gap-1 text-sm">
                     <Plus className="h-4 w-4" />
                     <span>{visitData?.count || 0} visits</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm">
+                    <Bookmark className="h-4 w-4" />
+                    <span>Saved by many</span>
                   </div>
                 </div>
               </div>
@@ -242,7 +255,8 @@ const SwimSpotDetail = () => {
               <TabsList className="w-full bg-white mb-6">
                 <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
                 <TabsTrigger value="community" className="flex-1">Community</TabsTrigger>
-                <TabsTrigger value="nearby" className="flex-1">Nearby</TabsTrigger>
+                <TabsTrigger value="groups" className="flex-1">Groups</TabsTrigger>
+                <TabsTrigger value="partners" className="flex-1">Partners</TabsTrigger>
               </TabsList>
               
               <TabsContent value="details" className="space-y-6">
@@ -254,20 +268,12 @@ const SwimSpotDetail = () => {
                     <div className="bg-swimspot-blue-mist/50 rounded-xl p-4">
                       <h3 className="font-medium text-swimspot-blue-green mb-3 flex items-center">
                         <Droplet className="h-5 w-5 mr-2" />
-                        Water Type & Conditions
+                        Water Info
                       </h3>
                       <ul className="space-y-2 text-gray-700">
                         <li className="flex justify-between">
                           <span>Type:</span>
                           <span className="font-medium">{swimSpot.water_type}</span>
-                        </li>
-                        <li className="flex justify-between">
-                          <span>Temperature:</span>
-                          <span className="font-medium">{swimSpot.current_temperature ? `${swimSpot.current_temperature}°C` : 'Not available'}</span>
-                        </li>
-                        <li className="flex justify-between">
-                          <span>Current:</span>
-                          <span className="font-medium">{swimSpot.current || 'Not available'}</span>
                         </li>
                       </ul>
                     </div>
@@ -291,6 +297,29 @@ const SwimSpotDetail = () => {
                           <span className="font-medium">{swimSpot.facilities.food_drinks ? 'Available nearby' : 'Not available'}</span>
                         </li>
                       </ul>
+                    </div>
+                  </div>
+                  
+                  {/* Temperature and Current added here */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div className="bg-swimspot-blue-mist/50 rounded-xl p-4">
+                      <h3 className="font-medium text-swimspot-blue-green mb-3 flex items-center">
+                        <Thermometer className="h-5 w-5 mr-2" />
+                        Temperature
+                      </h3>
+                      <p className="text-gray-700">
+                        {swimSpot.current_temperature ? `${swimSpot.current_temperature}°C` : 'Not available'}
+                      </p>
+                    </div>
+                    
+                    <div className="bg-swimspot-drift-sand rounded-xl p-4">
+                      <h3 className="font-medium text-swimspot-blue-green mb-3 flex items-center">
+                        <Waves className="h-5 w-5 mr-2" />
+                        Current
+                      </h3>
+                      <p className="text-gray-700">
+                        {swimSpot.current || 'Not available'}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -360,41 +389,99 @@ const SwimSpotDetail = () => {
                 </div>
               </TabsContent>
               
-              <TabsContent value="nearby" className="space-y-6">
+              <TabsContent value="groups" className="space-y-6">
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <h2 className="font-serif text-2xl text-swimspot-blue-green mb-6">Nearby Swim Spots</h2>
+                  <h2 className="font-serif text-2xl text-swimspot-blue-green mb-6">Swim Groups</h2>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {nearbySpots.length > 0 ? (
-                      nearbySpots.slice(0, 4).map((spot) => (
-                        <Link 
-                          key={spot.id} 
-                          to={`/spot/${spot.id}`}
-                          className="flex bg-swimspot-drift-sand/50 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
-                        >
-                          <div className="w-1/3">
-                            <img 
-                              src={spot.image_url} 
-                              alt={spot.name} 
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div className="w-2/3 p-3">
-                            <h3 className="font-medium text-swimspot-blue-green mb-1">{spot.name}</h3>
-                            <div className="flex items-center text-xs text-gray-600 mb-1">
-                              <Droplet className="h-3 w-3 mr-1" />
-                              {spot.water_type}
+                  {groups.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {groups.slice(0, 4).map((group) => (
+                        <Link key={group.id} to={`/groups`}>
+                          <div className="bg-swimspot-drift-sand/50 rounded-xl p-4 hover:shadow-md transition-shadow">
+                            <div className="flex items-start gap-4">
+                              <div className="h-12 w-12 bg-swimspot-blue-green rounded-lg flex items-center justify-center">
+                                <Users className="h-6 w-6 text-white" />
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="font-medium text-swimspot-blue-green mb-1">
+                                  {group.name}
+                                </h3>
+                                <p className="text-sm text-gray-600 mb-2">{group.description}</p>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs text-gray-500">
+                                    {group.location}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
-                            <p className="text-xs text-gray-500">Nearby</p>
                           </div>
                         </Link>
-                      ))
-                    ) : (
-                      <div className="col-span-2 flex items-center justify-center p-8 text-gray-500">
-                        <p>No nearby swim spots found.</p>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center p-8 text-gray-500">
+                      <div className="text-center">
+                        <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <p>No swim groups found for this area.</p>
+                        <Link to="/groups">
+                          <Button className="mt-4 bg-swimspot-blue-green hover:bg-swimspot-blue-green/90">
+                            Find Groups
+                          </Button>
+                        </Link>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="partners" className="space-y-6">
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                  <h2 className="font-serif text-2xl text-swimspot-blue-green mb-6">Local Partners</h2>
+                  
+                  {partners.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {partners.map((partner) => (
+                        <div key={partner.id} className="bg-swimspot-drift-sand/50 rounded-xl p-4">
+                          <div className="flex items-start gap-4">
+                            <div className="h-12 w-12 bg-swimspot-blue-green rounded-lg flex items-center justify-center">
+                              <MapPin className="h-6 w-6 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="font-medium text-swimspot-blue-green mb-1">
+                                {partner.name}
+                              </h3>
+                              <p className="text-sm text-gray-600 mb-2 capitalize">{partner.type}</p>
+                              {partner.description && (
+                                <p className="text-xs text-gray-500 mb-2">{partner.description}</p>
+                              )}
+                              <div className="flex items-center gap-2">
+                                {partner.phone && (
+                                  <Phone className="h-3 w-3 text-gray-400" />
+                                )}
+                                {partner.website && (
+                                  <a href={partner.website} target="_blank" rel="noopener noreferrer">
+                                    <ExternalLink className="h-3 w-3 text-swimspot-blue-green hover:text-swimspot-blue-green/80" />
+                                  </a>
+                                )}
+                                {partner.distance_meters && (
+                                  <span className="text-xs text-gray-500">
+                                    {Math.round(partner.distance_meters)}m away
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center p-8 text-gray-500">
+                      <div className="text-center">
+                        <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <p>No local partners found for this spot.</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>

@@ -162,6 +162,51 @@ export type Database = {
         }
         Relationships: []
       }
+      partners: {
+        Row: {
+          address: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          latitude: number | null
+          longitude: number | null
+          name: string
+          phone: string | null
+          type: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          phone?: string | null
+          type: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          phone?: string | null
+          type?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -223,6 +268,48 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "swim_spot_likes_swim_spot_id_fkey"
+            columns: ["swim_spot_id"]
+            isOneToOne: false
+            referencedRelation: "swim_spots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      swim_spot_partners: {
+        Row: {
+          created_at: string
+          discount_code: string | null
+          distance_meters: number | null
+          id: string
+          partner_id: string
+          swim_spot_id: string
+        }
+        Insert: {
+          created_at?: string
+          discount_code?: string | null
+          distance_meters?: number | null
+          id?: string
+          partner_id: string
+          swim_spot_id: string
+        }
+        Update: {
+          created_at?: string
+          discount_code?: string | null
+          distance_meters?: number | null
+          id?: string
+          partner_id?: string
+          swim_spot_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "swim_spot_partners_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "swim_spot_partners_swim_spot_id_fkey"
             columns: ["swim_spot_id"]
             isOneToOne: false
             referencedRelation: "swim_spots"
