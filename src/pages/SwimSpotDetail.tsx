@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -267,7 +266,6 @@ const SwimSpotDetail = () => {
                 <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
                 <TabsTrigger value="community" className="flex-1">Community</TabsTrigger>
                 <TabsTrigger value="groups" className="flex-1">Groups</TabsTrigger>
-                <TabsTrigger value="partners" className="flex-1">Partners</TabsTrigger>
               </TabsList>
               
               <TabsContent value="details" className="space-y-6">
@@ -329,20 +327,51 @@ const SwimSpotDetail = () => {
                       <h4 className="font-medium text-swimspot-blue-green">Time of Day</h4>
                       <p className="text-gray-600">{swimSpot.best_times.time_of_day}</p>
                     </div>
-                    <div className="bg-swimspot-drift-sand/50 p-4 rounded-xl text-center">
-                      <div className="flex justify-center mb-2">
-                        <Thermometer className="h-6 w-6 text-swimspot-blue-green" />
+                    
+                    {/* Partner spots - show up to 2 partners */}
+                    {partners.slice(0, 2).map((partner, index) => (
+                      <div key={partner.id} className="bg-swimspot-burnt-coral/10 p-4 rounded-xl text-center">
+                        <div className="flex justify-center mb-2">
+                          <MapPin className="h-6 w-6 text-swimspot-burnt-coral" />
+                        </div>
+                        <h4 className="font-medium text-swimspot-burnt-coral">{partner.name}</h4>
+                        {partner.discount_code ? (
+                          <p className="text-gray-600 text-sm">Code: {partner.discount_code}</p>
+                        ) : (
+                          <p className="text-gray-600 text-sm capitalize">{partner.type}</p>
+                        )}
                       </div>
-                      <h4 className="font-medium text-swimspot-blue-green">Weather</h4>
-                      <p className="text-gray-600">{swimSpot.best_times.weather}</p>
-                    </div>
-                    <div className="bg-swimspot-drift-sand/50 p-4 rounded-xl text-center">
-                      <div className="flex justify-center mb-2">
-                        <Waves className="h-6 w-6 text-swimspot-blue-green" />
+                    ))}
+                    
+                    {/* If no partners or only 1 partner, fill remaining spaces with default info */}
+                    {partners.length === 0 && (
+                      <>
+                        <div className="bg-swimspot-drift-sand/50 p-4 rounded-xl text-center">
+                          <div className="flex justify-center mb-2">
+                            <Thermometer className="h-6 w-6 text-swimspot-blue-green" />
+                          </div>
+                          <h4 className="font-medium text-swimspot-blue-green">Weather</h4>
+                          <p className="text-gray-600">{swimSpot.best_times.weather}</p>
+                        </div>
+                        <div className="bg-swimspot-drift-sand/50 p-4 rounded-xl text-center">
+                          <div className="flex justify-center mb-2">
+                            <Waves className="h-6 w-6 text-swimspot-blue-green" />
+                          </div>
+                          <h4 className="font-medium text-swimspot-blue-green">Conditions</h4>
+                          <p className="text-gray-600">{swimSpot.best_times.water_condition}</p>
+                        </div>
+                      </>
+                    )}
+                    
+                    {partners.length === 1 && (
+                      <div className="bg-swimspot-drift-sand/50 p-4 rounded-xl text-center">
+                        <div className="flex justify-center mb-2">
+                          <Waves className="h-6 w-6 text-swimspot-blue-green" />
+                        </div>
+                        <h4 className="font-medium text-swimspot-blue-green">Conditions</h4>
+                        <p className="text-gray-600">{swimSpot.best_times.water_condition}</p>
                       </div>
-                      <h4 className="font-medium text-swimspot-blue-green">Conditions</h4>
-                      <p className="text-gray-600">{swimSpot.best_times.water_condition}</p>
-                    </div>
+                    )}
                   </div>
                 </div>
               </TabsContent>
@@ -416,57 +445,6 @@ const SwimSpotDetail = () => {
                             Find Groups
                           </Button>
                         </Link>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="partners" className="space-y-6">
-                <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <h2 className="font-serif text-2xl text-swimspot-blue-green mb-6">Local Partners</h2>
-                  
-                  {partners.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {partners.map((partner) => (
-                        <div key={partner.id} className="bg-swimspot-drift-sand/50 rounded-xl p-4">
-                          <div className="flex items-start gap-4">
-                            <div className="h-12 w-12 bg-swimspot-blue-green rounded-lg flex items-center justify-center">
-                              <MapPin className="h-6 w-6 text-white" />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="font-medium text-swimspot-blue-green mb-1">
-                                {partner.name}
-                              </h3>
-                              <p className="text-sm text-gray-600 mb-2 capitalize">{partner.type}</p>
-                              {partner.description && (
-                                <p className="text-xs text-gray-500 mb-2">{partner.description}</p>
-                              )}
-                              <div className="flex items-center gap-2">
-                                {partner.phone && (
-                                  <Phone className="h-3 w-3 text-gray-400" />
-                                )}
-                                {partner.website && (
-                                  <a href={partner.website} target="_blank" rel="noopener noreferrer">
-                                    <ExternalLink className="h-3 w-3 text-swimspot-blue-green hover:text-swimspot-blue-green/80" />
-                                  </a>
-                                )}
-                                {partner.distance_meters && (
-                                  <span className="text-xs text-gray-500">
-                                    {Math.round(partner.distance_meters)}m away
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center p-8 text-gray-500">
-                      <div className="text-center">
-                        <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                        <p>No local partners found for this spot.</p>
                       </div>
                     </div>
                   )}
