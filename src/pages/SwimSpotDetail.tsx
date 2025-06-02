@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -311,7 +310,7 @@ const SwimSpotDetail = () => {
                 </div>
                 
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <h2 className="font-serif text-2xl text-swimspot-blue-green mb-4">Best Times to Visit</h2>
+                  <h2 className="font-serif text-2xl text-swimspot-blue-green mb-4">Quick Info</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="bg-swimspot-drift-sand/50 p-4 rounded-xl text-center">
                       <div className="flex justify-center mb-2">
@@ -328,48 +327,33 @@ const SwimSpotDetail = () => {
                       <p className="text-gray-600">{swimSpot.best_times.time_of_day}</p>
                     </div>
                     
-                    {/* Partner spots - show up to 2 partners */}
-                    {partners.slice(0, 2).map((partner, index) => (
-                      <div key={partner.id} className="bg-swimspot-burnt-coral/10 p-4 rounded-xl text-center">
+                    {/* First partner */}
+                    {partners.length > 0 && (
+                      <div className="bg-swimspot-burnt-coral/10 p-4 rounded-xl text-center">
                         <div className="flex justify-center mb-2">
                           <MapPin className="h-6 w-6 text-swimspot-burnt-coral" />
                         </div>
-                        <h4 className="font-medium text-swimspot-burnt-coral">{partner.name}</h4>
-                        {partner.discount_code ? (
-                          <p className="text-gray-600 text-sm">Code: {partner.discount_code}</p>
+                        <h4 className="font-medium text-swimspot-burnt-coral">{partners[0].name}</h4>
+                        {partners[0].discount_code ? (
+                          <p className="text-gray-600 text-sm">Code: {partners[0].discount_code}</p>
                         ) : (
-                          <p className="text-gray-600 text-sm capitalize">{partner.type}</p>
+                          <p className="text-gray-600 text-sm capitalize">{partners[0].type}</p>
                         )}
                       </div>
-                    ))}
-                    
-                    {/* If no partners or only 1 partner, fill remaining spaces with default info */}
-                    {partners.length === 0 && (
-                      <>
-                        <div className="bg-swimspot-drift-sand/50 p-4 rounded-xl text-center">
-                          <div className="flex justify-center mb-2">
-                            <Thermometer className="h-6 w-6 text-swimspot-blue-green" />
-                          </div>
-                          <h4 className="font-medium text-swimspot-blue-green">Weather</h4>
-                          <p className="text-gray-600">{swimSpot.best_times.weather}</p>
-                        </div>
-                        <div className="bg-swimspot-drift-sand/50 p-4 rounded-xl text-center">
-                          <div className="flex justify-center mb-2">
-                            <Waves className="h-6 w-6 text-swimspot-blue-green" />
-                          </div>
-                          <h4 className="font-medium text-swimspot-blue-green">Conditions</h4>
-                          <p className="text-gray-600">{swimSpot.best_times.water_condition}</p>
-                        </div>
-                      </>
                     )}
                     
-                    {partners.length === 1 && (
-                      <div className="bg-swimspot-drift-sand/50 p-4 rounded-xl text-center">
+                    {/* Second partner */}
+                    {partners.length > 1 && (
+                      <div className="bg-swimspot-burnt-coral/10 p-4 rounded-xl text-center">
                         <div className="flex justify-center mb-2">
-                          <Waves className="h-6 w-6 text-swimspot-blue-green" />
+                          <MapPin className="h-6 w-6 text-swimspot-burnt-coral" />
                         </div>
-                        <h4 className="font-medium text-swimspot-blue-green">Conditions</h4>
-                        <p className="text-gray-600">{swimSpot.best_times.water_condition}</p>
+                        <h4 className="font-medium text-swimspot-burnt-coral">{partners[1].name}</h4>
+                        {partners[1].discount_code ? (
+                          <p className="text-gray-600 text-sm">Code: {partners[1].discount_code}</p>
+                        ) : (
+                          <p className="text-gray-600 text-sm capitalize">{partners[1].type}</p>
+                        )}
                       </div>
                     )}
                   </div>
