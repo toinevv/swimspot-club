@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,9 +20,11 @@ import {
 import { Link } from "react-router-dom";
 import { api } from "@/services/api";
 import ProfileEditForm from "@/components/profile/ProfileEditForm";
+import { UserProfile } from "@/services/api/profiles";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['profile'],
@@ -43,6 +45,12 @@ const Profile = () => {
     queryKey: ['userGroups'],
     queryFn: api.getUserGroups,
   });
+
+  const handleProfileUpdate = (updatedProfile: UserProfile) => {
+    // Update the profile query cache with the new data
+    queryClient.setQueryData(['profile'], updatedProfile);
+    setIsEditing(false);
+  };
 
   if (profileLoading) {
     return (
@@ -324,7 +332,7 @@ const Profile = () => {
         {isEditing && (
           <ProfileEditForm
             profile={profile}
-            onClose={() => setIsEditing(false)}
+            onProfileUpdate={handleProfileUpdate}
           />
         )}
       </div>
