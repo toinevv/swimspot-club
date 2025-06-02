@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -20,7 +19,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { api } from "@/services/api";
-import { ProfileEditForm } from "@/components/profile/ProfileEditForm";
+import ProfileEditForm from "@/components/profile/ProfileEditForm";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
