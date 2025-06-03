@@ -46,13 +46,15 @@ const SwimSpotDetail = () => {
     queryFn: api.getUserGroups,
   });
 
-  // Query for saved count
+  // Query for actual saved count from database
   const { data: savedCount = 0 } = useQuery({
     queryKey: ['spotSavedCount', id],
     queryFn: async () => {
-      // This would need to be implemented in the API to count total saves
-      // For now, return a placeholder
-      return Math.floor(Math.random() * 50) + 10; // Temporary placeholder
+      const { data } = await api.apiClient.supabase
+        .from('swim_spot_saves')
+        .select('id', { count: 'exact' })
+        .eq('swim_spot_id', id);
+      return data?.length || 0;
     },
     enabled: !!id,
   });
@@ -61,6 +63,7 @@ const SwimSpotDetail = () => {
     mutationFn: () => api.toggleSaveSpot(id!),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['spotSaved', id] });
+      queryClient.invalidateQueries({ queryKey: ['spotSavedCount', id] });
       toast.success(isSaved ? "Removed from saved spots" : "Added to saved spots");
     },
     onError: () => {
