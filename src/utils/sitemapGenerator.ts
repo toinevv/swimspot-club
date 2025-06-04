@@ -54,6 +54,36 @@ export const generateSitemap = async (): Promise<string> => {
     console.error("Error fetching cities for sitemap:", error);
   }
 
+  // Add blog posts to sitemap
+  try {
+    const blogPosts = await api.getAllBlogPosts();
+    blogPosts.forEach(post => {
+      urls.push({
+        url: `${baseUrl}/blog/${post.slug}`,
+        lastmod: new Date(post.updated_at || post.published_at).toISOString().split('T')[0],
+        changefreq: 'monthly',
+        priority: '0.6'
+      });
+    });
+  } catch (error) {
+    console.error("Error fetching blog posts for sitemap:", error);
+  }
+
+  // Add swim spots to sitemap (for individual spot pages)
+  try {
+    const swimSpots = await api.getSwimSpots({});
+    swimSpots.forEach(spot => {
+      urls.push({
+        url: `${baseUrl}/spot/${spot.id}`,
+        lastmod: new Date(spot.updated_at || spot.created_at).toISOString().split('T')[0],
+        changefreq: 'weekly',
+        priority: '0.5'
+      });
+    });
+  } catch (error) {
+    console.error("Error fetching swim spots for sitemap:", error);
+  }
+
   const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(url => `  <url>

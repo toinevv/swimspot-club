@@ -11,6 +11,8 @@ import SwimSpotHeader from "@/components/swimspot/SwimSpotHeader";
 import SwimSpotDetailsTab from "@/components/swimspot/SwimSpotDetailsTab";
 import SwimSpotCommunityTab from "@/components/swimspot/SwimSpotCommunityTab";
 import SwimSpotSidebar from "@/components/swimspot/SwimSpotSidebar";
+import SEOHead from "@/components/seo/SEOHead";
+import StructuredData from "@/components/seo/StructuredData";
 
 const SwimSpotDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -139,44 +141,73 @@ const SwimSpotDetail = () => {
     );
   }
 
+  const seoTitle = `${swimSpot.name} - Wild Swimming Spot`;
+  const seoDescription = swimSpot.summary || `Discover ${swimSpot.name}, a beautiful wild swimming location. ${swimSpot.description.substring(0, 100)}...`;
+  const currentUrl = `${window.location.origin}/spot/${swimSpot.id}`;
+
   return (
-    <div className="min-h-screen bg-swimspot-drift-sand">
-      <SwimSpotHeader
-        swimSpot={swimSpot}
-        getBackToMapUrl={getBackToMapUrl}
-        visitData={visitData}
-        savedCount={savedCount}
-        isSaved={isSaved}
-        onSave={handleSave}
-        onMarkVisited={handleMarkVisited}
-        onReport={handleReport}
-        saveMutationPending={saveMutation.isPending}
-        visitMutationPending={visitMutation.isPending}
+    <>
+      <SEOHead 
+        title={seoTitle}
+        description={seoDescription}
+        city={swimSpot.city?.display_name}
+      />
+      
+      <StructuredData 
+        data={{
+          type: 'Place',
+          name: swimSpot.name,
+          description: seoDescription,
+          address: swimSpot.city ? {
+            addressLocality: swimSpot.city.display_name,
+            addressCountry: "Netherlands"
+          } : undefined,
+          geo: {
+            latitude: swimSpot.latitude,
+            longitude: swimSpot.longitude
+          },
+          url: currentUrl
+        }}
       />
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <Tabs defaultValue="details" className="w-full">
-              <TabsList className="w-full bg-white mb-6">
-                <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
-                <TabsTrigger value="community" className="flex-1">Community</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="details">
-                <SwimSpotDetailsTab swimSpot={swimSpot} partners={partners} groups={groups} />
-              </TabsContent>
-              
-              <TabsContent value="community">
-                <SwimSpotCommunityTab visitData={visitData} groups={groups} />
-              </TabsContent>
-            </Tabs>
+      <div className="min-h-screen bg-swimspot-drift-sand">
+        <SwimSpotHeader
+          swimSpot={swimSpot}
+          getBackToMapUrl={getBackToMapUrl}
+          visitData={visitData}
+          savedCount={savedCount}
+          isSaved={isSaved}
+          onSave={handleSave}
+          onMarkVisited={handleMarkVisited}
+          onReport={handleReport}
+          saveMutationPending={saveMutation.isPending}
+          visitMutationPending={visitMutation.isPending}
+        />
+
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <Tabs defaultValue="details" className="w-full">
+                <TabsList className="w-full bg-white mb-6">
+                  <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
+                  <TabsTrigger value="community" className="flex-1">Community</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="details">
+                  <SwimSpotDetailsTab swimSpot={swimSpot} partners={partners} groups={groups} />
+                </TabsContent>
+                
+                <TabsContent value="community">
+                  <SwimSpotCommunityTab visitData={visitData} groups={groups} />
+                </TabsContent>
+              </Tabs>
+            </div>
+            
+            <SwimSpotSidebar swimSpot={swimSpot} />
           </div>
-          
-          <SwimSpotSidebar swimSpot={swimSpot} />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
