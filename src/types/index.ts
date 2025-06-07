@@ -27,7 +27,6 @@ export interface SwimSpot {
     address: string;
   };
   tags: string[];
-  current?: string; // Changed from union type to string to match database
   visibility: string; // Changed from union type to string to match database
   city?: string; // Added city property to match database
   country?: string; // Added country property to match database

@@ -47,7 +47,6 @@ export const swimSpotsApi = {
             address: spot.address
           },
           tags: spot.tags,
-          current: spot.current,
           visibility: spot.visibility,
           city: spot.city, // Include city field
           country: spot.country, // Include country field
@@ -99,7 +98,6 @@ export const swimSpotsApi = {
           address: data.address
         },
         tags: data.tags,
-        current: data.current,
         visibility: data.visibility,
         city: data.city, // Include city field
         country: data.country, // Include country field
