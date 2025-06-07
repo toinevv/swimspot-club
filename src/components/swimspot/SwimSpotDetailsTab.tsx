@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Droplet, Info, Users, MapPin } from "lucide-react";
+import { Droplet, Users, MapPin, Clock, Waves, MapIcon } from "lucide-react";
 import { SwimSpot } from "@/types";
 import { Partner } from "@/services/api/partners";
 
@@ -18,106 +18,93 @@ const SwimSpotDetailsTab = ({ swimSpot, partners, groups }: SwimSpotDetailsTabPr
         <h2 className="font-serif text-2xl text-swimspot-blue-green mb-4">About This Spot</h2>
         <p className="text-gray-700 mb-6">{swimSpot.description}</p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Water Info Tile */}
-          <div className="bg-swimspot-blue-mist/50 rounded-xl p-4">
-            <h3 className="font-medium text-swimspot-blue-green mb-3 flex items-center">
-              <Droplet className="h-5 w-5 mr-2" />
-              Water Info
-            </h3>
-            <ul className="space-y-2 text-gray-700 text-sm">
-              <li className="flex justify-between">
-                <span>Type:</span>
-                <span className="font-medium">{swimSpot.water_type}</span>
-              </li>
-              {swimSpot.current_temperature && (
-                <li className="flex justify-between">
-                  <span>Temp:</span>
-                  <span className="font-medium">{swimSpot.current_temperature}°C</span>
-                </li>
-              )}
-              {swimSpot.current && (
-                <li className="flex justify-between">
-                  <span>Current:</span>
-                  <span className="font-medium capitalize">{swimSpot.current}</span>
-                </li>
-              )}
-            </ul>
-          </div>
-          
-          {/* Facilities Tile */}
-          <div className="bg-swimspot-drift-sand rounded-xl p-4">
-            <h3 className="font-medium text-swimspot-blue-green mb-3 flex items-center">
-              <Info className="h-5 w-5 mr-2" />
-              Facilities
-            </h3>
-            <ul className="space-y-2 text-gray-700 text-sm">
-              <li className="flex justify-between">
-                <span>Changing:</span>
-                <span className="font-medium">{swimSpot.facilities.changing_rooms ? 'Yes' : 'No'}</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Restrooms:</span>
-                <span className="font-medium">{swimSpot.facilities.restrooms ? 'Yes' : 'No'}</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Lifeguard:</span>
-                <span className="font-medium">{swimSpot.facilities.lifeguard ? 'Yes' : 'No'}</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Food/Drinks:</span>
-                <span className="font-medium">{swimSpot.facilities.food_drinks ? 'Yes' : 'No'}</span>
-              </li>
-            </ul>
+        {/* 4 vertical advice tiles */}
+        <div className="space-y-4">
+          {/* Water Quality & Safety */}
+          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
+            <div className="flex items-start gap-3">
+              <Droplet className="h-6 w-6 text-blue-600 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-blue-900 mb-2">Water Quality & Safety</h3>
+                <p className="text-blue-800 text-sm mb-2">
+                  This {swimSpot.water_type.toLowerCase()} spot is ideal for swimming. 
+                  {swimSpot.current_temperature && ` Current water temperature: ${swimSpot.current_temperature}°C.`}
+                  {swimSpot.current && ` Water current: ${swimSpot.current}.`}
+                </p>
+                <div className="text-xs text-blue-700">
+                  {swimSpot.facilities.lifeguard ? "✓ Lifeguard on duty" : "⚠️ No lifeguard - swim with caution"}
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* First Partner Tile */}
-          {partners.length > 0 && (
-            <div className="bg-swimspot-burnt-coral/10 rounded-xl p-4">
-              <h3 className="font-medium text-swimspot-burnt-coral mb-3 flex items-center">
-                <MapPin className="h-5 w-5 mr-2" />
-                Partner
-              </h3>
-              <div className="text-sm">
-                <p className="font-medium text-gray-800 mb-1">{partners[0].name}</p>
-                {partners[0].discount_code ? (
-                  <p className="text-gray-600">Code: <span className="font-mono bg-gray-100 px-1 rounded">{partners[0].discount_code}</span></p>
+          {/* Best Time to Visit */}
+          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+            <div className="flex items-start gap-3">
+              <Clock className="h-6 w-6 text-green-600 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-green-900 mb-2">Best Time to Visit</h3>
+                <p className="text-green-800 text-sm mb-2">
+                  Optimal swimming season: {swimSpot.best_times.season || 'Year-round'}. 
+                  {swimSpot.best_times.time_of_day && ` Best time of day: ${swimSpot.best_times.time_of_day}.`}
+                </p>
+                <div className="text-xs text-green-700">
+                  💡 Pro tip: Visit during off-peak hours for a more peaceful experience
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Facilities & Access */}
+          <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-lg">
+            <div className="flex items-start gap-3">
+              <MapIcon className="h-6 w-6 text-purple-600 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-purple-900 mb-2">Facilities & Access</h3>
+                <p className="text-purple-800 text-sm mb-2">
+                  {swimSpot.facilities.changing_rooms ? "Changing rooms available" : "No changing facilities - come prepared"}
+                  {swimSpot.facilities.restrooms && ", restrooms on-site"}
+                  {swimSpot.facilities.food_drinks && ", food & drinks available"}.
+                </p>
+                <div className="text-xs text-purple-700">
+                  📍 Located at: {swimSpot.location.address}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Local Partnerships & Support */}
+          <div className="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-lg">
+            <div className="flex items-start gap-3">
+              <MapPin className="h-6 w-6 text-orange-600 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-orange-900 mb-2">Local Partnerships & Support</h3>
+                {partners.length > 0 ? (
+                  <div>
+                    <p className="text-orange-800 text-sm mb-2">
+                      Local partner: <strong>{partners[0].name}</strong>
+                      {partners[0].discount_code && ` - Use code "${partners[0].discount_code}" for discounts`}
+                    </p>
+                    {partners[0].description && (
+                      <div className="text-xs text-orange-700">{partners[0].description}</div>
+                    )}
+                  </div>
                 ) : (
-                  <p className="text-gray-600 capitalize">{partners[0].type}</p>
-                )}
-                {partners[0].description && (
-                  <p className="text-gray-600 mt-1 text-xs">{partners[0].description.slice(0, 50)}...</p>
+                  <p className="text-orange-800 text-sm">
+                    No local partnerships yet. Support local businesses when visiting this area.
+                  </p>
                 )}
               </div>
             </div>
-          )}
-
-          {/* Best Times Tile */}
-          <div className="bg-swimspot-drift-sand/50 rounded-xl p-4">
-            <h3 className="font-medium text-swimspot-blue-green mb-3">Best Times</h3>
-            <ul className="space-y-2 text-gray-700 text-sm">
-              {swimSpot.best_times.season && (
-                <li className="flex justify-between">
-                  <span>Season:</span>
-                  <span className="font-medium">{swimSpot.best_times.season}</span>
-                </li>
-              )}
-              {swimSpot.best_times.time_of_day && (
-                <li className="flex justify-between">
-                  <span>Time:</span>
-                  <span className="font-medium">{swimSpot.best_times.time_of_day}</span>
-                </li>
-              )}
-            </ul>
           </div>
         </div>
 
         {/* Additional partners if more than one */}
         {partners.length > 1 && (
-          <div className="mt-4">
+          <div className="mt-6">
             <h3 className="font-medium text-swimspot-blue-green mb-3">More Partners</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {partners.slice(1).map((partner, index) => (
+              {partners.slice(1).map((partner) => (
                 <div key={partner.id} className="bg-swimspot-burnt-coral/5 rounded-lg p-3 border border-swimspot-burnt-coral/20">
                   <div className="flex items-center gap-2 mb-2">
                     <MapPin className="h-4 w-4 text-swimspot-burnt-coral" />

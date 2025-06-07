@@ -12,7 +12,7 @@ interface CityContentProps {
 const CityContent = ({ cityData, spotCount }: CityContentProps) => {
   // Fetch related blog posts for the city
   const { data: relatedPosts = [] } = useQuery({
-    queryKey: ['cityBlogPosts', cityData.slug],
+    queryKey: ['cityBlogPosts', cityData.name],
     queryFn: async () => {
       const allPosts = await api.getAllBlogPosts();
       // Filter posts that mention the city name in title or content
@@ -57,7 +57,7 @@ const CityContent = ({ cityData, spotCount }: CityContentProps) => {
                     {post.title}
                   </h4>
                   <p className="text-xs text-gray-600 line-clamp-2">
-                    {post.excerpt || post.content.substring(0, 80) + '...'}
+                    {post.content.substring(0, 80) + '...'}
                   </p>
                 </Link>
               ))}

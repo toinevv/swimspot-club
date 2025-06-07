@@ -1,12 +1,10 @@
 
-import { useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Calendar, Tag, User } from "lucide-react";
+import { api } from "@/services/api";
+import { Loader2, ArrowLeft, Calendar, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { blogPostsApi } from "@/services/api/blogPosts";
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from "react-markdown";
 import SEOHead from "@/components/seo/SEOHead";
 import StructuredData from "@/components/seo/StructuredData";
 
@@ -14,221 +12,167 @@ const BlogArticle = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
 
-  const { 
-    data: article,
-    isLoading, 
-    error,
-    isError 
-  } = useQuery({
+  const { data: post, isLoading, error } = useQuery({
     queryKey: ['blogPost', slug],
-    queryFn: () => blogPostsApi.getBlogPostBySlug(slug || ''),
-    enabled: !!slug
+    queryFn: () => api.getBlogPostBySlug(slug!),
+    enabled: !!slug,
   });
 
-  // Fetch related blog posts for internal linking
   const { data: relatedPosts = [] } = useQuery({
-    queryKey: ['relatedBlogPosts', article?.id],
-    queryFn: () => blogPostsApi.getAllBlogPosts(),
-    enabled: !!article,
-    select: (posts) => posts.filter(post => post.id !== article?.id).slice(0, 3)
+    queryKey: ['relatedBlogPosts', slug],
+    queryFn: async () => {
+      if (!post) return [];
+      const allPosts = await api.getAllBlogPosts();
+      return allPosts
+        .filter(p => p.slug !== slug && p.tags?.some(tag => post.tags?.includes(tag)))
+        .slice(0, 3);
+    },
+    enabled: !!post,
   });
-
-  // Redirect to blog page if article not found
-  useEffect(() => {
-    if (!isLoading && !isError && !article) {
-      navigate('/blog', { replace: true });
-    }
-  }, [article, isLoading, isError, navigate]);
 
   if (isLoading) {
-    return <LoadingState />;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-swimspot-blue-green" />
+      </div>
+    );
   }
 
-  if (isError || !article) {
-    return <ErrorState error={error as Error} />;
+  if (error || !post) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-medium text-swimspot-blue-green mb-2">Article not found</h2>
+          <p className="text-gray-600 mb-4">The article you're looking for doesn't exist.</p>
+          <Button onClick={() => navigate("/blog")} className="bg-swimspot-blue-green hover:bg-swimspot-blue-green/90">
+            Back to Blog
+          </Button>
+        </div>
+      </div>
+    );
   }
 
-  const currentUrl = `${window.location.origin}/blog/${article.slug}`;
-  const seoDescription = article.excerpt || article.content.substring(0, 160) + '...';
+  const seoTitle = `${post.title} - SwimSpot Blog`;
+  const seoDescription = post.content.substring(0, 160) + '...';
+  const currentUrl = `${window.location.origin}/blog/${post.slug}`;
 
   return (
     <>
       <SEOHead 
-        title={article.title}
+        title={seoTitle}
         description={seoDescription}
       />
       
       <StructuredData 
         data={{
           type: 'BlogPosting',
-          headline: article.title,
+          headline: post.title,
           description: seoDescription,
-          image: article.cover_image_url,
-          author: article.author,
-          datePublished: article.published_at,
-          dateModified: article.updated_at,
+          image: post.cover_image_url,
+          author: post.author,
+          datePublished: post.published_at,
+          dateModified: post.published_at,
           url: currentUrl
         }}
       />
 
       <div className="min-h-screen bg-swimspot-drift-sand">
-        {/* Hero Section with Article Cover */}
-        <div className="relative h-[50vh] overflow-hidden">
-          <div 
-            className="absolute inset-0 bg-cover bg-center" 
-            style={{ 
-              backgroundImage: `url('${article.cover_image_url}')`,
-              filter: "brightness(0.7)"
-            }}
+        {/* Hero Section */}
+        <div className="relative h-[40vh] md:h-[50vh]">
+          <img
+            src={post.cover_image_url}
+            alt={post.title}
+            className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-          <div className="relative h-full container mx-auto px-4 flex flex-col justify-end pb-12">
-            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 max-w-4xl">
-              {article.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-6 text-white/90">
-              <span className="flex items-center">
-                <Calendar className="h-5 w-5 mr-2" />
-                {new Date(article.published_at).toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
-              </span>
-              <span className="flex items-center">
-                <User className="h-5 w-5 mr-2" />
-                {article.author}
-              </span>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+          
+          {/* Back button */}
+          <div className="absolute top-4 left-4">
+            <Button
+              onClick={() => navigate("/blog")}
+              variant="outline"
+              className="flex items-center gap-2 bg-black/30 backdrop-blur-sm text-white border-white/20 hover:bg-black/40"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Blog
+            </Button>
+          </div>
+          
+          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+            <div className="container mx-auto max-w-4xl">
+              <h1 className="font-serif text-3xl md:text-4xl font-medium mb-4">{post.title}</h1>
+              <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-1">
+                  <User className="h-4 w-4" />
+                  <span>{post.author}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  <span>{new Date(post.published_at).toLocaleDateString()}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Article Content */}
-        <div className="py-12">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-md p-8 mb-8">
-              {/* Tags */}
-              {article.tags && article.tags.length > 0 && (
-                <div className="mb-8 flex flex-wrap gap-2">
-                  {article.tags.map((tag, index) => (
-                    <span 
-                      key={index} 
-                      className="bg-swimspot-blue-mist text-swimspot-blue-green text-sm px-3 py-1 rounded-full flex items-center"
+        {/* Content */}
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
+          <div className="bg-white rounded-2xl p-8 shadow-sm mb-8">
+            <div className="prose prose-lg max-w-none">
+              <ReactMarkdown>{post.content}</ReactMarkdown>
+            </div>
+            
+            {/* Tags */}
+            {post.tags && post.tags.length > 0 && (
+              <div className="mt-8 pt-8 border-t border-gray-200">
+                <h3 className="text-lg font-medium text-swimspot-blue-green mb-3">Tags</h3>
+                <div className="flex flex-wrap gap-2">
+                  {post.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-swimspot-drift-sand/50 text-swimspot-blue-green rounded-full text-sm"
                     >
-                      <Tag className="h-3 w-3 mr-1" />
                       {tag}
                     </span>
                   ))}
                 </div>
-              )}
-              
-              {/* Article content with markdown support */}
-              <div className="prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-swimspot-blue-green prose-a:text-swimspot-burnt-coral">
-                <ReactMarkdown>
-                  {article.content}
-                </ReactMarkdown>
-              </div>
-            </div>
-
-            {/* More from the blog section */}
-            {relatedPosts.length > 0 && (
-              <div className="max-w-3xl mx-auto mb-8">
-                <div className="bg-white rounded-2xl shadow-md p-8">
-                  <h3 className="font-serif text-2xl text-swimspot-blue-green mb-6">More from the Blog</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {relatedPosts.map((post) => (
-                      <Link 
-                        key={post.id}
-                        to={`/blog/${post.slug}`}
-                        className="block p-4 border border-gray-200 rounded-lg hover:border-swimspot-blue-green transition-colors"
-                      >
-                        <h4 className="font-medium text-swimspot-blue-green mb-2 line-clamp-2">
-                          {post.title}
-                        </h4>
-                        <p className="text-sm text-gray-600 line-clamp-3">
-                          {post.excerpt || post.content.substring(0, 100) + '...'}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-2">
-                          {new Date(post.published_at).toLocaleDateString()}
-                        </p>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
               </div>
             )}
-
-            {/* Back to Blog button */}
-            <div className="max-w-3xl mx-auto">
-              <Button 
-                asChild
-                variant="outline" 
-                className="border-swimspot-blue-green text-swimspot-blue-green hover:bg-swimspot-blue-green hover:text-white"
-              >
-                <Link to="/blog" className="flex items-center">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Blog
-                </Link>
-              </Button>
-            </div>
           </div>
+
+          {/* More from the blog */}
+          {relatedPosts.length > 0 && (
+            <div className="bg-white rounded-2xl p-8 shadow-sm">
+              <h3 className="text-2xl font-serif text-swimspot-blue-green mb-6">More from the Blog</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {relatedPosts.map((relatedPost) => (
+                  <article
+                    key={relatedPost.id}
+                    onClick={() => navigate(`/blog/${relatedPost.slug}`)}
+                    className="cursor-pointer group"
+                  >
+                    <div className="aspect-video mb-4 overflow-hidden rounded-lg">
+                      <img
+                        src={relatedPost.cover_image_url}
+                        alt={relatedPost.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <h4 className="font-medium text-swimspot-blue-green mb-2 group-hover:underline">
+                      {relatedPost.title}
+                    </h4>
+                    <p className="text-sm text-gray-600 line-clamp-3">
+                      {relatedPost.content.substring(0, 120) + '...'}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
   );
 };
-
-const LoadingState = () => (
-  <div className="min-h-screen bg-swimspot-drift-sand">
-    <div className="relative h-[50vh] overflow-hidden">
-      <Skeleton className="absolute inset-0" />
-      <div className="relative h-full container mx-auto px-4 flex flex-col justify-end pb-12">
-        <Skeleton className="h-16 w-2/3 mb-6" />
-        <div className="flex flex-wrap items-center gap-6">
-          <Skeleton className="h-6 w-40" />
-          <Skeleton className="h-6 w-32" />
-        </div>
-      </div>
-    </div>
-    <div className="py-12">
-      <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-md p-8 mb-8">
-          <div className="mb-8 flex flex-wrap gap-2">
-            <Skeleton className="h-6 w-20" />
-            <Skeleton className="h-6 w-24" />
-            <Skeleton className="h-6 w-16" />
-          </div>
-          <Skeleton className="h-8 w-full mb-6" />
-          <Skeleton className="h-4 w-full mb-4" />
-          <Skeleton className="h-4 w-full mb-4" />
-          <Skeleton className="h-4 w-2/3 mb-8" />
-          <Skeleton className="h-6 w-full mb-6" />
-          <Skeleton className="h-4 w-full mb-4" />
-          <Skeleton className="h-4 w-full mb-4" />
-          <Skeleton className="h-4 w-3/4 mb-4" />
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const ErrorState = ({ error }: { error: Error }) => (
-  <div className="min-h-screen bg-swimspot-drift-sand flex items-center justify-center">
-    <div className="container mx-auto px-4 text-center">
-      <h2 className="font-serif text-3xl text-swimspot-blue-green mb-4">Something went wrong</h2>
-      <p className="text-gray-600 mb-6">
-        {error?.message || "We couldn't load this article. It may have been removed or is temporarily unavailable."}
-      </p>
-      <Button 
-        asChild
-        className="bg-swimspot-blue-green hover:bg-swimspot-blue-green/90"
-      >
-        <Link to="/blog">
-          Return to Blog
-        </Link>
-      </Button>
-    </div>
-  </div>
-);
 
 export default BlogArticle;

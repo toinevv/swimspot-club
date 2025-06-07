@@ -60,7 +60,7 @@ export const generateSitemap = async (): Promise<string> => {
     blogPosts.forEach(post => {
       urls.push({
         url: `${baseUrl}/blog/${post.slug}`,
-        lastmod: new Date(post.updated_at || post.published_at).toISOString().split('T')[0],
+        lastmod: new Date(post.published_at).toISOString().split('T')[0],
         changefreq: 'monthly',
         priority: '0.6'
       });
