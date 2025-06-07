@@ -149,7 +149,7 @@ const SwimSpotDetail = () => {
       <SEOHead 
         title={seoTitle}
         description={seoDescription}
-        city={swimSpot.city?.display_name}
+        city={swimSpot.city}
       />
       
       <StructuredData 
@@ -158,12 +158,12 @@ const SwimSpotDetail = () => {
           name: swimSpot.name,
           description: seoDescription,
           address: swimSpot.city ? {
-            addressLocality: swimSpot.city.display_name,
+            addressLocality: swimSpot.city,
             addressCountry: "Netherlands"
           } : undefined,
           geo: {
-            latitude: swimSpot.latitude,
-            longitude: swimSpot.longitude
+            latitude: swimSpot.location.latitude,
+            longitude: swimSpot.location.longitude
           },
           url: currentUrl
         }}
