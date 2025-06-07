@@ -34,18 +34,6 @@ export const swimSpotsApi = {
       
       // Transform Supabase data to match our SwimSpot type
       return data.map(spot => {
-        // Parse facilities as an object with default values
-        let facilitiesObj: Record<string, boolean> = {};
-        if (typeof spot.facilities === 'object' && spot.facilities !== null && !Array.isArray(spot.facilities)) {
-          facilitiesObj = spot.facilities as Record<string, any>;
-        }
-        
-        // Parse best_times as an object with default values
-        let bestTimesObj: Record<string, string> = {};
-        if (typeof spot.best_times === 'object' && spot.best_times !== null && !Array.isArray(spot.best_times)) {
-          bestTimesObj = spot.best_times as Record<string, any>;
-        }
-        
         return {
           id: spot.id, // Use the UUID directly
           name: spot.name,
@@ -59,25 +47,12 @@ export const swimSpotsApi = {
             address: spot.address
           },
           tags: spot.tags,
-          current_temperature: spot.current_temperature ? Number(spot.current_temperature) : undefined,
           current: spot.current,
           visibility: spot.visibility,
           city: spot.city, // Include city field
+          country: spot.country, // Include country field
           created_at: spot.created_at,
-          updated_at: spot.updated_at,
-          // Parse the JSON fields with safe access
-          facilities: {
-            changing_rooms: Boolean(facilitiesObj.changing_rooms),
-            restrooms: Boolean(facilitiesObj.restrooms),
-            lifeguard: Boolean(facilitiesObj.lifeguard),
-            food_drinks: Boolean(facilitiesObj.food_drinks)
-          },
-          best_times: {
-            season: String(bestTimesObj.season || ''),
-            time_of_day: String(bestTimesObj.time_of_day || ''),
-            weather: String(bestTimesObj.weather || ''),
-            water_condition: String(bestTimesObj.water_condition || '')
-          }
+          updated_at: spot.updated_at
         };
       });
     } catch (error) {
@@ -111,16 +86,6 @@ export const swimSpotsApi = {
       }
       
       // Process the spot data similar to getSwimSpots
-      let facilitiesObj: Record<string, boolean> = {};
-      if (typeof data.facilities === 'object' && data.facilities !== null && !Array.isArray(data.facilities)) {
-        facilitiesObj = data.facilities as Record<string, any>;
-      }
-      
-      let bestTimesObj: Record<string, string> = {};
-      if (typeof data.best_times === 'object' && data.best_times !== null && !Array.isArray(data.best_times)) {
-        bestTimesObj = data.best_times as Record<string, any>;
-      }
-      
       return {
         id: data.id,
         name: data.name,
@@ -134,24 +99,12 @@ export const swimSpotsApi = {
           address: data.address
         },
         tags: data.tags,
-        current_temperature: data.current_temperature ? Number(data.current_temperature) : undefined,
         current: data.current,
         visibility: data.visibility,
         city: data.city, // Include city field
+        country: data.country, // Include country field
         created_at: data.created_at,
-        updated_at: data.updated_at,
-        facilities: {
-          changing_rooms: Boolean(facilitiesObj.changing_rooms),
-          restrooms: Boolean(facilitiesObj.restrooms),
-          lifeguard: Boolean(facilitiesObj.lifeguard),
-          food_drinks: Boolean(facilitiesObj.food_drinks)
-        },
-        best_times: {
-          season: String(bestTimesObj.season || ''),
-          time_of_day: String(bestTimesObj.time_of_day || ''),
-          weather: String(bestTimesObj.weather || ''),
-          water_condition: String(bestTimesObj.water_condition || '')
-        }
+        updated_at: data.updated_at
       };
     } catch (error) {
       console.error("Error fetching swim spot by ID:", error);

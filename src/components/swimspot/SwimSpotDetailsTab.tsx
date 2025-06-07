@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Droplet, Users, MapPin, Clock, Waves, MapIcon } from "lucide-react";
+import { Droplet, Users, MapPin, Tag } from "lucide-react";
 import { SwimSpot } from "@/types";
 import { Partner } from "@/services/api/partners";
 
@@ -18,84 +18,57 @@ const SwimSpotDetailsTab = ({ swimSpot, partners, groups }: SwimSpotDetailsTabPr
         <h2 className="font-serif text-2xl text-swimspot-blue-green mb-4">About This Spot</h2>
         <p className="text-gray-700 mb-6">{swimSpot.description}</p>
         
-        {/* 4 vertical advice tiles */}
-        <div className="space-y-4">
-          {/* Water Quality & Safety */}
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
-            <div className="flex items-start gap-3">
-              <Droplet className="h-6 w-6 text-blue-600 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-blue-900 mb-2">Water Quality & Safety</h3>
-                <p className="text-blue-800 text-sm mb-2">
-                  This {swimSpot.water_type.toLowerCase()} spot is ideal for swimming. 
-                  {swimSpot.current_temperature && ` Current water temperature: ${swimSpot.current_temperature}°C.`}
-                  {swimSpot.current && ` Water current: ${swimSpot.current}.`}
-                </p>
-                <div className="text-xs text-blue-700">
-                  {swimSpot.facilities.lifeguard ? "✓ Lifeguard on duty" : "⚠️ No lifeguard - swim with caution"}
-                </div>
-              </div>
+        {/* 4 horizontal advice tiles */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {/* Water Type */}
+          <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <Droplet className="h-5 w-5 text-blue-600" />
+              <h3 className="font-semibold text-blue-900">Water Type</h3>
+            </div>
+            <p className="text-blue-800 text-sm capitalize">{swimSpot.water_type}</p>
+          </div>
+
+          {/* Tags */}
+          <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <Tag className="h-5 w-5 text-green-600" />
+              <h3 className="font-semibold text-green-900">Features</h3>
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {swimSpot.tags.slice(0, 2).map((tag, index) => (
+                <span key={index} className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+                  {tag}
+                </span>
+              ))}
             </div>
           </div>
 
-          {/* Best Time to Visit */}
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
-            <div className="flex items-start gap-3">
-              <Clock className="h-6 w-6 text-green-600 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-green-900 mb-2">Best Time to Visit</h3>
-                <p className="text-green-800 text-sm mb-2">
-                  Optimal swimming season: {swimSpot.best_times.season || 'Year-round'}. 
-                  {swimSpot.best_times.time_of_day && ` Best time of day: ${swimSpot.best_times.time_of_day}.`}
-                </p>
-                <div className="text-xs text-green-700">
-                  💡 Pro tip: Visit during off-peak hours for a more peaceful experience
-                </div>
-              </div>
+          {/* Location */}
+          <div className="bg-purple-50 border border-purple-200 p-4 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <MapPin className="h-5 w-5 text-purple-600" />
+              <h3 className="font-semibold text-purple-900">Location</h3>
             </div>
+            <p className="text-purple-800 text-sm">{swimSpot.city}, {swimSpot.country}</p>
           </div>
 
-          {/* Facilities & Access */}
-          <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-lg">
-            <div className="flex items-start gap-3">
-              <MapIcon className="h-6 w-6 text-purple-600 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-purple-900 mb-2">Facilities & Access</h3>
-                <p className="text-purple-800 text-sm mb-2">
-                  {swimSpot.facilities.changing_rooms ? "Changing rooms available" : "No changing facilities - come prepared"}
-                  {swimSpot.facilities.restrooms && ", restrooms on-site"}
-                  {swimSpot.facilities.food_drinks && ", food & drinks available"}.
-                </p>
-                <div className="text-xs text-purple-700">
-                  📍 Located at: {swimSpot.location.address}
-                </div>
-              </div>
+          {/* Partner */}
+          <div className="bg-orange-50 border border-orange-200 p-4 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <Users className="h-5 w-5 text-orange-600" />
+              <h3 className="font-semibold text-orange-900">Local Partner</h3>
             </div>
-          </div>
-
-          {/* Local Partnerships & Support */}
-          <div className="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-lg">
-            <div className="flex items-start gap-3">
-              <MapPin className="h-6 w-6 text-orange-600 mt-0.5" />
+            {partners.length > 0 ? (
               <div>
-                <h3 className="font-semibold text-orange-900 mb-2">Local Partnerships & Support</h3>
-                {partners.length > 0 ? (
-                  <div>
-                    <p className="text-orange-800 text-sm mb-2">
-                      Local partner: <strong>{partners[0].name}</strong>
-                      {partners[0].discount_code && ` - Use code "${partners[0].discount_code}" for discounts`}
-                    </p>
-                    {partners[0].description && (
-                      <div className="text-xs text-orange-700">{partners[0].description}</div>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-orange-800 text-sm">
-                    No local partnerships yet. Support local businesses when visiting this area.
-                  </p>
+                <p className="text-orange-800 text-sm font-medium">{partners[0].name}</p>
+                {partners[0].discount_code && (
+                  <p className="text-xs text-orange-600">Code: {partners[0].discount_code}</p>
                 )}
               </div>
-            </div>
+            ) : (
+              <p className="text-orange-800 text-sm">No partner yet</p>
+            )}
           </div>
         </div>
 

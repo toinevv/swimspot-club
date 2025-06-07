@@ -378,13 +378,10 @@ export type Database = {
       swim_spots: {
         Row: {
           address: string
-          best_times: Json
           city: string | null
+          country: string | null
           created_at: string
-          current: string | null
-          current_temperature: number | null
           description: string
-          facilities: Json
           id: string
           image_url: string
           latitude: number
@@ -398,13 +395,10 @@ export type Database = {
         }
         Insert: {
           address: string
-          best_times?: Json
           city?: string | null
+          country?: string | null
           created_at?: string
-          current?: string | null
-          current_temperature?: number | null
           description: string
-          facilities?: Json
           id?: string
           image_url: string
           latitude: number
@@ -418,13 +412,10 @@ export type Database = {
         }
         Update: {
           address?: string
-          best_times?: Json
           city?: string | null
+          country?: string | null
           created_at?: string
-          current?: string | null
-          current_temperature?: number | null
           description?: string
-          facilities?: Json
           id?: string
           image_url?: string
           latitude?: number
