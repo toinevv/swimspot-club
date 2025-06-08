@@ -30,19 +30,19 @@ const SwimSpotHeader = ({
   visitMutationPending
 }: SwimSpotHeaderProps) => {
   return (
-    <div className="relative h-[40vh] md:h-[50vh] bg-swimspot-blue-green">
+    <div className="relative h-[60vh] bg-swimspot-blue-green">
       <img
         src={swimSpot.image_url}
         alt={swimSpot.name}
         className="w-full h-full object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
       
       {/* Back button */}
-      <div className="absolute top-4 left-4">
+      <div className="absolute top-6 left-6">
         <Link 
           to={getBackToMapUrl()}
-          className="flex items-center gap-2 px-4 py-2 bg-black/30 backdrop-blur-sm text-white rounded-full hover:bg-black/40 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md text-white rounded-lg hover:bg-white/20 transition-all duration-200 border border-white/20"
         >
           <Map className="h-4 w-4" />
           Back to Map
@@ -51,23 +51,24 @@ const SwimSpotHeader = ({
       
       {/* Premium badge */}
       {swimSpot.visibility === "premium" && (
-        <div className="absolute top-4 right-4 px-3 py-1 bg-swimspot-burnt-coral text-white rounded-full text-sm font-medium flex items-center">
+        <div className="absolute top-6 right-6 px-3 py-1 bg-swimspot-burnt-coral text-white rounded-full text-sm font-medium flex items-center shadow-lg">
           <Star className="h-4 w-4 mr-1" />
           Premium Spot
         </div>
       )}
       
-      {/* Title area */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-        <div className="container mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-              <h1 className="font-serif text-3xl md:text-4xl font-medium mb-2">{swimSpot.name}</h1>
-              <div className="flex items-center flex-wrap gap-2 mb-2">
+      {/* Content overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+        <div className="container mx-auto max-w-6xl">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+            <div className="flex-1">
+              <h1 className="font-serif text-4xl lg:text-5xl font-bold mb-4 leading-tight">{swimSpot.name}</h1>
+              
+              <div className="flex items-center flex-wrap gap-2 mb-4">
                 {swimSpot.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs"
+                    className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium border border-white/30"
                   >
                     {tag}
                   </span>
@@ -75,24 +76,28 @@ const SwimSpotHeader = ({
               </div>
               
               {/* Stats */}
-              <div className="flex items-center gap-4 mt-2">
-                <div className="flex items-center gap-1 text-sm">
-                  <span>{visitData?.count || 0} visits</span>
+              <div className="flex items-center gap-6 text-white/90">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                  <span className="text-lg font-medium">{visitData?.count || 0} visits</span>
                 </div>
-                <div className="flex items-center gap-1 text-sm">
-                  <span>{savedCount} saves</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                  <span className="text-lg font-medium">{savedCount} saves</span>
                 </div>
               </div>
             </div>
             
-            <SwimSpotActions
-              isSaved={isSaved}
-              onSave={onSave}
-              onMarkVisited={onMarkVisited}
-              onReport={onReport}
-              saveMutationPending={saveMutationPending}
-              visitMutationPending={visitMutationPending}
-            />
+            <div className="lg:ml-8">
+              <SwimSpotActions
+                isSaved={isSaved}
+                onSave={onSave}
+                onMarkVisited={onMarkVisited}
+                onReport={onReport}
+                saveMutationPending={saveMutationPending}
+                visitMutationPending={visitMutationPending}
+              />
+            </div>
           </div>
         </div>
       </div>
