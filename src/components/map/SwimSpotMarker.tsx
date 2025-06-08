@@ -1,3 +1,4 @@
+
 import { MapPin } from "lucide-react";
 import { SwimSpot } from "@/types";
 
@@ -17,7 +18,7 @@ const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
     // Otherwise, use water type colors
     switch (waterType.toLowerCase()) {
       case 'lake':
-        return 'text-blue-500'; // More subdued lake color
+        return 'text-blue-300'; // Much more subdued lake color
       case 'river':
         return 'text-teal-600';
       case 'canal':
@@ -26,7 +27,7 @@ const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
       case 'ocean':
         return 'text-blue-800';
       case 'pond':
-        return 'text-blue-300';
+        return 'text-blue-200';
       case 'stream':
         return 'text-teal-400';
       default:

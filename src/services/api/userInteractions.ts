@@ -124,7 +124,8 @@ export const userInteractionsApi = {
           image_url,
           water_type,
           address,
-          tags
+          tags,
+          official_location
         )
       `)
       .eq('user_id', user.id)
@@ -132,8 +133,9 @@ export const userInteractionsApi = {
 
     return saves?.map(save => {
       if (!save.swim_spots) return null;
+      const swimSpot = save.swim_spots as any;
       return {
-        ...save.swim_spots,
+        ...swimSpot,
         savedAt: save.created_at
       };
     }).filter(Boolean) || [];
