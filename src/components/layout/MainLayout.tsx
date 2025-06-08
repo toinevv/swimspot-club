@@ -240,7 +240,7 @@ const UserMenu = ({ isMobile = false, user, onSignOut }: { isMobile?: boolean; u
         <>
           <Button 
             variant="outline" 
-            className="w-64 py-4 text-white bg-swimspot-blue-green border-swimspot-blue-green hover:bg-swimspot-blue-green/90 rounded-xl"
+            className="w-64 py-4 text-swimspot-blue-green bg-swimspot-drift-sand border-swimspot-blue-green hover:bg-swimspot-drift-sand/90 rounded-xl"
           >
             <Link to="/auth">Sign In</Link>
           </Button>
