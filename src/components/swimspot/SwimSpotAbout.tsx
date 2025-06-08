@@ -62,25 +62,23 @@ const SwimSpotAbout = ({ swimSpot, partners }: SwimSpotAboutProps) => {
       <div className="grid grid-cols-2 gap-4">
         {/* Water Type */}
         <div className="bg-gradient-to-br from-swimspot-blue-mist to-swimspot-blue-mist/60 rounded-2xl p-6 border border-swimspot-blue-green/20 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
-          <div className="flex items-center gap-3 mb-3">
+          <div className="flex items-center justify-center mb-3">
             <div className="h-10 w-10 rounded-full bg-swimspot-blue-green/10 flex items-center justify-center">
               <Droplet className="h-5 w-5 text-swimspot-blue-green" />
             </div>
-            <h3 className="font-medium text-swimspot-blue-green text-lg">Water Type</h3>
           </div>
-          <p className="text-swimspot-blue-green capitalize font-medium">{swimSpot.water_type}</p>
+          <p className="text-swimspot-blue-green capitalize font-medium text-center">{swimSpot.water_type}</p>
         </div>
 
         {/* Location - Clickable */}
         <button 
           onClick={openInMaps}
-          className="bg-gradient-to-br from-swimspot-drift-sand to-swimspot-drift-sand/60 rounded-2xl p-6 border border-swimspot-blue-green/20 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-left"
+          className="bg-gradient-to-br from-swimspot-drift-sand to-swimspot-drift-sand/60 rounded-2xl p-6 border border-swimspot-blue-green/20 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-center"
         >
-          <div className="flex items-center gap-3 mb-3">
+          <div className="flex items-center justify-center mb-3">
             <div className="h-10 w-10 rounded-full bg-swimspot-blue-green/10 flex items-center justify-center">
               <MapPin className="h-5 w-5 text-swimspot-blue-green" />
             </div>
-            <h3 className="font-medium text-swimspot-blue-green text-lg">Location</h3>
           </div>
           <p className="text-swimspot-blue-green mb-1 font-medium">{swimSpot.city}</p>
           <p className="text-swimspot-blue-green/70 text-sm">Tap to navigate</p>
@@ -89,13 +87,12 @@ const SwimSpotAbout = ({ swimSpot, partners }: SwimSpotAboutProps) => {
         {/* WhatsApp Group */}
         <button 
           onClick={openWhatsApp}
-          className="bg-gradient-to-br from-green-50 to-green-50/60 rounded-2xl p-6 border border-green-500/30 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-left"
+          className="bg-gradient-to-br from-green-50 to-green-50/60 rounded-2xl p-6 border border-green-500/30 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 text-center"
         >
-          <div className="flex items-center gap-3 mb-3">
+          <div className="flex items-center justify-center mb-3">
             <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
               <MessageCircle className="h-5 w-5 text-green-700" />
             </div>
-            <h3 className="font-medium text-green-800 text-lg">Local Chat</h3>
           </div>
           <p className="text-green-800 mb-1 font-medium">Join WhatsApp</p>
           <p className="text-green-700/70 text-sm">Connect instantly</p>
@@ -103,14 +100,13 @@ const SwimSpotAbout = ({ swimSpot, partners }: SwimSpotAboutProps) => {
         
         {/* Local Partners */}
         <div className="bg-gradient-to-br from-swimspot-burnt-coral/10 to-swimspot-burnt-coral/5 rounded-2xl p-6 border border-swimspot-burnt-coral/30 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
-          <div className="flex items-center gap-3 mb-3">
+          <div className="flex items-center justify-center mb-3">
             <div className="h-10 w-10 rounded-full bg-swimspot-burnt-coral/10 flex items-center justify-center">
               <Users className="h-5 w-5 text-swimspot-burnt-coral" />
             </div>
-            <h3 className="font-medium text-swimspot-burnt-coral text-lg">Local Partner</h3>
           </div>
           {localPartner ? (
-            <div>
+            <div className="text-center">
               <p className="text-swimspot-burnt-coral font-medium mb-1">
                 {localPartner.name}
               </p>
@@ -121,7 +117,7 @@ const SwimSpotAbout = ({ swimSpot, partners }: SwimSpotAboutProps) => {
               )}
             </div>
           ) : (
-            <p className="text-swimspot-burnt-coral font-medium">Coming soon</p>
+            <p className="text-swimspot-burnt-coral font-medium text-center">Coming soon</p>
           )}
         </div>
       </div>

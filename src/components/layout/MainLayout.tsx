@@ -87,12 +87,14 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           {/* Mobile navigation overlay */}
           {isMobile && navOpen && (
             <div className="fixed inset-0 bg-swimspot-drift-sand z-40 pt-16">
-              <nav className="flex flex-col items-center gap-6 p-6">
-                <NavLinks isMobile={true} />
-                <div className="mt-4">
-                  <UserMenu isMobile={true} user={user} onSignOut={handleSignOut} />
-                </div>
-              </nav>
+              <div className="bg-white/95 backdrop-blur-sm min-h-full">
+                <nav className="flex flex-col items-center gap-6 p-6">
+                  <NavLinks isMobile={true} />
+                  <div className="mt-4">
+                    <UserMenu isMobile={true} user={user} onSignOut={handleSignOut} />
+                  </div>
+                </nav>
+              </div>
             </div>
           )}
         </header>
