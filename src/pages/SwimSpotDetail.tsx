@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Bookmark, Plus, Share, AlertTriangle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import { toast } from "sonner";
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import SwimSpotDetailsTab from "@/components/swimspot/SwimSpotDetailsTab";
 import SwimSpotCommunityTab from "@/components/swimspot/SwimSpotCommunityTab";
 import SwimSpotSidebar from "@/components/swimspot/SwimSpotSidebar";
+import SwimSpotActions from "@/components/swimspot/SwimSpotActions";
 import SEOHead from "@/components/seo/SEOHead";
 import StructuredData from "@/components/seo/StructuredData";
 
@@ -201,46 +203,14 @@ const SwimSpotDetail = () => {
               </div>
               
               {/* Action buttons */}
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleSave}
-                  disabled={saveMutationPending}
-                  className={`rounded-full ${
-                    isSaved ? "text-swimspot-burnt-coral border-swimspot-burnt-coral" : "text-swimspot-blue-green border-swimspot-blue-green"
-                  }`}
-                >
-                  <Bookmark
-                    className="h-5 w-5"
-                    fill={isSaved ? "currentColor" : "none"}
-                  />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleMarkVisited}
-                  disabled={visitMutationPending}
-                  className="rounded-full text-swimspot-blue-green border-swimspot-blue-green"
-                >
-                  <Plus className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full text-swimspot-blue-green border-swimspot-blue-green"
-                >
-                  <Share className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleReport}
-                  className="rounded-full text-swimspot-blue-green border-swimspot-blue-green"
-                >
-                  <AlertTriangle className="h-5 w-5" />
-                </Button>
-              </div>
+              <SwimSpotActions
+                isSaved={isSaved}
+                onSave={handleSave}
+                onMarkVisited={handleMarkVisited}
+                onReport={handleReport}
+                saveMutationPending={saveMutation.isPending}
+                visitMutationPending={visitMutation.isPending}
+              />
             </div>
           </div>
         </div>

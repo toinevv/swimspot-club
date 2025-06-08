@@ -92,7 +92,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                       to="/profile"
                       className="flex items-center justify-center w-8 h-8 bg-swimspot-blue-green text-white rounded-full text-sm font-medium hover:bg-swimspot-blue-green/90 transition-colors"
                     >
-                      {user.name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
+                      {user.email?.charAt(0).toUpperCase()}
                     </Link>
                     <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-swimspot-blue-green hover:text-swimspot-burnt-coral">
                       Sign Out
@@ -188,10 +188,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                   <div className="bg-white/50 backdrop-blur-sm rounded-lg p-4 shadow-sm">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-10 h-10 bg-swimspot-blue-green text-white rounded-full flex items-center justify-center font-medium">
-                        {user.name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
+                        {user.email?.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-medium text-swimspot-blue-green">{user.name || 'User'}</p>
+                        <p className="font-medium text-swimspot-blue-green">User</p>
                         <p className="text-sm text-gray-600">{user.email}</p>
                       </div>
                     </div>
