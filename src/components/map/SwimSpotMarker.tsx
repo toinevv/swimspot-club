@@ -8,8 +8,28 @@ interface SwimSpotMarkerProps {
 }
 
 const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
-  // Use a standard color instead of quality-based colors
-  const markerColor = spot.visibility === 'premium' ? 'text-swimspot-burnt-coral' : 'text-swimspot-blue-green';
+  // Use water type for pin color instead of premium status
+  const getMarkerColor = (waterType: string) => {
+    switch (waterType.toLowerCase()) {
+      case 'lake':
+        return 'text-blue-600';
+      case 'river':
+        return 'text-teal-600';
+      case 'canal':
+        return 'text-cyan-600';
+      case 'sea':
+      case 'ocean':
+        return 'text-blue-800';
+      case 'pond':
+        return 'text-blue-400';
+      case 'stream':
+        return 'text-teal-400';
+      default:
+        return 'text-swimspot-blue-green';
+    }
+  };
+
+  const markerColor = getMarkerColor(spot.water_type);
 
   return (
     <div 
