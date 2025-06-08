@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
@@ -175,6 +174,8 @@ const SwimSpotDetail = () => {
           onShare={handleShare}
           saveMutationPending={saveMutation.isPending}
           visitMutationPending={visitMutation.isPending}
+          savedCount={savedCount}
+          visitCount={visitData?.count || 0}
         />
         
         {/* Single Column Content */}

@@ -10,6 +10,8 @@ interface SwimSpotHeroProps {
   onShare: () => void;
   saveMutationPending: boolean;
   visitMutationPending: boolean;
+  savedCount?: number;
+  visitCount?: number;
 }
 
 const SwimSpotHero = ({
@@ -19,7 +21,9 @@ const SwimSpotHero = ({
   onMarkVisited,
   onShare,
   saveMutationPending,
-  visitMutationPending
+  visitMutationPending,
+  savedCount = 0,
+  visitCount = 0
 }: SwimSpotHeroProps) => {
   return (
     <div className="relative h-72 md:h-96 overflow-hidden">
@@ -33,7 +37,7 @@ const SwimSpotHero = ({
       
       <div className="absolute bottom-8 left-6 right-6">
         <div className="flex justify-between items-end">
-          <div className="text-white space-y-2">
+          <div className="text-white space-y-3">
             <h1 className="font-serif font-medium leading-tight tracking-tight" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', lineHeight: 1.1 }}>
               {swimSpot.name}
             </h1>
@@ -41,6 +45,19 @@ const SwimSpotHero = ({
               <MapPin className="h-4 w-4" />
               {swimSpot.city}, {swimSpot.country}
             </p>
+            
+            {/* Engagement Stats */}
+            <div className="flex items-center gap-6 mt-4">
+              <div className="text-center">
+                <div className="text-white font-semibold text-xl">{savedCount}</div>
+                <div className="text-white/70 text-sm font-medium">Saves</div>
+              </div>
+              <div className="w-px h-8 bg-white/30"></div>
+              <div className="text-center">
+                <div className="text-white font-semibold text-xl">{visitCount}</div>
+                <div className="text-white/70 text-sm font-medium">Visits</div>
+              </div>
+            </div>
           </div>
           
           {/* Action Buttons */}

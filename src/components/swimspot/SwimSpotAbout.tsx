@@ -24,9 +24,6 @@ const SwimSpotAbout = ({ swimSpot, partners }: SwimSpotAboutProps) => {
 
   return (
     <div className="bg-white rounded-3xl p-8 shadow-sm border border-swimspot-drift-sand/50">
-      <h2 className="font-serif text-3xl font-medium text-swimspot-blue-green mb-6 tracking-tight">
-        About This Place
-      </h2>
       <p className="text-gray-700 text-lg leading-relaxed mb-8 font-sans">
         {swimSpot.description}
       </p>
