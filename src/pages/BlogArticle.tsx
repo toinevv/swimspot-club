@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import { Loader2, ArrowLeft, Calendar, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ReactMarkdown from "react-markdown";
+import BlogContent from "@/components/blog/BlogContent";
 import SEOHead from "@/components/seo/SEOHead";
 import StructuredData from "@/components/seo/StructuredData";
 
@@ -119,7 +119,7 @@ const BlogArticle = () => {
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <div className="bg-white rounded-2xl p-8 shadow-sm mb-8">
             <div className="prose prose-lg max-w-none">
-              <ReactMarkdown>{post.content}</ReactMarkdown>
+              <BlogContent htmlContent={post.content} />
             </div>
             
             {/* Tags */}
