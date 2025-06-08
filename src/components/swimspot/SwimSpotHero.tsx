@@ -1,5 +1,5 @@
 
-import { Bookmark, Plus, Share, Eye } from "lucide-react";
+import { Bookmark, Share, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface SwimSpotHeroProps {
@@ -83,7 +83,7 @@ const SwimSpotHero = ({
               className="h-11 w-11 rounded-full bg-white/15 backdrop-blur-md border border-white/20 hover:bg-white/25 transition-all duration-300"
               style={{ backdropFilter: 'blur(12px)' }}
             >
-              <Plus className="h-5 w-5 text-white" />
+              <Eye className="h-5 w-5 text-white" />
             </Button>
             <Button
               size="icon"
