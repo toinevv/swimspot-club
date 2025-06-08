@@ -8,11 +8,11 @@ interface SwimSpotMarkerProps {
 }
 
 const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
-  // Use water type for pin color, but override with light blue for official locations
+  // Use water type for pin color, but override with blue-700 for official locations
   const getMarkerColor = (waterType: string, isOfficial: boolean) => {
-    // Override: if it's an official location, always use light blue
+    // Override: if it's an official location, always use blue-700
     if (isOfficial) {
-      return 'text-blue-400';
+      return 'text-blue-700';
     }
     
     // Otherwise, use water type colors
@@ -27,7 +27,7 @@ const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
       case 'ocean':
         return 'text-blue-800';
       case 'pond':
-        return 'text-blue-200';
+        return 'text-blue-300';
       case 'stream':
         return 'text-teal-400';
       default:
