@@ -66,7 +66,6 @@ const SwimSpotCommunity = ({ visitData, groups, userIsPremium = false }: SwimSpo
       
       {/* Swimming Options */}
       <div>
-        <h3 className="text-xl font-medium text-swimspot-blue-green mb-4">Ways to Connect</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* In-App Groups */}
           <Link to="/groups" className="group block">
