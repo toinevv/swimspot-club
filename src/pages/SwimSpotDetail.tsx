@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2 } from "lucide-react";
+import { Loader2, Bookmark, Plus, Share, AlertTriangle } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import SwimSpotHeader from "@/components/swimspot/SwimSpotHeader";
 import SwimSpotDetailsTab from "@/components/swimspot/SwimSpotDetailsTab";
 import SwimSpotCommunityTab from "@/components/swimspot/SwimSpotCommunityTab";
 import SwimSpotSidebar from "@/components/swimspot/SwimSpotSidebar";
@@ -170,18 +169,81 @@ const SwimSpotDetail = () => {
       />
 
       <div className="min-h-screen bg-swimspot-drift-sand">
-        <SwimSpotHeader
-          swimSpot={swimSpot}
-          getBackToMapUrl={getBackToMapUrl}
-          visitData={visitData}
-          savedCount={savedCount}
-          isSaved={isSaved}
-          onSave={handleSave}
-          onMarkVisited={handleMarkVisited}
-          onReport={handleReport}
-          saveMutationPending={saveMutation.isPending}
-          visitMutationPending={visitMutation.isPending}
-        />
+        {/* Compact spot header */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="flex-1">
+                <h1 className="font-serif text-3xl lg:text-4xl font-bold text-swimspot-blue-green mb-3">{swimSpot.name}</h1>
+                
+                <div className="flex items-center flex-wrap gap-2 mb-4">
+                  {swimSpot.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-swimspot-light-blue-mist rounded-full text-sm font-medium text-swimspot-blue-green"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                
+                {/* Stats */}
+                <div className="flex items-center gap-6 text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-swimspot-blue-green rounded-full"></div>
+                    <span className="font-medium">{visitData?.count || 0} visits</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-swimspot-blue-green rounded-full"></div>
+                    <span className="font-medium">{savedCount} saves</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Action buttons */}
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleSave}
+                  disabled={saveMutationPending}
+                  className={`rounded-full ${
+                    isSaved ? "text-swimspot-burnt-coral border-swimspot-burnt-coral" : "text-swimspot-blue-green border-swimspot-blue-green"
+                  }`}
+                >
+                  <Bookmark
+                    className="h-5 w-5"
+                    fill={isSaved ? "currentColor" : "none"}
+                  />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleMarkVisited}
+                  disabled={visitMutationPending}
+                  className="rounded-full text-swimspot-blue-green border-swimspot-blue-green"
+                >
+                  <Plus className="h-5 w-5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full text-swimspot-blue-green border-swimspot-blue-green"
+                >
+                  <Share className="h-5 w-5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleReport}
+                  className="rounded-full text-swimspot-blue-green border-swimspot-blue-green"
+                >
+                  <AlertTriangle className="h-5 w-5" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

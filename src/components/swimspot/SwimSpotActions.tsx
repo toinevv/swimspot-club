@@ -26,8 +26,8 @@ const SwimSpotActions = ({
         size="icon"
         onClick={onSave}
         disabled={saveMutationPending}
-        className={`rounded-full border-white bg-black/20 backdrop-blur-sm ${
-          isSaved ? "text-swimspot-burnt-coral" : "text-white"
+        className={`rounded-full ${
+          isSaved ? "text-swimspot-burnt-coral border-swimspot-burnt-coral" : "text-swimspot-blue-green border-swimspot-blue-green"
         }`}
       >
         <Bookmark
@@ -40,14 +40,14 @@ const SwimSpotActions = ({
         size="icon"
         onClick={onMarkVisited}
         disabled={visitMutationPending}
-        className="rounded-full border-white bg-black/20 backdrop-blur-sm text-white"
+        className="rounded-full text-swimspot-blue-green border-swimspot-blue-green"
       >
         <Plus className="h-5 w-5" />
       </Button>
       <Button
         variant="outline"
         size="icon"
-        className="rounded-full border-white bg-black/20 backdrop-blur-sm text-white"
+        className="rounded-full text-swimspot-blue-green border-swimspot-blue-green"
       >
         <Share className="h-5 w-5" />
       </Button>
@@ -55,7 +55,7 @@ const SwimSpotActions = ({
         variant="outline"
         size="icon"
         onClick={onReport}
-        className="rounded-full border-white bg-black/20 backdrop-blur-sm text-white"
+        className="rounded-full text-swimspot-blue-green border-swimspot-blue-green"
       >
         <AlertTriangle className="h-5 w-5" />
       </Button>
