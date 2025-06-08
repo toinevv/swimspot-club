@@ -23,27 +23,6 @@ const SwimSpotCTA = ({ userIsPremium = false }: SwimSpotCTAProps) => {
             Join the Movement
           </Button>
         </Link>
-        
-        {/* Community Support */}
-        {!userIsPremium && (
-          <>
-            <div className="flex items-center gap-4 my-4">
-              <div className="flex-1 h-px bg-white/20"></div>
-              <span className="text-white/60 text-sm font-medium tracking-wide">SUPPORT</span>
-              <div className="flex-1 h-px bg-white/20"></div>
-            </div>
-            
-            <p className="text-white/70 text-sm mb-3">
-              Support SwimSpot and unlock community benefits
-            </p>
-            
-            <Link to="/membership">
-              <Button variant="outline" className="w-full text-white border-white/30 hover:bg-white/10 py-4 px-6 rounded-2xl font-medium transition-all duration-300">
-                Become a Community Member
-              </Button>
-            </Link>
-          </>
-        )}
       </div>
     </div>
   );
