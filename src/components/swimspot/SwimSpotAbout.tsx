@@ -1,5 +1,6 @@
 
 import { Droplet, MapPin, MessageCircle, Users } from "lucide-react";
+import { useState } from "react";
 
 interface SwimSpotAboutProps {
   swimSpot: any;
@@ -7,6 +8,8 @@ interface SwimSpotAboutProps {
 }
 
 const SwimSpotAbout = ({ swimSpot, partners }: SwimSpotAboutProps) => {
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  
   const openInMaps = () => {
     const { latitude, longitude } = swimSpot.location;
     const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
@@ -22,11 +25,38 @@ const SwimSpotAbout = ({ swimSpot, partners }: SwimSpotAboutProps) => {
 
   const localPartner = partners?.[0];
 
+  // Check if description has multiple sentences
+  const sentences = swimSpot.description.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0);
+  const hasMultipleSentences = sentences.length > 1;
+  const firstSentence = sentences[0]?.trim() + '.';
+
   return (
     <div className="bg-white rounded-3xl p-8 shadow-sm border border-swimspot-drift-sand/50">
-      <p className="text-gray-700 text-lg leading-relaxed mb-8 font-sans">
-        {swimSpot.description}
-      </p>
+      <div className="text-gray-700 text-lg leading-relaxed mb-8 font-sans">
+        {hasMultipleSentences && !showFullDescription ? (
+          <>
+            {firstSentence}
+            <button 
+              onClick={() => setShowFullDescription(true)}
+              className="ml-2 text-swimspot-blue-green hover:text-swimspot-blue-green/80 font-medium underline"
+            >
+              Read more
+            </button>
+          </>
+        ) : (
+          <>
+            {swimSpot.description}
+            {hasMultipleSentences && showFullDescription && (
+              <button 
+                onClick={() => setShowFullDescription(false)}
+                className="ml-2 text-swimspot-blue-green hover:text-swimspot-blue-green/80 font-medium underline"
+              >
+                Show less
+              </button>
+            )}
+          </>
+        )}
+      </div>
       
       {/* 2x2 Info Grid */}
       <div className="grid grid-cols-2 gap-4">
