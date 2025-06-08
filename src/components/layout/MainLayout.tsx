@@ -107,7 +107,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
           {/* Mobile navigation overlay */}
           {isMobile && navOpen && (
-            <div className="fixed inset-0 bg-swimspot-drift-sand/95 backdrop-blur-sm z-40 pt-16">
+            <div className="fixed inset-0 z-40 pt-16">
               <div ref={mobileMenuRef} className="min-h-full">
                 {/* Close button in top right */}
                 <div className="absolute top-4 right-4">
@@ -184,7 +184,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
 const NavLinks = ({ isMobile = false, onLinkClick }: { isMobile?: boolean; onLinkClick?: () => void }) => {
   const linkClasses = isMobile 
-    ? "flex items-center justify-center gap-3 py-4 px-8 text-lg font-medium text-white bg-swimspot-burnt-coral hover:bg-swimspot-burnt-coral/90 transition-colors rounded-xl shadow-lg w-64"
+    ? "flex items-center justify-center gap-3 py-4 px-8 text-lg font-medium text-white bg-swimspot-blue-green hover:bg-swimspot-blue-green/90 transition-colors rounded-xl shadow-lg w-64"
     : "flex items-center gap-1 text-swimspot-blue-green hover:text-swimspot-burnt-coral transition-colors";
 
   const handleClick = () => {
@@ -231,7 +231,7 @@ const UserMenu = ({ isMobile = false, user, onSignOut }: { isMobile?: boolean; u
           <Button 
             variant="outline" 
             onClick={onSignOut} 
-            className="w-64 py-4 text-swimspot-blue-green border-swimspot-blue-green hover:bg-swimspot-blue-green hover:text-white rounded-xl"
+            className="w-64 py-4 text-white bg-swimspot-blue-green border-swimspot-blue-green hover:bg-swimspot-blue-green/90 rounded-xl"
           >
             Sign Out
           </Button>
@@ -240,7 +240,7 @@ const UserMenu = ({ isMobile = false, user, onSignOut }: { isMobile?: boolean; u
         <>
           <Button 
             variant="outline" 
-            className="w-64 py-4 text-swimspot-blue-green border-swimspot-blue-green hover:bg-swimspot-blue-green hover:text-white rounded-xl"
+            className="w-64 py-4 text-white bg-swimspot-blue-green border-swimspot-blue-green hover:bg-swimspot-blue-green/90 rounded-xl"
           >
             <Link to="/auth">Sign In</Link>
           </Button>
