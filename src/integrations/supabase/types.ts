@@ -338,6 +338,20 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_swim_spot_saves_spot_id"
+            columns: ["swim_spot_id"]
+            isOneToOne: false
+            referencedRelation: "swim_spots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_swim_spot_saves_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "swim_spot_saves_swim_spot_id_fkey"
             columns: ["swim_spot_id"]
             isOneToOne: false
@@ -366,6 +380,20 @@ export type Database = {
           visited_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_swim_spot_visits_spot_id"
+            columns: ["swim_spot_id"]
+            isOneToOne: false
+            referencedRelation: "swim_spots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_swim_spot_visits_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "swim_spot_visits_swim_spot_id_fkey"
             columns: ["swim_spot_id"]
