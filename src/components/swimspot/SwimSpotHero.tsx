@@ -1,5 +1,5 @@
 
-import { MapPin, Bookmark, Plus, Share } from "lucide-react";
+import { Bookmark, Plus, Share } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface SwimSpotHeroProps {
@@ -41,10 +41,6 @@ const SwimSpotHero = ({
             <h1 className="font-serif font-medium leading-tight tracking-tight" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', lineHeight: 1.1 }}>
               {swimSpot.name}
             </h1>
-            <p className="text-white/85 flex items-center gap-2 text-lg font-sans">
-              <MapPin className="h-4 w-4" />
-              {swimSpot.city}, {swimSpot.country}
-            </p>
             
             {/* Engagement Stats */}
             <div className="flex items-center gap-6 mt-4">
