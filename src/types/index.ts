@@ -30,6 +30,7 @@ export interface SwimSpot {
   visibility: string; // Changed from union type to string to match database
   city?: string; // Added city property to match database
   country?: string; // Added country property to match database
+  official_location: boolean; // Added official_location property to match database
   created_at: string;
   updated_at: string;
 }

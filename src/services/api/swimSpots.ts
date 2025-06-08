@@ -1,3 +1,4 @@
+
 import { SwimSpot } from '@/types';
 import { apiClient } from './client';
 
@@ -50,6 +51,7 @@ export const swimSpotsApi = {
           visibility: spot.visibility,
           city: spot.city, // Include city field
           country: spot.country, // Include country field
+          official_location: spot.official_location, // Include official_location field
           created_at: spot.created_at,
           updated_at: spot.updated_at
         };
@@ -101,6 +103,7 @@ export const swimSpotsApi = {
         visibility: data.visibility,
         city: data.city, // Include city field
         country: data.country, // Include country field
+        official_location: data.official_location, // Include official_location field
         created_at: data.created_at,
         updated_at: data.updated_at
       };

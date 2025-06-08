@@ -415,6 +415,7 @@ export type Database = {
           latitude: number
           longitude: number
           name: string
+          official_location: boolean
           summary: string
           tags: string[]
           updated_at: string
@@ -432,6 +433,7 @@ export type Database = {
           latitude: number
           longitude: number
           name: string
+          official_location?: boolean
           summary: string
           tags?: string[]
           updated_at?: string
@@ -449,6 +451,7 @@ export type Database = {
           latitude?: number
           longitude?: number
           name?: string
+          official_location?: boolean
           summary?: string
           tags?: string[]
           updated_at?: string

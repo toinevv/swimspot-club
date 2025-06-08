@@ -105,7 +105,8 @@ export const profilesApi = {
           image_url,
           water_type,
           address,
-          tags
+          tags,
+          official_location
         )
       `)
       .eq('user_id', user.id)
@@ -114,7 +115,7 @@ export const profilesApi = {
     return saves?.map(save => {
       if (!save.swim_spots) return null;
       return {
-        ...save.swim_spots,
+        ...(save.swim_spots as any),
         savedAt: save.created_at
       };
     }).filter(Boolean) || [];
@@ -143,7 +144,7 @@ export const profilesApi = {
     return userGroups?.map(ug => {
       if (!ug.groups) return null;
       return {
-        ...ug.groups,
+        ...(ug.groups as any),
         role: ug.role,
         joinedAt: ug.joined_at
       };

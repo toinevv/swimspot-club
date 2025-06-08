@@ -1,4 +1,3 @@
-
 import { MapPin } from "lucide-react";
 import { SwimSpot } from "@/types";
 
@@ -8,11 +7,17 @@ interface SwimSpotMarkerProps {
 }
 
 const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
-  // Use water type for pin color instead of premium status
-  const getMarkerColor = (waterType: string) => {
+  // Use water type for pin color, but override with light blue for official locations
+  const getMarkerColor = (waterType: string, isOfficial: boolean) => {
+    // Override: if it's an official location, always use light blue
+    if (isOfficial) {
+      return 'text-blue-400';
+    }
+    
+    // Otherwise, use water type colors
     switch (waterType.toLowerCase()) {
       case 'lake':
-        return 'text-blue-600';
+        return 'text-blue-500'; // More subdued lake color
       case 'river':
         return 'text-teal-600';
       case 'canal':
@@ -21,7 +26,7 @@ const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
       case 'ocean':
         return 'text-blue-800';
       case 'pond':
-        return 'text-blue-400';
+        return 'text-blue-300';
       case 'stream':
         return 'text-teal-400';
       default:
@@ -29,7 +34,7 @@ const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
     }
   };
 
-  const markerColor = getMarkerColor(spot.water_type);
+  const markerColor = getMarkerColor(spot.water_type, spot.official_location);
 
   return (
     <div 
@@ -47,6 +52,12 @@ const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
           <h3 className="font-medium text-swimspot-blue-green mb-1">{spot.name}</h3>
           <div className="flex items-center text-xs text-gray-600">
             <span>{spot.water_type}</span>
+            {spot.official_location && (
+              <>
+                <span className="mx-1">•</span>
+                <span className="text-blue-600">Official</span>
+              </>
+            )}
             {spot.visibility === 'premium' && (
               <>
                 <span className="mx-1">•</span>
