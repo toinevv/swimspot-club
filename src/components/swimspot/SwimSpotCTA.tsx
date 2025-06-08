@@ -13,33 +13,33 @@ const SwimSpotCTA = ({ userIsPremium = false }: SwimSpotCTAProps) => {
         🏊‍♀️ Ready to Dive In?
       </h3>
       <p className="text-white/85 text-lg leading-relaxed mb-6 max-w-md mx-auto font-sans">
-        Connect with fellow swimmers and discover Amsterdam's hidden gems
+        Become part of Amsterdam's natural swimming movement and help us grow the community
       </p>
       
       <div className="space-y-4 max-w-sm mx-auto">
-        {/* Primary Action */}
+        {/* Primary Action - Community Movement */}
         <Link to="/groups">
           <Button className="w-full bg-swimspot-burnt-coral hover:bg-swimspot-burnt-coral/90 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300">
-            Join Swimming Groups
+            Join the Movement
           </Button>
         </Link>
         
-        {/* Community Join */}
+        {/* Community Support */}
         {!userIsPremium && (
           <>
             <div className="flex items-center gap-4 my-4">
               <div className="flex-1 h-px bg-white/20"></div>
-              <span className="text-white/60 text-sm font-medium tracking-wide">COMMUNITY</span>
+              <span className="text-white/60 text-sm font-medium tracking-wide">SUPPORT</span>
               <div className="flex-1 h-px bg-white/20"></div>
             </div>
             
             <p className="text-white/70 text-sm mb-3">
-              Become part of our swimming community
+              Support SwimSpot and unlock community benefits
             </p>
             
-            <Link to="/profile">
+            <Link to="/membership">
               <Button variant="outline" className="w-full text-white border-white/30 hover:bg-white/10 py-4 px-6 rounded-2xl font-medium transition-all duration-300">
-                Join SwimSpot Community
+                Become a Community Member
               </Button>
             </Link>
           </>
