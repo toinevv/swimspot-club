@@ -131,7 +131,7 @@ export const userInteractionsApi = {
       .order('created_at', { ascending: false });
 
     return saves?.map(save => ({
-      ...save.swim_spots,
+      ...(save.swim_spots || {}),
       savedAt: save.created_at
     })) || [];
   }

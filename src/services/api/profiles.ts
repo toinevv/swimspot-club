@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 export interface UserProfile {
@@ -111,7 +112,7 @@ export const profilesApi = {
       .order('created_at', { ascending: false });
 
     return saves?.map(save => ({
-      ...save.swim_spots,
+      ...(save.swim_spots || {}),
       savedAt: save.created_at
     })) || [];
   },
@@ -137,7 +138,7 @@ export const profilesApi = {
       .order('joined_at', { ascending: false });
 
     return userGroups?.map(ug => ({
-      ...ug.groups,
+      ...(ug.groups || {}),
       role: ug.role,
       joinedAt: ug.joined_at
     })) || [];
