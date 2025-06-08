@@ -60,7 +60,7 @@ export const userInteractionsApi = {
       .eq('user_id', user.id)
       .eq('swim_spot_id', spotId)
       .gt('visited_at', oneHourAgo)
-      .single();
+      .maybeSingle();
 
     if (recentVisit) {
       // Already visited within the last hour
@@ -68,9 +68,14 @@ export const userInteractionsApi = {
     }
 
     // Record new visit
-    await supabase
+    const { error } = await supabase
       .from('swim_spot_visits')
       .insert({ user_id: user.id, swim_spot_id: spotId });
+    
+    if (error) {
+      console.error('Error recording visit:', error);
+      throw error;
+    }
     
     return true;
   },
@@ -78,7 +83,7 @@ export const userInteractionsApi = {
   async getSpotVisits(spotId: string): Promise<{ count: number; userHasVisited: boolean; recentVisitors: any[] }> {
     const { data: { user } } = await supabase.auth.getUser();
     
-    const { data: visits } = await supabase
+    const { data: visits, error } = await supabase
       .from('swim_spot_visits')
       .select(`
         *,
@@ -90,6 +95,11 @@ export const userInteractionsApi = {
       `)
       .eq('swim_spot_id', spotId)
       .order('visited_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching visits:', error);
+      return { count: 0, userHasVisited: false, recentVisitors: [] };
+    }
 
     const userHasVisited = user ? visits?.some(visit => visit.user_id === user.id) || false : false;
     

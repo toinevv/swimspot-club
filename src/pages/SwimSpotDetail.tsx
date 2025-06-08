@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
@@ -73,6 +74,7 @@ const SwimSpotDetail = () => {
   const visitMutation = useMutation({
     mutationFn: () => api.markAsVisited(id!),
     onSuccess: (wasRecorded) => {
+      // Invalidate both visit data queries to refresh the UI
       queryClient.invalidateQueries({ queryKey: ['spotVisits', id] });
       if (wasRecorded) {
         toast.success("Visit recorded!");
