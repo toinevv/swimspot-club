@@ -1,16 +1,15 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import SwimSpotDetailsTab from "@/components/swimspot/SwimSpotDetailsTab";
-import SwimSpotCommunityTab from "@/components/swimspot/SwimSpotCommunityTab";
-import SwimSpotSidebar from "@/components/swimspot/SwimSpotSidebar";
-import SwimSpotActions from "@/components/swimspot/SwimSpotActions";
+import SwimSpotHero from "@/components/swimspot/SwimSpotHero";
+import SwimSpotAbout from "@/components/swimspot/SwimSpotAbout";
+import SwimSpotCommunity from "@/components/swimspot/SwimSpotCommunity";
+import SwimSpotCTA from "@/components/swimspot/SwimSpotCTA";
 import SEOHead from "@/components/seo/SEOHead";
 import StructuredData from "@/components/seo/StructuredData";
 
@@ -48,7 +47,6 @@ const SwimSpotDetail = () => {
     queryFn: api.getUserGroups,
   });
 
-  // Query for actual saved count from database
   const { data: savedCount = 0 } = useQuery({
     queryKey: ['spotSavedCount', id],
     queryFn: async () => {
@@ -103,20 +101,17 @@ const SwimSpotDetail = () => {
     visitMutation.mutate();
   };
 
-  const handleReport = () => {
-    toast("Report functionality will be implemented soon");
-  };
-
-  // Generate back to map URL with preserved coordinates
-  const getBackToMapUrl = () => {
-    const lat = searchParams.get('lat');
-    const lng = searchParams.get('lng');
-    const zoom = searchParams.get('zoom');
-    
-    if (lat && lng && zoom) {
-      return `/?lat=${lat}&lng=${lng}&zoom=${zoom}`;
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: swimSpot.name,
+        text: `Check out this swim spot: ${swimSpot.name}`,
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast.success("Link copied to clipboard!");
     }
-    return "/";
   };
 
   if (isLoading) {
@@ -170,71 +165,28 @@ const SwimSpotDetail = () => {
         }}
       />
 
-      <div className="min-h-screen bg-swimspot-drift-sand">
-        {/* Compact spot header */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="container mx-auto px-4 py-6">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-              <div className="flex-1">
-                <h1 className="font-serif text-3xl lg:text-4xl font-bold text-swimspot-blue-green mb-3">{swimSpot.name}</h1>
-                
-                <div className="flex items-center flex-wrap gap-2 mb-4">
-                  {swimSpot.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-swimspot-light-blue-mist rounded-full text-sm font-medium text-swimspot-blue-green"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                
-                {/* Stats */}
-                <div className="flex items-center gap-6 text-gray-600">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-swimspot-blue-green rounded-full"></div>
-                    <span className="font-medium">{visitData?.count || 0} visits</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-swimspot-blue-green rounded-full"></div>
-                    <span className="font-medium">{savedCount} saves</span>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Action buttons */}
-              <SwimSpotActions
-                isSaved={isSaved}
-                onSave={handleSave}
-                onMarkVisited={handleMarkVisited}
-                onReport={handleReport}
-                saveMutationPending={saveMutation.isPending}
-                visitMutationPending={visitMutation.isPending}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <Tabs defaultValue="details" className="w-full">
-                <TabsList className="w-full bg-white mb-6">
-                  <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
-                  <TabsTrigger value="community" className="flex-1">Community</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="details">
-                  <SwimSpotDetailsTab swimSpot={swimSpot} partners={partners} groups={groups} />
-                </TabsContent>
-                
-                <TabsContent value="community">
-                  <SwimSpotCommunityTab visitData={visitData} groups={groups} />
-                </TabsContent>
-              </Tabs>
-            </div>
-            
-            <SwimSpotSidebar swimSpot={swimSpot} />
+      <div className="min-h-screen bg-swimspot-drift-sand/30">
+        {/* Hero Section */}
+        <SwimSpotHero
+          swimSpot={swimSpot}
+          isSaved={isSaved}
+          onSave={handleSave}
+          onMarkVisited={handleMarkVisited}
+          onShare={handleShare}
+          saveMutationPending={saveMutation.isPending}
+          visitMutationPending={visitMutation.isPending}
+        />
+        
+        {/* Single Column Content */}
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
+          <div className="space-y-6">
+            <SwimSpotAbout swimSpot={swimSpot} partners={partners} />
+            <SwimSpotCommunity 
+              visitData={visitData} 
+              groups={groups}
+              userIsPremium={false} // TODO: Get from user context
+            />
+            <SwimSpotCTA userIsPremium={false} />
           </div>
         </div>
       </div>
