@@ -1,5 +1,5 @@
 
-import { MapPin } from "lucide-react";
+import { MapPin, MapPinCheck } from "lucide-react";
 import { SwimSpot } from "@/types";
 
 interface SwimSpotMarkerProps {
@@ -18,7 +18,7 @@ const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
     // Otherwise, use water type colors
     switch (waterType.toLowerCase()) {
       case 'lake':
-        return 'text-blue-300'; // Much more subdued lake color
+        return 'text-sky-800'; // Sky 800 for lake color
       case 'river':
         return 'text-teal-600';
       case 'canal':
@@ -36,13 +36,16 @@ const SwimSpotMarker = ({ spot, onClick }: SwimSpotMarkerProps) => {
   };
 
   const markerColor = getMarkerColor(spot.water_type, spot.official_location);
+  
+  // Use different icon for official locations
+  const PinIcon = spot.official_location ? MapPinCheck : MapPin;
 
   return (
     <div 
       onClick={onClick}
       className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
     >
-      <MapPin 
+      <PinIcon 
         className={`h-8 w-8 ${markerColor}`}
         fill="currentColor"
         fillOpacity={0.2}
