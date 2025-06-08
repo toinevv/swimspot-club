@@ -1,5 +1,5 @@
 
-import { Bookmark, Plus, Share } from "lucide-react";
+import { Bookmark, Plus, Share, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface SwimSpotHeroProps {
@@ -45,12 +45,18 @@ const SwimSpotHero = ({
             {/* Engagement Stats */}
             <div className="flex items-center gap-6 mt-4">
               <div className="text-center">
-                <div className="text-white font-semibold text-xl">{savedCount}</div>
+                <div className="flex items-center justify-center gap-1 mb-1">
+                  <Bookmark className="h-4 w-4 text-white/70" />
+                  <div className="text-white font-semibold text-xl">{savedCount}</div>
+                </div>
                 <div className="text-white/70 text-sm font-medium">Saves</div>
               </div>
               <div className="w-px h-8 bg-white/30"></div>
               <div className="text-center">
-                <div className="text-white font-semibold text-xl">{visitCount}</div>
+                <div className="flex items-center justify-center gap-1 mb-1">
+                  <Eye className="h-4 w-4 text-white/70" />
+                  <div className="text-white font-semibold text-xl">{visitCount}</div>
+                </div>
                 <div className="text-white/70 text-sm font-medium">Visits</div>
               </div>
             </div>

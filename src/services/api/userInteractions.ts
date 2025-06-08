@@ -130,9 +130,12 @@ export const userInteractionsApi = {
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
-    return saves?.map(save => ({
-      ...(save.swim_spots || {}),
-      savedAt: save.created_at
-    })) || [];
+    return saves?.map(save => {
+      if (!save.swim_spots) return null;
+      return {
+        ...save.swim_spots,
+        savedAt: save.created_at
+      };
+    }).filter(Boolean) || [];
   }
 };

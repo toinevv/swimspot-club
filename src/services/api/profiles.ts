@@ -111,10 +111,13 @@ export const profilesApi = {
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
-    return saves?.map(save => ({
-      ...(save.swim_spots || {}),
-      savedAt: save.created_at
-    })) || [];
+    return saves?.map(save => {
+      if (!save.swim_spots) return null;
+      return {
+        ...save.swim_spots,
+        savedAt: save.created_at
+      };
+    }).filter(Boolean) || [];
   },
 
   async getUserGroups(): Promise<any[]> {
@@ -137,10 +140,13 @@ export const profilesApi = {
       .eq('user_id', user.id)
       .order('joined_at', { ascending: false });
 
-    return userGroups?.map(ug => ({
-      ...(ug.groups || {}),
-      role: ug.role,
-      joinedAt: ug.joined_at
-    })) || [];
+    return userGroups?.map(ug => {
+      if (!ug.groups) return null;
+      return {
+        ...ug.groups,
+        role: ug.role,
+        joinedAt: ug.joined_at
+      };
+    }).filter(Boolean) || [];
   }
 };
