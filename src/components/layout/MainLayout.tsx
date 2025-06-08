@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { MapPin, Menu, X, Map, Home, Users, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import StructuredData from "@/components/seo/StructuredData";
@@ -18,6 +18,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const isMobile = useIsMobile();
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const handleSignOut = async () => {
     try {
@@ -32,10 +33,30 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     setNavOpen(!navOpen);
   };
 
+  const closeNav = () => {
+    setNavOpen(false);
+  };
+
   // Close mobile menu when route changes
   useEffect(() => {
     setNavOpen(false);
   }, [location.pathname]);
+
+  // Handle click outside to close menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setNavOpen(false);
+      }
+    };
+
+    if (navOpen && isMobile) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [navOpen, isMobile]);
 
   return (
     <>
@@ -86,10 +107,22 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
           {/* Mobile navigation overlay */}
           {isMobile && navOpen && (
-            <div className="fixed inset-0 bg-swimspot-drift-sand z-40 pt-16">
-              <div className="bg-white/95 backdrop-blur-sm min-h-full">
-                <nav className="flex flex-col items-center gap-6 p-6">
-                  <NavLinks isMobile={true} />
+            <div className="fixed inset-0 bg-swimspot-drift-sand/95 backdrop-blur-sm z-40 pt-16">
+              <div ref={mobileMenuRef} className="min-h-full">
+                {/* Close button in top right */}
+                <div className="absolute top-4 right-4">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={closeNav}
+                    className="text-swimspot-blue-green"
+                  >
+                    <X className="h-6 w-6" />
+                  </Button>
+                </div>
+                
+                <nav className="flex flex-col items-center gap-6 p-6 pt-12">
+                  <NavLinks isMobile={true} onLinkClick={closeNav} />
                   <div className="mt-4">
                     <UserMenu isMobile={true} user={user} onSignOut={handleSignOut} />
                   </div>
@@ -149,26 +182,32 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   );
 };
 
-const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => {
+const NavLinks = ({ isMobile = false, onLinkClick }: { isMobile?: boolean; onLinkClick?: () => void }) => {
   const linkClasses = isMobile 
-    ? "flex items-center gap-2 py-3 text-xl text-swimspot-blue-green hover:text-swimspot-burnt-coral transition-colors"
+    ? "flex items-center justify-center gap-3 py-4 px-8 text-lg font-medium text-white bg-swimspot-burnt-coral hover:bg-swimspot-burnt-coral/90 transition-colors rounded-xl shadow-lg w-64"
     : "flex items-center gap-1 text-swimspot-blue-green hover:text-swimspot-burnt-coral transition-colors";
+
+  const handleClick = () => {
+    if (onLinkClick) {
+      onLinkClick();
+    }
+  };
 
   return (
     <>
-      <Link to="/" className={linkClasses}>
+      <Link to="/" className={linkClasses} onClick={handleClick}>
         {isMobile && <Map className="h-5 w-5" />}
         Swim Map
       </Link>
-      <Link to="/about" className={linkClasses}>
+      <Link to="/about" className={linkClasses} onClick={handleClick}>
         {isMobile && <Home className="h-5 w-5" />}
         About
       </Link>
-      <Link to="/groups" className={linkClasses}>
+      <Link to="/groups" className={linkClasses} onClick={handleClick}>
         {isMobile && <Users className="h-5 w-5" />}
         Groups
       </Link>
-      <Link to="/profile" className={`${linkClasses} ${!isMobile && "md:hidden"}`}>
+      <Link to="/profile" className={`${linkClasses} ${!isMobile && "md:hidden"}`} onClick={handleClick}>
         {isMobile && <User className="h-5 w-5" />}
         Profile
       </Link>
@@ -189,16 +228,23 @@ const UserMenu = ({ isMobile = false, user, onSignOut }: { isMobile?: boolean; u
             </Avatar>
             <span className="text-swimspot-blue-green">{user.email}</span>
           </div>
-          <Button variant="outline" onClick={onSignOut} className="w-full text-swimspot-blue-green border-swimspot-blue-green hover:bg-swimspot-blue-green hover:text-white">
+          <Button 
+            variant="outline" 
+            onClick={onSignOut} 
+            className="w-64 py-4 text-swimspot-blue-green border-swimspot-blue-green hover:bg-swimspot-blue-green hover:text-white rounded-xl"
+          >
             Sign Out
           </Button>
         </>
       ) : (
         <>
-          <Button variant="outline" className="w-full text-swimspot-blue-green border-swimspot-blue-green hover:bg-swimspot-blue-green hover:text-white">
+          <Button 
+            variant="outline" 
+            className="w-64 py-4 text-swimspot-blue-green border-swimspot-blue-green hover:bg-swimspot-blue-green hover:text-white rounded-xl"
+          >
             <Link to="/auth">Sign In</Link>
           </Button>
-          <Button className="w-full bg-swimspot-burnt-coral hover:bg-swimspot-burnt-coral/90 text-white">
+          <Button className="w-64 py-4 bg-swimspot-burnt-coral hover:bg-swimspot-burnt-coral/90 text-white rounded-xl">
             <Link to="/auth">Join SwimSpot</Link>
           </Button>
         </>
