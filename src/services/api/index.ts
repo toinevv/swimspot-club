@@ -44,7 +44,6 @@ export const api = {
   
   // Groups
   getGroups: groupsApi.getGroups,
-  getUserGroups: groupsApi.getUserGroups,
   
   // Users
   ...usersApi,
