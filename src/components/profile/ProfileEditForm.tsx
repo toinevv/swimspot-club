@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { api } from "@/services/api";
-import { UserProfile } from "@/services/api/profiles";
+import type { UserProfile } from "@/types/entities";
 
 interface ProfileEditFormProps {
   profile: UserProfile;

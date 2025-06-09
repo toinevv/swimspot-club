@@ -12,7 +12,7 @@ import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileStats from "@/components/profile/ProfileStats";
 import SavedSpotsTab from "@/components/profile/SavedSpotsTab";
 import GroupsTab from "@/components/profile/GroupsTab";
-import type { UserProfile, SavedSpotData, UserGroupData } from "@/services/api";
+import type { UserProfile, SavedSpotData, UserGroupData } from "@/types/entities";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);

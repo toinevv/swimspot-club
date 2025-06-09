@@ -1,7 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Bookmark, Users, Droplet } from "lucide-react";
-import { UserStats } from "@/services/api/profiles";
+import type { UserStats } from "@/types/entities";
 
 interface ProfileStatsProps {
   stats: UserStats;

@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bookmark, Droplet } from "lucide-react";
 import { Link } from "react-router-dom";
-import { SavedSpotData } from "@/services/api/profiles";
+import type { SavedSpotData } from "@/types/entities";
 
 interface SavedSpotsTabProps {
   savedSpots: SavedSpotData[];

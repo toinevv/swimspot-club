@@ -9,7 +9,7 @@ import SwimSpotCommunity from "@/components/swimspot/SwimSpotCommunity";
 import SwimSpotCTA from "@/components/swimspot/SwimSpotCTA";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { SpotVisitData } from "@/services/api";
+import type { SpotVisitData } from "@/types/entities";
 
 const SwimSpotDetail = () => {
   const { id } = useParams<{ id: string }>();

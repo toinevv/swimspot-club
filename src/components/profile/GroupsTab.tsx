@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Users } from "lucide-react";
 import { Link } from "react-router-dom";
-import { UserGroupData } from "@/services/api/userGroups";
+import type { UserGroupData } from "@/types/entities";
 
 interface GroupsTabProps {
   groups: UserGroupData[];

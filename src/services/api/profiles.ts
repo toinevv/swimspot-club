@@ -1,37 +1,7 @@
 
 import { apiClient } from './client';
-
-export interface UserProfile {
-  id: string;
-  username?: string;
-  full_name?: string;
-  avatar_url?: string;
-  bio?: string;
-  location?: string;
-  explorer_level?: string;
-  is_premium?: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface UserStats {
-  spots_saved: number;
-  spots_visited: number;
-  groups_joined: number;
-}
-
-export interface SavedSpotData {
-  id: string;
-  created_at: string;
-  swim_spots: {
-    id: string;
-    name: string;
-    image_url: string;
-    water_type: string;
-    address: string;
-    tags: string[];
-  };
-}
+import { mapRawProfileToUserProfile, mapRawSavedSpotToSavedSpotData } from './mappers';
+import type { UserProfile, UserStats, SavedSpotData } from '@/types/entities';
 
 export const profilesApi = {
   async getCurrentUserProfile(): Promise<UserProfile | null> {
@@ -53,7 +23,7 @@ export const profilesApi = {
         return null;
       }
 
-      return data;
+      return mapRawProfileToUserProfile(data);
     } catch (error) {
       console.error('Error fetching user profile:', error);
       return null;
@@ -86,7 +56,7 @@ export const profilesApi = {
         throw error;
       }
 
-      return data;
+      return mapRawProfileToUserProfile(data);
     } catch (error) {
       console.error('Error updating profile:', error);
       throw error;
@@ -123,7 +93,7 @@ export const profilesApi = {
         return [];
       }
 
-      return data || [];
+      return (data || []).map(mapRawSavedSpotToSavedSpotData);
     } catch (error) {
       console.error('Error fetching saved spots:', error);
       return [];

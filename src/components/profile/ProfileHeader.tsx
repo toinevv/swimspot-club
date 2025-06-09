@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Calendar, Trophy, Star, Edit } from "lucide-react";
-import { UserProfile } from "@/services/api/profiles";
+import type { UserProfile } from "@/types/entities";
 
 interface ProfileHeaderProps {
   profile: UserProfile;

@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Calendar, Trophy, Star } from "lucide-react";
-import { UserProfile } from "@/services/api/profiles";
+import type { UserProfile } from "@/types/entities";
 
 interface ProfileCardProps {
   profile: UserProfile;
