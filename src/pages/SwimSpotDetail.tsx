@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -21,27 +22,15 @@ const SwimSpotDetail = () => {
     enabled: !!id,
   });
 
-  const { data: waterQuality = [], isLoading: waterQualityLoading } = useQuery({
-    queryKey: ['waterQuality', id],
-    queryFn: () => api.getWaterQuality(id!),
-    enabled: !!id,
-  });
-
-  const { data: reviews = [], isLoading: reviewsLoading } = useQuery({
-    queryKey: ['reviews', id],
-    queryFn: () => api.getReviews(id!),
+  const { data: visits = [], isLoading: visitsLoading } = useQuery({
+    queryKey: ['spotVisits', id],
+    queryFn: () => api.getSpotVisits(id!),
     enabled: !!id,
   });
 
   const { data: groups = [], isLoading: groupsLoading } = useQuery({
     queryKey: ['groups'],
     queryFn: () => api.getGroups(),
-  });
-
-  const { data: visits = [], isLoading: visitsLoading } = useQuery({
-    queryKey: ['spotVisits', id],
-    queryFn: () => api.getSpotVisits(id!),
-    enabled: !!id,
   });
 
   if (spotLoading) {
@@ -54,27 +43,22 @@ const SwimSpotDetail = () => {
 
   return (
     <div className="min-h-screen bg-swimspot-drift-sand">
-      <SwimSpotHero spot={spot} />
+      <SwimSpotHero swimSpot={spot} />
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             <SwimSpotAbout 
-              spot={spot} 
-              waterQuality={waterQuality}
-              isWaterQualityLoading={waterQualityLoading}
+              swimSpot={spot} 
+              partners={partners}
             />
             <SwimSpotCommunity 
-              reviews={reviews}
+              visitData={visits}
               groups={groups}
-              visits={visits}
-              isReviewsLoading={reviewsLoading}
-              isGroupsLoading={groupsLoading}
-              isVisitsLoading={visitsLoading}
             />
           </div>
           <div className="lg:col-span-1">
             <SwimSpotCTA 
-              spot={spot} 
+              swimSpot={spot} 
               partners={partners}
               isPartnersLoading={partnersLoading}
             />

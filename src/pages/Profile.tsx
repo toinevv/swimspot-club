@@ -7,6 +7,7 @@ import { Edit } from "lucide-react";
 import { Link } from "react-router-dom";
 import { api } from "@/services/api";
 import ProfileEditForm from "@/components/profile/ProfileEditForm";
+import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileStats from "@/components/profile/ProfileStats";
 import SavedSpotsTab from "@/components/profile/SavedSpotsTab";
@@ -74,18 +75,7 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-swimspot-drift-sand">
       <div className="max-w-4xl mx-auto p-6">
-        <div className="flex justify-between items-start mb-8">
-          <h1 className="text-3xl font-serif text-swimspot-blue-green">My Profile</h1>
-          <Button
-            onClick={() => setIsEditing(true)}
-            variant="outline"
-            className="flex items-center gap-2"
-          >
-            <Edit className="h-4 w-4" />
-            Edit Profile
-          </Button>
-        </div>
-
+        <ProfileHeader profile={profile} onEditClick={() => setIsEditing(true)} />
         <ProfileCard profile={profile} />
         <ProfileStats stats={stats || { spots_saved: 0, spots_visited: 0, groups_joined: 0 }} isLoading={statsLoading} />
 

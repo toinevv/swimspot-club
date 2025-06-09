@@ -1,7 +1,5 @@
 
 import { swimSpotsApi } from './swimSpots';
-import { waterQualityApi } from './waterQuality';
-import { reviewsApi } from './reviews';
 import { groupsApi } from './groups';
 import { usersApi } from './users';
 import { blogPostsApi } from './blogPosts';
@@ -44,14 +42,9 @@ export const api = {
   // User groups
   getUserGroups: userGroupsApi.getUserGroups,
   
-  // Water quality
-  ...waterQualityApi,
-  
-  // Reviews
-  ...reviewsApi,
-  
   // Groups
-  ...groupsApi,
+  getGroups: groupsApi.getGroups,
+  getUserGroups: groupsApi.getUserGroups,
   
   // Users
   ...usersApi,
@@ -69,8 +62,6 @@ export const api = {
 // Export individual APIs
 export { 
   swimSpotsApi, 
-  waterQualityApi, 
-  reviewsApi, 
   groupsApi, 
   usersApi, 
   blogPostsApi, 
