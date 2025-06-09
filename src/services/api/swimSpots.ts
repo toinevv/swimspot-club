@@ -31,7 +31,6 @@ export const swimSpotsApi = {
         .from('swim_spots')
         .select('*');
 
-      // Apply filters if provided
       if (filters.waterType) {
         query = query.eq('water_type', filters.waterType);
       }
@@ -51,7 +50,6 @@ export const swimSpotsApi = {
         return [];
       }
 
-      // Transform database data to match SwimSpot interface
       return (data || []).map(spot => ({
         id: spot.id,
         name: spot.name,
@@ -91,7 +89,6 @@ export const swimSpotsApi = {
         throw new Error(`Failed to fetch swim spot with id ${id}`);
       }
 
-      // Transform database data to match SwimSpot interface
       return {
         id: data.id,
         name: data.name,
