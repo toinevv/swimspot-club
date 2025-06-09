@@ -38,6 +38,13 @@ const SwimSpotDetail = () => {
     queryFn: api.getGroups,
   });
 
+  // Check if spot is saved
+  const { data: savedCheck } = useQuery({
+    queryKey: ['spotSaved', id],
+    queryFn: () => api.checkIfSaved(id!),
+    enabled: !!id,
+  });
+
   // Mutations for spot interactions
   const saveMutation = useMutation({
     mutationFn: () => api.toggleSaveSpot(id!),
@@ -45,6 +52,7 @@ const SwimSpotDetail = () => {
       setIsSaved(!isSaved);
       toast.success(isSaved ? "Spot removed from saved" : "Spot saved!");
       queryClient.invalidateQueries({ queryKey: ['savedSpots'] });
+      queryClient.invalidateQueries({ queryKey: ['spotSaved', id] });
     }
   });
 
@@ -88,14 +96,14 @@ const SwimSpotDetail = () => {
   }
 
   // Handle visit count safely
-  const visitCount = visitsData && typeof visitsData === 'object' && 'count' in visitsData ? visitsData.count : 0;
+  const visitCount = typeof visitsData === 'object' && visitsData && 'count' in visitsData ? visitsData.count : 0;
   const visits = Array.isArray(visitsData) ? visitsData : [];
 
   return (
     <div className="min-h-screen bg-swimspot-drift-sand">
       <SwimSpotHero 
         swimSpot={spot}
-        isSaved={isSaved}
+        isSaved={savedCheck || false}
         hasFeedback={hasFeedback}
         onSave={handleSave}
         onMarkVisited={handleMarkVisited}
