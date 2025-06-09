@@ -1,143 +1,266 @@
 
-import { supabase } from '@/integrations/supabase/client';
+import { apiClient } from './client';
 
 export const userInteractionsApi = {
-  // Save functionality (replacing like)
-  async toggleSaveSpot(spotId: string): Promise<boolean> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not authenticated');
+  async getSpotPartners(id: string) {
+    try {
+      const { data, error } = await apiClient.supabase
+        .from('swim_spot_partners')
+        .select('*')
+        .eq('swim_spot_id', id);
 
-    // Check if already saved
-    const { data: existingSave } = await supabase
-      .from('swim_spot_saves')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('swim_spot_id', spotId)
-      .single();
+      if (error) {
+        console.error(`Error fetching partners for spot ${id}:`, error);
+        return [];
+      }
 
-    if (existingSave) {
-      // Remove from saved
-      await supabase
-        .from('swim_spot_saves')
-        .delete()
+      return data || [];
+    } catch (error) {
+      console.error(`Error fetching partners for spot ${id}:`, error);
+      return [];
+    }
+  },
+
+  async getSpotVisits(id: string) {
+    try {
+      const { data: { user } } = await apiClient.supabase.auth.getUser();
+
+      if (!user) {
+        return { count: 0 };
+      }
+
+      const { data, error } = await apiClient.supabase
+        .from('spot_visits')
+        .select('count')
+        .eq('swim_spot_id', id)
         .eq('user_id', user.id)
-        .eq('swim_spot_id', spotId);
+        .single();
+
+      if (error) {
+        console.error(`Error fetching visit count for spot ${id}:`, error);
+        return { count: 0 };
+      }
+
+      return data || { count: 0 };
+    } catch (error) {
+      console.error(`Error fetching visit count for spot ${id}:`, error);
+      return { count: 0 };
+    }
+  },
+
+  async markAsVisited(swimSpotId: string): Promise<boolean> {
+    try {
+      const { data: { user } } = await apiClient.supabase.auth.getUser();
+
+      if (!user) {
+        return false;
+      }
+
+      // Check if the user has already visited the spot in the last hour
+      const oneHourAgo = new Date();
+      oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+
+      const { data: existingVisit, error: existingVisitError } = await apiClient.supabase
+        .from('spot_visits_audit')
+        .select('created_at')
+        .eq('spot_id', swimSpotId)
+        .eq('user_id', user.id)
+        .gte('created_at', oneHourAgo.toISOString())
+        .maybeSingle();
+
+      if (existingVisitError) {
+        console.error('Error checking existing visit:', existingVisitError);
+        return false;
+      }
+
+      if (existingVisit) {
+        return true;
+      }
+
+      // Get current visit count
+      const { data: currentVisit, error: currentVisitError } = await apiClient.supabase
+        .from('spot_visits')
+        .select('count')
+        .eq('swim_spot_id', swimSpotId)
+        .eq('user_id', user.id)
+        .single();
+
+      if (currentVisitError) {
+        console.error('Error fetching current visit count:', currentVisitError);
+        return false;
+      }
+
+      const currentCount = currentVisit?.count || 0;
+
+      // Update or insert visit count
+      const { error: upsertError } = await apiClient.supabase
+        .from('spot_visits')
+        .upsert(
+          {
+            swim_spot_id: swimSpotId,
+            user_id: user.id,
+            count: currentCount + 1,
+          },
+          { onConflict: 'swim_spot_id, user_id' }
+        );
+
+      if (upsertError) {
+        console.error('Error updating visit count:', upsertError);
+        return false;
+      }
+
+      // Log the visit in the audit table
+      const { error: auditError } = await apiClient.supabase
+        .from('spot_visits_audit')
+        .insert({
+          spot_id: swimSpotId,
+          user_id: user.id,
+          success: true,
+        });
+
+      if (auditError) {
+        console.error('Error logging visit in audit table:', auditError);
+      }
+
       return false;
-    } else {
-      // Save spot
-      await supabase
+    } catch (error) {
+      console.error('Error marking spot as visited:', error);
+      return false;
+    }
+  },
+
+  async toggleSaveSpot(swimSpotId: string): Promise<void> {
+    try {
+      const { data: { user } } = await apiClient.supabase.auth.getUser();
+
+      if (!user) {
+        throw new Error("User not logged in");
+      }
+
+      // Check if the spot is already saved by the user
+      const { data: existingSave, error: existingSaveError } = await apiClient.supabase
         .from('swim_spot_saves')
-        .insert({ user_id: user.id, swim_spot_id: spotId });
-      return true;
-    }
-  },
+        .select('id')
+        .eq('swim_spot_id', swimSpotId)
+        .eq('user_id', user.id)
+        .single();
 
-  async checkIfSaved(spotId: string): Promise<boolean> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
+      if (existingSaveError) {
+        console.error('Error checking existing save:', existingSaveError);
+        throw existingSaveError;
+      }
 
-    const { data } = await supabase
-      .from('swim_spot_saves')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('swim_spot_id', spotId)
-      .single();
+      if (existingSave) {
+        // Remove the save
+        const { error: deleteError } = await apiClient.supabase
+          .from('swim_spot_saves')
+          .delete()
+          .eq('id', existingSave.id);
 
-    return !!data;
-  },
+        if (deleteError) {
+          console.error('Error deleting save:', deleteError);
+          throw deleteError;
+        }
 
-  // Visit functionality (now acts like likes - total visit count)
-  async markAsVisited(spotId: string): Promise<boolean> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not authenticated');
+        // Log the unsave action
+        await apiClient.supabase
+          .from('swim_spots_audit')
+          .insert({
+            spot_id: swimSpotId,
+            action: 'unsave',
+            user_id: user.id,
+            success: true
+          });
 
-    // Check if user has visited in the last hour (realistic limitation)
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-    
-    const { data: recentVisit } = await supabase
-      .from('swim_spot_visits')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('swim_spot_id', spotId)
-      .gt('visited_at', oneHourAgo)
-      .maybeSingle();
+      } else {
+        // Create a new save
+        const { error: insertError } = await apiClient.supabase
+          .from('swim_spot_saves')
+          .insert({
+            swim_spot_id: swimSpotId,
+            user_id: user.id,
+          });
 
-    if (recentVisit) {
-      // Already visited within the last hour
-      return false;
-    }
+        if (insertError) {
+          console.error('Error creating save:', insertError);
+          throw insertError;
+        }
 
-    // Record new visit
-    const { error } = await supabase
-      .from('swim_spot_visits')
-      .insert({ user_id: user.id, swim_spot_id: spotId });
-    
-    if (error) {
-      console.error('Error recording visit:', error);
+        // Log the save action
+        await apiClient.supabase
+          .from('swim_spots_audit')
+          .insert({
+            spot_id: swimSpotId,
+            action: 'save',
+            user_id: user.id,
+            success: true
+          });
+      }
+    } catch (error) {
+      console.error('Error toggling save spot:', error);
       throw error;
     }
-    
-    return true;
   },
 
-  async getSpotVisits(spotId: string): Promise<{ count: number; userHasVisited: boolean; recentVisitors: any[] }> {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    const { data: visits, error } = await supabase
-      .from('swim_spot_visits')
-      .select(`
-        *,
-        profiles:user_id (
-          username,
-          full_name,
-          avatar_url
-        )
-      `)
-      .eq('swim_spot_id', spotId)
-      .order('visited_at', { ascending: false });
+  async checkIfSaved(swimSpotId: string): Promise<boolean> {
+    try {
+      const { data: { user } } = await apiClient.supabase.auth.getUser();
 
-    if (error) {
-      console.error('Error fetching visits:', error);
-      return { count: 0, userHasVisited: false, recentVisitors: [] };
+      if (!user) {
+        return false;
+      }
+
+      const { data, error } = await apiClient.supabase
+        .from('swim_spot_saves')
+        .select('id')
+        .eq('swim_spot_id', swimSpotId)
+        .eq('user_id', user.id)
+        .single();
+
+      if (error) {
+        return false;
+      }
+
+      return !!data;
+    } catch (error) {
+      console.error('Error checking if spot is saved:', error);
+      return false;
     }
-
-    const userHasVisited = user ? visits?.some(visit => visit.user_id === user.id) || false : false;
-    
-    return {
-      count: visits?.length || 0,
-      userHasVisited,
-      recentVisitors: visits?.slice(0, 10) || []
-    };
   },
 
-  async getUserSavedSpots(): Promise<any[]> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return [];
+  async getUserGroups() {
+    try {
+      const { data: { user } } = await apiClient.supabase.auth.getUser();
 
-    const { data: saves } = await supabase
-      .from('swim_spot_saves')
-      .select(`
-        *,
-        swim_spots:swim_spot_id (
-          id,
-          name,
-          image_url,
-          water_type,
-          address,
-          tags,
-          official_location
-        )
-      `)
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+      if (!user) {
+        return [];
+      }
 
-    return saves?.map(save => {
-      if (!save.swim_spots) return null;
-      const swimSpot = save.swim_spots as any;
-      return {
-        ...swimSpot,
-        savedAt: save.created_at
-      };
-    }).filter(Boolean) || [];
+      const { data, error } = await apiClient.supabase
+        .from('user_groups')
+        .select(`
+          role,
+          groups:group_id (
+            id,
+            name,
+            description,
+            image_url,
+            location,
+            type,
+            is_premium
+          )
+        `)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error fetching user groups:', error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching user groups:', error);
+      return [];
+    }
   }
 };

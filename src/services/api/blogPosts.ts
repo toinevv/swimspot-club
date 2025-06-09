@@ -1,50 +1,43 @@
 
-import { supabase } from '@/integrations/supabase/client';
-
-export type BlogArticle = {
-  id: string;
-  title: string;
-  slug: string;
-  content: string;
-  cover_image_url: string;
-  tags: string[];
-  created_at: string;
-  published_at: string;
-  keyword?: string | null;
-  author: string;
-};
+import { apiClient } from './client';
 
 export const blogPostsApi = {
-  getAllBlogPosts: async (): Promise<BlogArticle[]> => {
-    const { data, error } = await supabase
-      .from('blog_articles')
-      .select('*')
-      .order('published_at', { ascending: false });
+  async getAllBlogPosts() {
+    try {
+      const { data, error } = await apiClient.supabase
+        .from('blog_articles')
+        .select('*')
+        .order('published_at', { ascending: false });
 
-    if (error) {
+      if (error) {
+        console.error('Error fetching blog posts:', error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
       console.error('Error fetching blog posts:', error);
-      throw error;
+      return [];
     }
-
-    return data || [];
   },
 
-  getBlogPostBySlug: async (slug: string): Promise<BlogArticle | null> => {
-    const { data, error } = await supabase
-      .from('blog_articles')
-      .select('*')
-      .eq('slug', slug)
-      .single();
+  async getBlogPostBySlug(slug: string) {
+    try {
+      const { data, error } = await apiClient.supabase
+        .from('blog_articles')
+        .select('*')
+        .eq('slug', slug)
+        .single();
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        // No rows returned - article not found
-        return null;
+      if (error) {
+        console.error(`Error fetching blog post with slug ${slug}:`, error);
+        throw new Error(`Failed to fetch blog post with slug ${slug}`);
       }
-      console.error('Error fetching blog post:', error);
+
+      return data;
+    } catch (error) {
+      console.error(`Error fetching blog post with slug ${slug}:`, error);
       throw error;
     }
-
-    return data;
   }
 };
