@@ -1,3 +1,4 @@
+
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import {
   Database,
@@ -7,7 +8,6 @@ import {
   SpotVisit,
 } from "./supabase.types";
 import { User } from "@supabase/supabase-js";
-import { groupApi } from "./api/group";
 import { feedbackApi } from "./api/feedback";
 
 type PublicSwimSpot = Omit<SwimSpot, "created_at" | "created_by">;
@@ -302,7 +302,41 @@ export const api = {
     }
   },
 
-  getUserGroups: groupApi.getUserGroups,
+  async getUserGroups() {
+    try {
+      const { data: { user } } = await apiClient.supabase.auth.getUser();
+
+      if (!user) {
+        return [];
+      }
+
+      const { data, error } = await apiClient.supabase
+        .from('user_groups')
+        .select(`
+          role,
+          groups:group_id (
+            id,
+            name,
+            description,
+            image_url,
+            location,
+            type,
+            is_premium
+          )
+        `)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error fetching user groups:', error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching user groups:', error);
+      return [];
+    }
+  },
   
   submitFeedback: feedbackApi.submitFeedback,
   submitFeedbackWithText: feedbackApi.submitFeedbackWithText,
