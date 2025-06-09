@@ -1,8 +1,31 @@
 
 import { apiClient } from './client';
 
+interface SwimSpotLocation {
+  latitude: number;
+  longitude: number;
+  address: string;
+}
+
+interface SwimSpot {
+  id: string;
+  name: string;
+  description: string;
+  summary: string;
+  image_url: string;
+  water_type: string;
+  location: SwimSpotLocation;
+  tags: string[];
+  visibility: string;
+  city: string | null;
+  country: string | null;
+  official_location: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export const swimSpotsApi = {
-  async getSwimSpots(filters: any = {}) {
+  async getSwimSpots(filters: any = {}): Promise<SwimSpot[]> {
     try {
       let query = apiClient.supabase
         .from('swim_spots')
@@ -55,7 +78,7 @@ export const swimSpotsApi = {
     }
   },
 
-  async getSwimSpotById(id: string) {
+  async getSwimSpotById(id: string): Promise<SwimSpot> {
     try {
       const { data, error } = await apiClient.supabase
         .from('swim_spots')
