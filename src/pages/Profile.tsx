@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -167,7 +168,7 @@ const Profile = () => {
                 <Plus className="h-8 w-8 text-swimspot-blue-green" />
               </div>
               <div className="text-2xl font-bold text-swimspot-blue-green">
-                {statsLoading ? "..." : stats?.spotsVisited || 0}
+                {statsLoading ? "..." : stats?.spots_visited || 0}
               </div>
               <div className="text-sm text-gray-600">Spots Visited</div>
             </CardContent>
@@ -179,7 +180,7 @@ const Profile = () => {
                 <Bookmark className="h-8 w-8 text-swimspot-blue-green" />
               </div>
               <div className="text-2xl font-bold text-swimspot-blue-green">
-                {statsLoading ? "..." : stats?.savedSpots || 0}
+                {statsLoading ? "..." : stats?.spots_saved || 0}
               </div>
               <div className="text-sm text-gray-600">Saved Spots</div>
             </CardContent>
@@ -191,7 +192,7 @@ const Profile = () => {
                 <Users className="h-8 w-8 text-swimspot-blue-green" />
               </div>
               <div className="text-2xl font-bold text-swimspot-blue-green">
-                {statsLoading ? "..." : stats?.groupsJoined || 0}
+                {statsLoading ? "..." : stats?.groups_joined || 0}
               </div>
               <div className="text-sm text-gray-600">Groups Joined</div>
             </CardContent>
@@ -203,7 +204,7 @@ const Profile = () => {
                 <Droplet className="h-8 w-8 text-swimspot-blue-green" />
               </div>
               <div className="text-2xl font-bold text-swimspot-blue-green">
-                {statsLoading ? "..." : stats?.totalVisits || 0}
+                {statsLoading ? "..." : stats?.spots_visited || 0}
               </div>
               <div className="text-sm text-gray-600">Total Visits</div>
             </CardContent>
@@ -229,23 +230,23 @@ const Profile = () => {
             ) : savedSpots.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {savedSpots.map((spot) => (
-                  <Link key={spot.id} to={`/spot/${spot.id}`}>
+                  <Link key={spot.id} to={`/spot/${spot.swim_spots.id}`}>
                     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-                      <div className="h-48 bg-cover bg-center" style={{ backgroundImage: `url(${spot.image_url})` }}>
+                      <div className="h-48 bg-cover bg-center" style={{ backgroundImage: `url(${spot.swim_spots.image_url})` }}>
                         <div className="h-full bg-gradient-to-t from-black/50 to-transparent flex items-end">
                           <div className="p-4 text-white">
-                            <h3 className="text-lg font-semibold mb-1">{spot.name}</h3>
+                            <h3 className="text-lg font-semibold mb-1">{spot.swim_spots.name}</h3>
                             <div className="flex items-center text-sm opacity-90">
                               <Droplet className="h-4 w-4 mr-1" />
-                              {spot.water_type}
+                              {spot.swim_spots.water_type}
                             </div>
                           </div>
                         </div>
                       </div>
                       <CardContent className="p-4">
-                        <p className="text-sm text-gray-600 mb-2">{spot.address}</p>
+                        <p className="text-sm text-gray-600 mb-2">{spot.swim_spots.address}</p>
                         <div className="flex gap-1 flex-wrap">
-                          {spot.tags?.slice(0, 3).map((tag: string, index: number) => (
+                          {spot.swim_spots.tags?.slice(0, 3).map((tag: string, index: number) => (
                             <Badge key={index} variant="secondary" className="text-xs">
                               {tag}
                             </Badge>
@@ -293,15 +294,15 @@ const Profile = () => {
                           </div>
                           <div className="flex-1">
                             <h3 className="text-lg font-semibold text-swimspot-blue-green mb-1">
-                              {group.name}
+                              {group.groups.name}
                             </h3>
-                            <p className="text-sm text-gray-600 mb-2">{group.description}</p>
+                            <p className="text-sm text-gray-600 mb-2">{group.groups.description}</p>
                             <div className="flex items-center justify-between">
                               <Badge variant="secondary" className="text-xs">
                                 {group.role}
                               </Badge>
                               <span className="text-xs text-gray-500">
-                                {group.location}
+                                {group.groups.location}
                               </span>
                             </div>
                           </div>

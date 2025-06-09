@@ -30,6 +30,7 @@ export const api = {
   
   // Profiles
   getCurrentUserProfile: profilesApi.getCurrentUserProfile,
+  updateProfile: profilesApi.updateProfile,
   getUserSavedSpots: profilesApi.getUserSavedSpots,
   getUserStats: profilesApi.getUserStats,
   
@@ -86,5 +87,6 @@ export {
 
 // Export types
 export type { BlogArticle } from './blogPosts';
-export type { UserProfile, UserStats } from './profiles';
+export type { UserProfile, UserStats, SavedSpotData } from './profiles';
 export type { City } from './cities';
+export type { UserGroupData } from './userGroups';

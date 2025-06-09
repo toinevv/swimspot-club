@@ -20,6 +20,19 @@ export interface UserStats {
   groups_joined: number;
 }
 
+export interface SavedSpotData {
+  id: string;
+  created_at: string;
+  swim_spots: {
+    id: string;
+    name: string;
+    image_url: string;
+    water_type: string;
+    address: string;
+    tags: string[];
+  };
+}
+
 export const profilesApi = {
   async getCurrentUserProfile(): Promise<UserProfile | null> {
     try {
@@ -47,7 +60,40 @@ export const profilesApi = {
     }
   },
 
-  async getUserSavedSpots() {
+  async updateProfile(profileData: Partial<UserProfile>): Promise<UserProfile> {
+    try {
+      const { data: { user } } = await apiClient.supabase.auth.getUser();
+
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      const { data, error } = await apiClient.supabase
+        .from('profiles')
+        .update({
+          full_name: profileData.full_name,
+          username: profileData.username,
+          bio: profileData.bio,
+          location: profileData.location,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating profile:', error);
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      throw error;
+    }
+  },
+
+  async getUserSavedSpots(): Promise<SavedSpotData[]> {
     try {
       const { data: { user } } = await apiClient.supabase.auth.getUser();
 
