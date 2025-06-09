@@ -3,22 +3,21 @@ import { apiClient } from './client';
 
 export interface UserProfile {
   id: string;
-  username: string | null;
-  full_name: string | null;
-  avatar_url: string | null;
-  bio: string | null;
-  location: string | null;
-  explorer_level: string | null;
-  is_premium: boolean | null;
+  username?: string;
+  full_name?: string;
+  avatar_url?: string;
+  bio?: string;
+  location?: string;
+  explorer_level?: string;
+  is_premium?: boolean;
   created_at: string;
   updated_at: string;
 }
 
 export interface UserStats {
-  spotsVisited: number;
-  savedSpots: number;
-  groupsJoined: number;
-  totalVisits: number;
+  spots_saved: number;
+  spots_visited: number;
+  groups_joined: number;
 }
 
 export const profilesApi = {
@@ -41,88 +40,10 @@ export const profilesApi = {
         return null;
       }
 
-      return data as UserProfile;
+      return data;
     } catch (error) {
       console.error('Error fetching user profile:', error);
       return null;
-    }
-  },
-
-  async updateProfile(profileData: Partial<UserProfile>): Promise<UserProfile> {
-    try {
-      const { data: { user } } = await apiClient.supabase.auth.getUser();
-
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
-
-      const { data, error } = await apiClient.supabase
-        .from('profiles')
-        .update(profileData)
-        .eq('id', user.id)
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error updating profile:', error);
-        throw error;
-      }
-
-      return data as UserProfile;
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      throw error;
-    }
-  },
-
-  async getUserStats(): Promise<UserStats> {
-    try {
-      const { data: { user } } = await apiClient.supabase.auth.getUser();
-
-      if (!user) {
-        return {
-          spotsVisited: 0,
-          savedSpots: 0,
-          groupsJoined: 0,
-          totalVisits: 0
-        };
-      }
-
-      // Get saved spots count
-      const { data: savedSpots } = await apiClient.supabase
-        .from('swim_spot_saves')
-        .select('id', { count: 'exact' })
-        .eq('user_id', user.id);
-
-      // Get groups joined count
-      const { data: groupsJoined } = await apiClient.supabase
-        .from('user_groups')
-        .select('id', { count: 'exact' })
-        .eq('user_id', user.id);
-
-      // Get spots visited and total visits from spot_visits table
-      const { data: visitData } = await apiClient.supabase
-        .from('swim_spot_visits')
-        .select('*')
-        .eq('user_id', user.id);
-
-      const spotsVisited = visitData?.length || 0;
-      const totalVisits = visitData?.length || 0;
-
-      return {
-        spotsVisited,
-        savedSpots: savedSpots?.length || 0,
-        groupsJoined: groupsJoined?.length || 0,
-        totalVisits
-      };
-    } catch (error) {
-      console.error('Error fetching user stats:', error);
-      return {
-        spotsVisited: 0,
-        savedSpots: 0,
-        groupsJoined: 0,
-        totalVisits: 0
-      };
     }
   },
 
@@ -134,76 +55,69 @@ export const profilesApi = {
         return [];
       }
 
-      // Fix the relationship query by being more explicit
       const { data, error } = await apiClient.supabase
         .from('swim_spot_saves')
         .select(`
+          id,
+          created_at,
           swim_spots!swim_spot_saves_swim_spot_id_fkey (
             id,
             name,
             image_url,
-            city,
             water_type,
             address,
             tags
           )
         `)
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching saved spots:', error);
         return [];
       }
 
-      return data?.map(save => save.swim_spots).filter(Boolean) || [];
+      return data || [];
     } catch (error) {
       console.error('Error fetching saved spots:', error);
       return [];
     }
   },
 
-  async getUserGroups() {
+  async getUserStats(): Promise<UserStats> {
     try {
       const { data: { user } } = await apiClient.supabase.auth.getUser();
 
       if (!user) {
-        return [];
+        return { spots_saved: 0, spots_visited: 0, groups_joined: 0 };
       }
 
-      const { data, error } = await apiClient.supabase
-        .from('user_groups')
-        .select(`
-          role,
-          groups!user_groups_group_id_fkey (
-            id,
-            name,
-            description,
-            image_url,
-            location,
-            type,
-            is_premium
-          )
-        `)
+      // Get saved spots count
+      const { data: savedSpots } = await apiClient.supabase
+        .from('swim_spot_saves')
+        .select('id', { count: 'exact' })
         .eq('user_id', user.id);
 
-      if (error) {
-        console.error('Error fetching user groups:', error);
-        return [];
-      }
+      // Get visited spots count
+      const { data: visitedSpots } = await apiClient.supabase
+        .from('swim_spot_visits')
+        .select('id', { count: 'exact' })
+        .eq('user_id', user.id);
 
-      return data?.map(userGroup => ({
-        id: userGroup.groups.id,
-        name: userGroup.groups.name,
-        description: userGroup.groups.description,
-        image_url: userGroup.groups.image_url,
-        location: userGroup.groups.location,
-        type: userGroup.groups.type,
-        is_premium: userGroup.groups.is_premium,
-        role: userGroup.role
-      })) || [];
+      // Get groups count
+      const { data: userGroups } = await apiClient.supabase
+        .from('user_groups')
+        .select('id', { count: 'exact' })
+        .eq('user_id', user.id);
+
+      return {
+        spots_saved: savedSpots?.length || 0,
+        spots_visited: visitedSpots?.length || 0,
+        groups_joined: userGroups?.length || 0
+      };
     } catch (error) {
-      console.error('Error fetching user groups:', error);
-      return [];
+      console.error('Error fetching user stats:', error);
+      return { spots_saved: 0, spots_visited: 0, groups_joined: 0 };
     }
   }
 };

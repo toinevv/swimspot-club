@@ -15,7 +15,7 @@ export interface BlogArticle {
 }
 
 export const blogPostsApi = {
-  async getAllBlogPosts() {
+  async getAllBlogPosts(): Promise<BlogArticle[]> {
     try {
       const { data, error } = await apiClient.supabase
         .from('blog_articles')
@@ -34,7 +34,7 @@ export const blogPostsApi = {
     }
   },
 
-  async getBlogPostBySlug(slug: string) {
+  async getBlogPostBySlug(slug: string): Promise<BlogArticle> {
     try {
       const { data, error } = await apiClient.supabase
         .from('blog_articles')

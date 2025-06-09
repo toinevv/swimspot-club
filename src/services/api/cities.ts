@@ -18,7 +18,7 @@ export interface City {
 }
 
 export const citiesApi = {
-  async getAllCities() {
+  async getAllCities(): Promise<City[]> {
     try {
       const { data, error } = await apiClient.supabase
         .from('cities')
@@ -37,7 +37,7 @@ export const citiesApi = {
     }
   },
 
-  async getCityBySlug(slug: string) {
+  async getCityBySlug(slug: string): Promise<City | null> {
     try {
       const { data, error } = await apiClient.supabase
         .from('cities')

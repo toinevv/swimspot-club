@@ -13,20 +13,54 @@ import { feedbackApi } from './feedback';
 import { apiClient } from './client';
 
 export const api = {
-  ...swimSpotsApi,
+  // Swim spots
+  getSwimSpots: swimSpotsApi.getSwimSpots,
+  getSwimSpotById: swimSpotsApi.getSwimSpotById,
+  
+  // Cities
+  getAllCities: citiesApi.getAllCities,
+  getCityBySlug: citiesApi.getCityBySlug,
+  
+  // Blog posts
+  getAllBlogPosts: blogPostsApi.getAllBlogPosts,
+  getBlogPostBySlug: blogPostsApi.getBlogPostBySlug,
+  
+  // Profiles
+  getCurrentUserProfile: profilesApi.getCurrentUserProfile,
+  getUserSavedSpots: profilesApi.getUserSavedSpots,
+  getUserStats: profilesApi.getUserStats,
+  
+  // User interactions
+  getSpotPartners: userInteractionsApi.getSpotPartners,
+  getSpotVisits: userInteractionsApi.getSpotVisits,
+  markAsVisited: userInteractionsApi.markAsVisited,
+  toggleSaveSpot: userInteractionsApi.toggleSaveSpot,
+  checkIfSaved: userInteractionsApi.checkIfSaved,
+  getUserGroups: userInteractionsApi.getUserGroups,
+  
+  // Water quality
   ...waterQualityApi,
+  
+  // Reviews
   ...reviewsApi,
+  
+  // Groups
   ...groupsApi,
+  
+  // Users
   ...usersApi,
-  ...blogPostsApi,
-  ...citiesApi,
-  ...userInteractionsApi,
-  ...profilesApi,
+  
+  // Partners
   ...partnersApi,
+  
+  // Feedback
   ...feedbackApi,
-  apiClient // Expose the API client for direct queries
+  
+  // Expose the API client for direct queries
+  apiClient
 };
 
+// Export individual APIs
 export { 
   swimSpotsApi, 
   waterQualityApi, 
