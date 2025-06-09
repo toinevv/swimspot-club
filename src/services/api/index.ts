@@ -6,10 +6,13 @@ import { groupsApi } from './groups';
 import { usersApi } from './users';
 import { blogPostsApi } from './blogPosts';
 import { citiesApi } from './cities';
-import { userInteractionsApi } from './userInteractions';
 import { profilesApi } from './profiles';
 import { partnersApi } from './partners';
 import { feedbackApi } from './feedback';
+import { spotPartnersApi } from './spotPartners';
+import { spotVisitsApi } from './spotVisits';
+import { spotSavesApi } from './spotSaves';
+import { userGroupsApi } from './userGroups';
 import { apiClient } from './client';
 
 export const api = {
@@ -30,13 +33,15 @@ export const api = {
   getUserSavedSpots: profilesApi.getUserSavedSpots,
   getUserStats: profilesApi.getUserStats,
   
-  // User interactions
-  getSpotPartners: userInteractionsApi.getSpotPartners,
-  getSpotVisits: userInteractionsApi.getSpotVisits,
-  markAsVisited: userInteractionsApi.markAsVisited,
-  toggleSaveSpot: userInteractionsApi.toggleSaveSpot,
-  checkIfSaved: userInteractionsApi.checkIfSaved,
-  getUserGroups: userInteractionsApi.getUserGroups,
+  // Spot interactions
+  getSpotPartners: spotPartnersApi.getSpotPartners,
+  getSpotVisits: spotVisitsApi.getSpotVisits,
+  markAsVisited: spotVisitsApi.markAsVisited,
+  toggleSaveSpot: spotSavesApi.toggleSaveSpot,
+  checkIfSaved: spotSavesApi.checkIfSaved,
+  
+  // User groups
+  getUserGroups: userGroupsApi.getUserGroups,
   
   // Water quality
   ...waterQualityApi,
@@ -69,10 +74,13 @@ export {
   usersApi, 
   blogPostsApi, 
   citiesApi,
-  userInteractionsApi,
   profilesApi,
   partnersApi,
   feedbackApi,
+  spotPartnersApi,
+  spotVisitsApi,
+  spotSavesApi,
+  userGroupsApi,
   apiClient
 };
 
