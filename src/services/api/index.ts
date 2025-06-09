@@ -15,7 +15,7 @@ import { apiClient } from './client';
 
 export const api = {
   // Swim spots
-  getSwimSpots: swimSpotsApi.getAllSwimSpots,
+  getAllSwimSpots: swimSpotsApi.getAllSwimSpots,
   getSwimSpotById: swimSpotsApi.getSwimSpotById,
   
   // Cities

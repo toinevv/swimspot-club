@@ -17,19 +17,19 @@ const SwimSpotDetail = () => {
 
   const { data: spot, isLoading: spotLoading, error: spotError } = useQuery({
     queryKey: ['swimSpot', id],
-    queryFn: ({ queryKey }) => api.getSwimSpotById(queryKey[1] as string),
+    queryFn: () => api.getSwimSpotById(id!),
     enabled: !!id,
   });
 
   const { data: partners = [], isLoading: partnersLoading } = useQuery({
     queryKey: ['spotPartners', id],
-    queryFn: ({ queryKey }) => api.getSpotPartners(queryKey[1] as string),
+    queryFn: () => api.getSpotPartners(id!),
     enabled: !!id,
   });
 
-  const { data: visits = [], isLoading: visitsLoading } = useQuery({
+  const { data: visitsData } = useQuery({
     queryKey: ['spotVisits', id],
-    queryFn: ({ queryKey }) => api.getSpotVisits(queryKey[1] as string),
+    queryFn: () => api.getSpotVisits(id!),
     enabled: !!id,
   });
 
@@ -87,8 +87,9 @@ const SwimSpotDetail = () => {
     return <div className="min-h-screen bg-swimspot-drift-sand">Spot not found</div>;
   }
 
-  const visitsData = Array.isArray(visits) ? visits : [];
-  const visitCount = typeof visits === 'object' && visits?.count !== undefined ? visits.count : 0;
+  // Handle visit count safely
+  const visitCount = visitsData && typeof visitsData === 'object' && 'count' in visitsData ? visitsData.count : 0;
+  const visits = Array.isArray(visitsData) ? visitsData : [];
 
   return (
     <div className="min-h-screen bg-swimspot-drift-sand">
@@ -114,7 +115,7 @@ const SwimSpotDetail = () => {
               partners={partners}
             />
             <SwimSpotCommunity 
-              visitData={visitsData}
+              visitData={visits}
               groups={groups}
             />
           </div>

@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Edit } from "lucide-react";
 import { Link } from "react-router-dom";
 import { api } from "@/services/api";
 import ProfileEditForm from "@/components/profile/ProfileEditForm";

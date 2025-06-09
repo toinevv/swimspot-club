@@ -71,7 +71,7 @@ export const generateSitemap = async (): Promise<string> => {
 
   // Add swim spots to sitemap (for individual spot pages)
   try {
-    const swimSpots = await api.getSwimSpots();
+    const swimSpots = await api.getAllSwimSpots();
     swimSpots.forEach(spot => {
       urls.push({
         url: `${baseUrl}/spot/${spot.id}`,

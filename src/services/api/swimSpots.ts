@@ -4,20 +4,25 @@ import { apiClient } from './client';
 export interface SwimSpot {
   id: string;
   name: string;
-  description?: string;
-  summary?: string;
+  description: string;
+  summary: string;
   latitude: number;
   longitude: number;
-  image_url?: string;
+  image_url: string;
   city?: string;
   country?: string;
-  water_type?: string;
-  address?: string;
-  tags?: string[];
-  visibility?: string;
-  official_location?: boolean;
-  created_at?: string;
-  updated_at?: string;
+  water_type: string;
+  address: string;
+  tags: string[];
+  visibility: string;
+  official_location: boolean;
+  created_at: string;
+  updated_at: string;
+  location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  };
 }
 
 export const swimSpotsApi = {
@@ -34,20 +39,25 @@ export const swimSpotsApi = {
     return (data || []).map(spot => ({
       id: spot.id,
       name: spot.name,
-      description: spot.description,
-      summary: spot.summary || spot.description,
+      description: spot.description || '',
+      summary: spot.summary || spot.description || '',
       latitude: Number(spot.latitude),
       longitude: Number(spot.longitude),
-      image_url: spot.image_url,
+      image_url: spot.image_url || '',
       city: spot.city,
       country: spot.country,
-      water_type: spot.water_type,
-      address: spot.address,
+      water_type: spot.water_type || '',
+      address: spot.address || '',
       tags: spot.tags || [],
       visibility: spot.visibility || 'public',
       official_location: spot.official_location || false,
-      created_at: spot.created_at,
-      updated_at: spot.updated_at
+      created_at: spot.created_at || '',
+      updated_at: spot.updated_at || '',
+      location: {
+        latitude: Number(spot.latitude),
+        longitude: Number(spot.longitude),
+        address: spot.address || ''
+      }
     }));
   },
 
@@ -66,20 +76,25 @@ export const swimSpotsApi = {
     return {
       id: data.id,
       name: data.name,
-      description: data.description,
-      summary: data.summary || data.description,
+      description: data.description || '',
+      summary: data.summary || data.description || '',
       latitude: Number(data.latitude),
       longitude: Number(data.longitude),
-      image_url: data.image_url,
+      image_url: data.image_url || '',
       city: data.city,
       country: data.country,
-      water_type: data.water_type,
-      address: data.address,
+      water_type: data.water_type || '',
+      address: data.address || '',
       tags: data.tags || [],
       visibility: data.visibility || 'public',
       official_location: data.official_location || false,
-      created_at: data.created_at,
-      updated_at: data.updated_at
+      created_at: data.created_at || '',
+      updated_at: data.updated_at || '',
+      location: {
+        latitude: Number(data.latitude),
+        longitude: Number(data.longitude),
+        address: data.address || ''
+      }
     };
   },
 
@@ -97,20 +112,25 @@ export const swimSpotsApi = {
     return (data || []).map(spot => ({
       id: spot.id,
       name: spot.name,
-      description: spot.description,
-      summary: spot.summary || spot.description,
+      description: spot.description || '',
+      summary: spot.summary || spot.description || '',
       latitude: Number(spot.latitude),
       longitude: Number(spot.longitude),
-      image_url: spot.image_url,
+      image_url: spot.image_url || '',
       city: spot.city,
       country: spot.country,
-      water_type: spot.water_type,
-      address: spot.address,
+      water_type: spot.water_type || '',
+      address: spot.address || '',
       tags: spot.tags || [],
       visibility: spot.visibility || 'public',
       official_location: spot.official_location || false,
-      created_at: spot.created_at,
-      updated_at: spot.updated_at
+      created_at: spot.created_at || '',
+      updated_at: spot.updated_at || '',
+      location: {
+        latitude: Number(spot.latitude),
+        longitude: Number(spot.longitude),
+        address: spot.address || ''
+      }
     }));
   },
 
@@ -128,20 +148,25 @@ export const swimSpotsApi = {
     return (data || []).map(spot => ({
       id: spot.id,
       name: spot.name,
-      description: spot.description,
-      summary: spot.summary || spot.description,
+      description: spot.description || '',
+      summary: spot.summary || spot.description || '',
       latitude: Number(spot.latitude),
       longitude: Number(spot.longitude),
-      image_url: spot.image_url,
+      image_url: spot.image_url || '',
       city: spot.city,
       country: spot.country,
-      water_type: spot.water_type,
-      address: spot.address,
+      water_type: spot.water_type || '',
+      address: spot.address || '',
       tags: spot.tags || [],
       visibility: spot.visibility || 'public',
       official_location: spot.official_location || false,
-      created_at: spot.created_at,
-      updated_at: spot.updated_at
+      created_at: spot.created_at || '',
+      updated_at: spot.updated_at || '',
+      location: {
+        latitude: Number(spot.latitude),
+        longitude: Number(spot.longitude),
+        address: spot.address || ''
+      }
     }));
   }
 };

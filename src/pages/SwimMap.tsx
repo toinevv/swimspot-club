@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import type { SwimSpot } from "@/types";
 import { api } from "@/services/api";
 import { convertCityToCityData } from "@/utils/cityData";
 import InteractiveMap from "@/components/map/InteractiveMap";
@@ -12,6 +11,7 @@ import SEOHead from "@/components/seo/SEOHead";
 import CityContent from "@/components/seo/CityContent";
 import { useMapboxToken } from "@/hooks/useMapboxToken";
 import { useUserLocation } from "@/hooks/useUserLocation";
+import { SwimSpot } from "@/types";
 
 const SwimMap = () => {
   const navigate = useNavigate();
@@ -36,10 +36,13 @@ const SwimMap = () => {
   });
   
   // Fetch all swim spots - always show all spots, let filters handle the filtering
-  const { data: spots = [] } = useQuery<SwimSpot[]>({
+  const { data: spotsData = [] } = useQuery({
     queryKey: ['swimSpots', filters],
-    queryFn: api.getSwimSpots
+    queryFn: api.getAllSwimSpots
   });
+
+  // Ensure spots is always an array of SwimSpot
+  const spots: SwimSpot[] = Array.isArray(spotsData) ? spotsData : [];
 
   const handleSpotClick = (spot: SwimSpot, mapCenter: [number, number], zoom: number) => {
     // Navigate to spot detail with current map position in URL
@@ -104,7 +107,7 @@ const SwimMap = () => {
   }
 
   console.log('Current city parameter:', city);
-  console.log('Fetched spots:', spots?.length || 0);
+  console.log('Fetched spots:', spots.length);
 
   return (
     <>
@@ -121,7 +124,7 @@ const SwimMap = () => {
         />
         
         <InteractiveMap 
-          spots={spots || []}
+          spots={spots}
           onSpotClick={handleSpotClick}
           mapboxToken={mapboxToken || undefined}
           initialCenter={getMapCenter()}
@@ -133,7 +136,7 @@ const SwimMap = () => {
             <div className="pointer-events-auto">
               <CityContent 
                 cityData={cityData}
-                spotCount={spots?.length || 0}
+                spotCount={spots.length}
               />
             </div>
           </div>
