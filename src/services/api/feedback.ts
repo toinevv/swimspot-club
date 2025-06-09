@@ -80,17 +80,23 @@ export const feedbackApi = {
       const oneHourAgo = new Date();
       oneHourAgo.setHours(oneHourAgo.getHours() - 1);
 
-      const { data } = await apiClient.supabase
+      const { data, error } = await apiClient.supabase
         .from('swim_spots_audit')
         .select('created_at')
         .eq('spot_id', swimSpotId)
         .eq('user_id', user.id)
         .eq('action', 'flag')
         .gte('created_at', oneHourAgo.toISOString())
-        .single();
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error checking user feedback:', error);
+        return false;
+      }
 
       return !!data;
     } catch (error) {
+      console.error('Error checking user feedback:', error);
       return false;
     }
   }
