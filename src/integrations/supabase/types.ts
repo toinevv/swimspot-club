@@ -410,6 +410,9 @@ export type Database = {
           country: string | null
           created_at: string
           description: string
+          flag_count: number | null
+          flagged_at: string | null
+          flagged_by: string | null
           id: string
           image_url: string
           latitude: number
@@ -428,6 +431,9 @@ export type Database = {
           country?: string | null
           created_at?: string
           description: string
+          flag_count?: number | null
+          flagged_at?: string | null
+          flagged_by?: string | null
           id?: string
           image_url: string
           latitude: number
@@ -446,6 +452,9 @@ export type Database = {
           country?: string | null
           created_at?: string
           description?: string
+          flag_count?: number | null
+          flagged_at?: string | null
+          flagged_by?: string | null
           id?: string
           image_url?: string
           latitude?: number

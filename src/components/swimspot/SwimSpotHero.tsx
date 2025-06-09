@@ -1,15 +1,18 @@
 
-import { Bookmark, Share, Eye } from "lucide-react";
+import { Bookmark, Share, Eye, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface SwimSpotHeroProps {
   swimSpot: any;
   isSaved?: boolean;
+  hasFeedback?: boolean;
   onSave: () => void;
   onMarkVisited: () => void;
+  onFeedback: () => void;
   onShare: () => void;
   saveMutationPending: boolean;
   visitMutationPending: boolean;
+  feedbackMutationPending: boolean;
   savedCount?: number;
   visitCount?: number;
 }
@@ -17,11 +20,14 @@ interface SwimSpotHeroProps {
 const SwimSpotHero = ({
   swimSpot,
   isSaved,
+  hasFeedback,
   onSave,
   onMarkVisited,
+  onFeedback,
   onShare,
   saveMutationPending,
   visitMutationPending,
+  feedbackMutationPending,
   savedCount = 0,
   visitCount = 0
 }: SwimSpotHeroProps) => {
@@ -84,6 +90,23 @@ const SwimSpotHero = ({
               style={{ backdropFilter: 'blur(12px)' }}
             >
               <Eye className="h-5 w-5 text-white" />
+            </Button>
+            <Button
+              size="icon"
+              onClick={onFeedback}
+              disabled={feedbackMutationPending}
+              className={`h-11 w-11 rounded-full backdrop-blur-md border transition-all duration-300 ${
+                hasFeedback 
+                  ? "bg-orange-500/80 border-orange-400/50 hover:bg-orange-500/90" 
+                  : "bg-white/15 border-white/20 hover:bg-white/25"
+              }`}
+              style={{ backdropFilter: 'blur(12px)' }}
+              title={hasFeedback ? "Feedback submitted" : "Report an issue"}
+            >
+              <Flag 
+                className={`h-5 w-5 ${hasFeedback ? "text-white" : "text-white"}`}
+                fill={hasFeedback ? "currentColor" : "none"}
+              />
             </Button>
             <Button
               size="icon"

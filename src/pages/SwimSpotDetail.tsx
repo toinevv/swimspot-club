@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
@@ -33,6 +32,12 @@ const SwimSpotDetail = () => {
   const { data: isSaved } = useQuery({
     queryKey: ['spotSaved', id],
     queryFn: () => api.checkIfSaved(id!),
+    enabled: !!id,
+  });
+
+  const { data: hasFeedback } = useQuery({
+    queryKey: ['userFeedback', id],
+    queryFn: () => api.checkUserFeedback(id!),
     enabled: !!id,
   });
 
@@ -86,6 +91,21 @@ const SwimSpotDetail = () => {
     }
   });
 
+  const feedbackMutation = useMutation({
+    mutationFn: () => api.submitFeedback(id!),
+    onSuccess: (success) => {
+      queryClient.invalidateQueries({ queryKey: ['userFeedback', id] });
+      if (success) {
+        toast.success("Thank you for your feedback!");
+      } else {
+        toast.info("You've already provided feedback for this spot");
+      }
+    },
+    onError: () => {
+      toast.error("Please sign in to provide feedback");
+    }
+  });
+
   useEffect(() => {
     if (error) {
       toast.error("Failed to load swim spot details");
@@ -99,6 +119,10 @@ const SwimSpotDetail = () => {
 
   const handleMarkVisited = () => {
     visitMutation.mutate();
+  };
+
+  const handleFeedback = () => {
+    feedbackMutation.mutate();
   };
 
   const handleShare = () => {
@@ -170,11 +194,14 @@ const SwimSpotDetail = () => {
         <SwimSpotHero
           swimSpot={swimSpot}
           isSaved={isSaved}
+          hasFeedback={hasFeedback}
           onSave={handleSave}
           onMarkVisited={handleMarkVisited}
+          onFeedback={handleFeedback}
           onShare={handleShare}
           saveMutationPending={saveMutation.isPending}
           visitMutationPending={visitMutation.isPending}
+          feedbackMutationPending={feedbackMutation.isPending}
           savedCount={savedCount}
           visitCount={visitData?.count || 0}
         />

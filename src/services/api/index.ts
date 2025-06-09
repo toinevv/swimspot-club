@@ -9,6 +9,7 @@ import { citiesApi } from './cities';
 import { userInteractionsApi } from './userInteractions';
 import { profilesApi } from './profiles';
 import { partnersApi } from './partners';
+import { feedbackApi } from './feedback';
 import { apiClient } from './client';
 
 export const api = {
@@ -22,6 +23,7 @@ export const api = {
   ...userInteractionsApi,
   ...profilesApi,
   ...partnersApi,
+  ...feedbackApi,
   apiClient // Expose the API client for direct queries
 };
 
@@ -36,5 +38,6 @@ export {
   userInteractionsApi,
   profilesApi,
   partnersApi,
+  feedbackApi,
   apiClient
 };
