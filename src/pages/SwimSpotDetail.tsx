@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import { toast } from "sonner";
@@ -138,6 +139,21 @@ const SwimSpotDetail = () => {
     }
   };
 
+  const handleBackToMap = () => {
+    // Get current URL parameters to preserve map position
+    const lat = searchParams.get('lat');
+    const lng = searchParams.get('lng');
+    const zoom = searchParams.get('zoom');
+    
+    if (lat && lng && zoom) {
+      // Navigate back to map with preserved position
+      navigate(`/?lat=${lat}&lng=${lng}&zoom=${zoom}`);
+    } else {
+      // Navigate to default map view
+      navigate('/');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -190,6 +206,18 @@ const SwimSpotDetail = () => {
       />
 
       <div className="min-h-screen bg-swimspot-drift-sand/30">
+        {/* Back to Map Button */}
+        <div className="sticky top-16 z-40 p-4">
+          <Button
+            onClick={handleBackToMap}
+            variant="outline"
+            className="bg-white/90 backdrop-blur-md border-white/20 hover:bg-white shadow-lg"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Map
+          </Button>
+        </div>
+
         {/* Hero Section */}
         <SwimSpotHero
           swimSpot={swimSpot}
