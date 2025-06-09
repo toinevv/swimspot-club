@@ -1,44 +1,27 @@
 
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link } from "react-router-dom";
-import { api } from "@/services/api";
-import { createSimpleQueryFn } from "@/services/api/utils";
+import { useQueryClient } from "@tanstack/react-query";
+import ProfileLoadingState from "@/components/profile/ProfileLoadingState";
+import ProfileNotFound from "@/components/profile/ProfileNotFound";
+import ProfileContent from "@/components/profile/ProfileContent";
 import ProfileEditForm from "@/components/profile/ProfileEditForm";
-import ProfileHeader from "@/components/profile/ProfileHeader";
-import ProfileCard from "@/components/profile/ProfileCard";
-import ProfileStats from "@/components/profile/ProfileStats";
-import SavedSpotsTab from "@/components/profile/SavedSpotsTab";
-import GroupsTab from "@/components/profile/GroupsTab";
-import type { UserProfile, SavedSpotData, UserGroupData } from "@/types/entities";
+import { useProfileData } from "@/hooks/useProfileData";
+import type { UserProfile } from "@/types/entities";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const queryClient = useQueryClient();
-
-  const { data: profile, isLoading: profileLoading } = useQuery({
-    queryKey: ['profile'],
-    queryFn: createSimpleQueryFn(api.getCurrentUserProfile),
-  });
-
-  const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ['userStats'],
-    queryFn: createSimpleQueryFn(api.getUserStats),
-  });
-
-  const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery({
-    queryKey: ['savedSpots'],
-    queryFn: createSimpleQueryFn(api.getUserSavedSpots),
-    enabled: !!profile?.id,
-  });
-
-  const { data: groups = [], isLoading: groupsLoading } = useQuery({
-    queryKey: ['userGroups'],
-    queryFn: createSimpleQueryFn(api.getUserGroups),
-    enabled: !!profile?.id,
-  });
+  
+  const {
+    profile,
+    profileLoading,
+    stats,
+    statsLoading,
+    savedSpots,
+    savedSpotsLoading,
+    groups,
+    groupsLoading
+  } = useProfileData();
 
   const handleProfileUpdate = (updatedProfile: UserProfile) => {
     queryClient.setQueryData(['profile'], updatedProfile);
@@ -46,63 +29,32 @@ const Profile = () => {
   };
 
   if (profileLoading) {
-    return (
-      <div className="min-h-screen bg-swimspot-drift-sand p-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-            <div className="h-64 bg-gray-200 rounded mb-6"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <ProfileLoadingState />;
   }
 
   if (!profile) {
-    return (
-      <div className="min-h-screen bg-swimspot-drift-sand p-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-2xl font-serif text-swimspot-blue-green mb-4">Profile Not Found</h1>
-          <p className="text-gray-600 mb-6">Please sign in to view your profile.</p>
-          <Link to="/auth">
-            <Button className="bg-swimspot-blue-green hover:bg-swimspot-blue-green/90">
-              Sign In
-            </Button>
-          </Link>
-        </div>
-      </div>
-    );
+    return <ProfileNotFound />;
   }
 
   return (
     <div className="min-h-screen bg-swimspot-drift-sand">
-      <div className="max-w-4xl mx-auto p-6">
-        <ProfileHeader profile={profile} onEditClick={() => setIsEditing(true)} />
-        <ProfileCard profile={profile} />
-        <ProfileStats stats={stats || { spots_saved: 0, spots_visited: 0, groups_joined: 0 }} isLoading={statsLoading} />
+      <ProfileContent
+        profile={profile}
+        stats={stats}
+        statsLoading={statsLoading}
+        savedSpots={savedSpots}
+        savedSpotsLoading={savedSpotsLoading}
+        groups={groups}
+        groupsLoading={groupsLoading}
+        onEditClick={() => setIsEditing(true)}
+      />
 
-        <Tabs defaultValue="saved" className="w-full">
-          <TabsList className="w-full bg-white mb-6">
-            <TabsTrigger value="saved" className="flex-1">Saved Spots</TabsTrigger>
-            <TabsTrigger value="groups" className="flex-1">My Groups</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="saved" className="space-y-4">
-            <SavedSpotsTab savedSpots={savedSpots} isLoading={savedSpotsLoading} />
-          </TabsContent>
-          
-          <TabsContent value="groups" className="space-y-4">
-            <GroupsTab groups={groups} isLoading={groupsLoading} />
-          </TabsContent>
-        </Tabs>
-
-        {isEditing && (
-          <ProfileEditForm
-            profile={profile}
-            onProfileUpdate={handleProfileUpdate}
-          />
-        )}
-      </div>
+      {isEditing && (
+        <ProfileEditForm
+          profile={profile}
+          onProfileUpdate={handleProfileUpdate}
+        />
+      )}
     </div>
   );
 };
