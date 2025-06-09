@@ -1,19 +1,6 @@
 
 import { apiClient } from './client';
-
-export interface UserGroupData {
-  id: string;
-  role: string;
-  groups: {
-    id: string;
-    name: string;
-    description: string;
-    image_url: string;
-    location: string;
-    type: string;
-    is_premium: boolean;
-  };
-}
+import type { UserGroupData } from '@/types/entities';
 
 export const userGroupsApi = {
   async getUserGroups(): Promise<UserGroupData[]> {
@@ -29,6 +16,7 @@ export const userGroupsApi = {
         .select(`
           id,
           role,
+          joined_at,
           groups:group_id (
             id,
             name,
@@ -46,7 +34,19 @@ export const userGroupsApi = {
         return [];
       }
 
-      return data || [];
+      return data?.map(item => ({
+        id: item.id,
+        role: item.role,
+        joined_at: item.joined_at,
+        groups: {
+          id: item.groups.id,
+          name: item.groups.name,
+          description: item.groups.description,
+          image_url: item.groups.image_url,
+          location: item.groups.location,
+          type: item.groups.type
+        }
+      })) || [];
     } catch (error) {
       console.error('Error fetching user groups:', error);
       return [];

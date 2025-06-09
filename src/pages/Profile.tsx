@@ -88,11 +88,11 @@ const Profile = () => {
           </TabsList>
           
           <TabsContent value="saved" className="space-y-4">
-            <SavedSpotsTab savedSpots={savedSpots as SavedSpotData[]} isLoading={savedSpotsLoading} />
+            <SavedSpotsTab savedSpots={savedSpots} isLoading={savedSpotsLoading} />
           </TabsContent>
           
           <TabsContent value="groups" className="space-y-4">
-            <GroupsTab groups={groups as UserGroupData[]} isLoading={groupsLoading} />
+            <GroupsTab groups={groups} isLoading={groupsLoading} />
           </TabsContent>
         </Tabs>
 
