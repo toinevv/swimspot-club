@@ -10,35 +10,37 @@ export const feedbackApi = {
         throw new Error('User must be authenticated to submit feedback');
       }
 
-      // Check if user has already flagged this spot
-      const { data: existingFlag } = await apiClient.supabase
-        .from('swim_spots')
-        .select('flagged_by, flag_count, flagged')
-        .eq('id', swimSpotId)
-        .eq('flagged_by', user.id)
-        .single();
-
-      if (existingFlag) {
-        return false; // User has already flagged this spot
-      }
-
-      // Get current flag count first
+      // Get current spot data
       const { data: currentSpot } = await apiClient.supabase
         .from('swim_spots')
-        .select('flag_count')
+        .select('flag_count, feedback_flag')
         .eq('id', swimSpotId)
         .single();
 
-      const currentFlagCount = currentSpot?.flag_count || 0;
+      if (!currentSpot) {
+        throw new Error('Swim spot not found');
+      }
+
+      const currentFlagCount = currentSpot.flag_count || 0;
+      const existingFeedback = currentSpot.feedback_flag || '';
+      
+      // Create new feedback entry (short identifier)
+      const feedbackEntry = `feedback${currentFlagCount + 1}`;
+      
+      // Append to existing feedback array-style string
+      const updatedFeedback = existingFeedback 
+        ? `${existingFeedback}, ${feedbackEntry}`
+        : feedbackEntry;
 
       // Update the swim spot with flag information
       const { error } = await apiClient.supabase
         .from('swim_spots')
         .update({
           flagged: true,
-          flagged_by: user.id,
+          flagged_by: user.id, // Keep last user who flagged
           flagged_at: new Date().toISOString(),
-          flag_count: currentFlagCount + 1
+          flag_count: currentFlagCount + 1,
+          feedback_flag: updatedFeedback
         })
         .eq('id', swimSpotId);
 
@@ -55,7 +57,7 @@ export const feedbackApi = {
           action: 'flag',
           user_id: user.id,
           flag_type: 'user_feedback',
-          message: 'Spot flagged by user',
+          message: `Feedback ${currentFlagCount + 1} submitted`,
           success: true
         });
 
@@ -74,11 +76,17 @@ export const feedbackApi = {
         return false;
       }
 
+      // Check if user has submitted feedback in the last hour (to prevent spam)
+      const oneHourAgo = new Date();
+      oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+
       const { data } = await apiClient.supabase
-        .from('swim_spots')
-        .select('flagged_by')
-        .eq('id', swimSpotId)
-        .eq('flagged_by', user.id)
+        .from('swim_spots_audit')
+        .select('created_at')
+        .eq('spot_id', swimSpotId)
+        .eq('user_id', user.id)
+        .eq('action', 'flag')
+        .gte('created_at', oneHourAgo.toISOString())
         .single();
 
       return !!data;
