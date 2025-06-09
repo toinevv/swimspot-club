@@ -11,12 +11,14 @@ import SwimSpotCommunity from "@/components/swimspot/SwimSpotCommunity";
 import SwimSpotCTA from "@/components/swimspot/SwimSpotCTA";
 import SEOHead from "@/components/seo/SEOHead";
 import StructuredData from "@/components/seo/StructuredData";
+import FeedbackDialog from "@/components/feedback/FeedbackDialog";
 
 const SwimSpotDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
   
   const { data: swimSpot, isLoading, error } = useQuery({
     queryKey: ['swimSpot', id],
@@ -92,9 +94,10 @@ const SwimSpotDetail = () => {
   });
 
   const feedbackMutation = useMutation({
-    mutationFn: () => api.submitFeedback(id!),
+    mutationFn: (feedback: string) => api.submitFeedbackWithText(id!, feedback),
     onSuccess: (success) => {
       queryClient.invalidateQueries({ queryKey: ['userFeedback', id] });
+      setFeedbackDialogOpen(false);
       if (success) {
         toast.success("Thank you for your feedback!");
       } else {
@@ -122,7 +125,11 @@ const SwimSpotDetail = () => {
   };
 
   const handleFeedback = () => {
-    feedbackMutation.mutate();
+    setFeedbackDialogOpen(true);
+  };
+
+  const handleFeedbackSubmit = (feedback: string) => {
+    feedbackMutation.mutate(feedback);
   };
 
   const handleShare = () => {
@@ -246,6 +253,13 @@ const SwimSpotDetail = () => {
           </div>
         </div>
       </div>
+
+      <FeedbackDialog
+        open={feedbackDialogOpen}
+        onOpenChange={setFeedbackDialogOpen}
+        onSubmit={handleFeedbackSubmit}
+        isSubmitting={feedbackMutation.isPending}
+      />
     </>
   );
 };

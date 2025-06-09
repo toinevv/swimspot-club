@@ -3,6 +3,10 @@ import { apiClient } from './client';
 
 export const feedbackApi = {
   async submitFeedback(swimSpotId: string): Promise<boolean> {
+    return this.submitFeedbackWithText(swimSpotId, "General feedback");
+  },
+
+  async submitFeedbackWithText(swimSpotId: string, feedbackText: string): Promise<boolean> {
     try {
       const { data: { user } } = await apiClient.supabase.auth.getUser();
       
@@ -20,12 +24,12 @@ export const feedbackApi = {
       const currentFlagCount = currentSpot.flag_count || 0;
       const existingFeedback = currentSpot.feedback_flag || '';
       
-      // Create new feedback entry (short identifier)
-      const feedbackEntry = `feedback${currentFlagCount + 1}`;
+      // Create new feedback entry with actual text
+      const feedbackEntry = `feedback${currentFlagCount + 1}: ${feedbackText}`;
       
       // Append to existing feedback array-style string
       const updatedFeedback = existingFeedback 
-        ? `${existingFeedback}, ${feedbackEntry}`
+        ? `${existingFeedback} | ${feedbackEntry}`
         : feedbackEntry;
 
       // Update the swim spot with flag information
@@ -33,7 +37,7 @@ export const feedbackApi = {
         .from('swim_spots')
         .update({
           flagged: true,
-          flagged_by: user?.id || 'anonymous', // Allow anonymous feedback
+          flagged_by: user?.id || 'anonymous',
           flagged_at: new Date().toISOString(),
           flag_count: currentFlagCount + 1,
           feedback_flag: updatedFeedback
@@ -45,7 +49,7 @@ export const feedbackApi = {
         return false;
       }
 
-      // Log the feedback action in the audit table (only if user is authenticated)
+      // Log the feedback action in the audit table
       if (user) {
         await apiClient.supabase
           .from('swim_spots_audit')
@@ -54,11 +58,10 @@ export const feedbackApi = {
             action: 'flag',
             user_id: user.id,
             flag_type: 'user_feedback',
-            message: `Feedback ${currentFlagCount + 1} submitted`,
+            message: `Feedback ${currentFlagCount + 1} submitted: ${feedbackText}`,
             success: true
           });
       } else {
-        // Log anonymous feedback
         await apiClient.supabase
           .from('swim_spots_audit')
           .insert({
@@ -66,7 +69,7 @@ export const feedbackApi = {
             action: 'flag',
             user_id: 'anonymous',
             flag_type: 'anonymous_feedback',
-            message: `Anonymous feedback ${currentFlagCount + 1} submitted`,
+            message: `Anonymous feedback ${currentFlagCount + 1} submitted: ${feedbackText}`,
             success: true
           });
       }
