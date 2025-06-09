@@ -22,13 +22,22 @@ export const feedbackApi = {
         return false; // User has already flagged this spot
       }
 
+      // Get current flag count first
+      const { data: currentSpot } = await apiClient.supabase
+        .from('swim_spots')
+        .select('flag_count')
+        .eq('id', swimSpotId)
+        .single();
+
+      const currentFlagCount = currentSpot?.flag_count || 0;
+
       // Update the swim spot with flag information
       const { error } = await apiClient.supabase
         .from('swim_spots')
         .update({
           flagged_by: user.id,
           flagged_at: new Date().toISOString(),
-          flag_count: apiClient.supabase.sql`flag_count + 1`
+          flag_count: currentFlagCount + 1
         })
         .eq('id', swimSpotId);
 
