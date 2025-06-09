@@ -1,13 +1,13 @@
 
 import { apiClient } from './client';
 
-interface SwimSpotLocation {
+export interface SwimSpotLocation {
   latitude: number;
   longitude: number;
   address: string;
 }
 
-interface SwimSpot {
+export interface SwimSpot {
   id: string;
   name: string;
   description: string;
