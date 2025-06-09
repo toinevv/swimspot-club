@@ -30,18 +30,17 @@ export const userInteractionsApi = {
       }
 
       const { data, error } = await apiClient.supabase
-        .from('spot_visits')
-        .select('count')
+        .from('swim_spot_visits')
+        .select('*')
         .eq('swim_spot_id', id)
-        .eq('user_id', user.id)
-        .single();
+        .eq('user_id', user.id);
 
       if (error) {
         console.error(`Error fetching visit count for spot ${id}:`, error);
         return { count: 0 };
       }
 
-      return data || { count: 0 };
+      return { count: data?.length || 0 };
     } catch (error) {
       console.error(`Error fetching visit count for spot ${id}:`, error);
       return { count: 0 };
@@ -61,10 +60,11 @@ export const userInteractionsApi = {
       oneHourAgo.setHours(oneHourAgo.getHours() - 1);
 
       const { data: existingVisit, error: existingVisitError } = await apiClient.supabase
-        .from('spot_visits_audit')
+        .from('swim_spots_audit')
         .select('created_at')
         .eq('spot_id', swimSpotId)
         .eq('user_id', user.id)
+        .eq('action', 'visit')
         .gte('created_at', oneHourAgo.toISOString())
         .maybeSingle();
 
@@ -77,43 +77,25 @@ export const userInteractionsApi = {
         return true;
       }
 
-      // Get current visit count
-      const { data: currentVisit, error: currentVisitError } = await apiClient.supabase
-        .from('spot_visits')
-        .select('count')
-        .eq('swim_spot_id', swimSpotId)
-        .eq('user_id', user.id)
-        .single();
+      // Create a new visit record
+      const { error: insertError } = await apiClient.supabase
+        .from('swim_spot_visits')
+        .insert({
+          swim_spot_id: swimSpotId,
+          user_id: user.id,
+        });
 
-      if (currentVisitError) {
-        console.error('Error fetching current visit count:', currentVisitError);
-        return false;
-      }
-
-      const currentCount = currentVisit?.count || 0;
-
-      // Update or insert visit count
-      const { error: upsertError } = await apiClient.supabase
-        .from('spot_visits')
-        .upsert(
-          {
-            swim_spot_id: swimSpotId,
-            user_id: user.id,
-            count: currentCount + 1,
-          },
-          { onConflict: 'swim_spot_id, user_id' }
-        );
-
-      if (upsertError) {
-        console.error('Error updating visit count:', upsertError);
+      if (insertError) {
+        console.error('Error creating visit:', insertError);
         return false;
       }
 
       // Log the visit in the audit table
       const { error: auditError } = await apiClient.supabase
-        .from('spot_visits_audit')
+        .from('swim_spots_audit')
         .insert({
           spot_id: swimSpotId,
+          action: 'visit',
           user_id: user.id,
           success: true,
         });
@@ -122,7 +104,7 @@ export const userInteractionsApi = {
         console.error('Error logging visit in audit table:', auditError);
       }
 
-      return false;
+      return true;
     } catch (error) {
       console.error('Error marking spot as visited:', error);
       return false;
@@ -145,7 +127,7 @@ export const userInteractionsApi = {
         .eq('user_id', user.id)
         .single();
 
-      if (existingSaveError) {
+      if (existingSaveError && existingSaveError.code !== 'PGRST116') {
         console.error('Error checking existing save:', existingSaveError);
         throw existingSaveError;
       }

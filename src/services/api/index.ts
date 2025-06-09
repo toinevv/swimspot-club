@@ -45,3 +45,4 @@ export {
 // Export types
 export type { BlogArticle } from './blogPosts';
 export type { UserProfile, UserStats } from './profiles';
+export type { City } from './cities';
