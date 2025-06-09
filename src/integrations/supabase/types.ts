@@ -410,7 +410,9 @@ export type Database = {
           country: string | null
           created_at: string
           description: string
+          feedback_flag: string | null
           flag_count: number | null
+          flagged: boolean | null
           flagged_at: string | null
           flagged_by: string | null
           id: string
@@ -431,7 +433,9 @@ export type Database = {
           country?: string | null
           created_at?: string
           description: string
+          feedback_flag?: string | null
           flag_count?: number | null
+          flagged?: boolean | null
           flagged_at?: string | null
           flagged_by?: string | null
           id?: string
@@ -452,7 +456,9 @@ export type Database = {
           country?: string | null
           created_at?: string
           description?: string
+          feedback_flag?: string | null
           flag_count?: number | null
+          flagged?: boolean | null
           flagged_at?: string | null
           flagged_by?: string | null
           id?: string
@@ -468,6 +474,62 @@ export type Database = {
           water_type?: string
         }
         Relationships: []
+      }
+      swim_spots_audit: {
+        Row: {
+          action: string
+          additional_data: Json | null
+          admin_user: string | null
+          created_at: string | null
+          flag_type: string | null
+          id: string
+          message: string | null
+          notes: string | null
+          review_action: string | null
+          spot_id: string | null
+          success: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          additional_data?: Json | null
+          admin_user?: string | null
+          created_at?: string | null
+          flag_type?: string | null
+          id?: string
+          message?: string | null
+          notes?: string | null
+          review_action?: string | null
+          spot_id?: string | null
+          success?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          additional_data?: Json | null
+          admin_user?: string | null
+          created_at?: string | null
+          flag_type?: string | null
+          id?: string
+          message?: string | null
+          notes?: string | null
+          review_action?: string | null
+          spot_id?: string | null
+          success?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "swim_spots_audit_spot_id_fkey"
+            columns: ["spot_id"]
+            isOneToOne: false
+            referencedRelation: "swim_spots"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_groups: {
         Row: {

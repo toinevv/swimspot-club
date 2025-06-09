@@ -13,7 +13,7 @@ export const feedbackApi = {
       // Check if user has already flagged this spot
       const { data: existingFlag } = await apiClient.supabase
         .from('swim_spots')
-        .select('flagged_by, flag_count')
+        .select('flagged_by, flag_count, flagged')
         .eq('id', swimSpotId)
         .eq('flagged_by', user.id)
         .single();
@@ -35,6 +35,7 @@ export const feedbackApi = {
       const { error } = await apiClient.supabase
         .from('swim_spots')
         .update({
+          flagged: true,
           flagged_by: user.id,
           flagged_at: new Date().toISOString(),
           flag_count: currentFlagCount + 1
@@ -45,6 +46,18 @@ export const feedbackApi = {
         console.error('Error submitting feedback:', error);
         return false;
       }
+
+      // Log the feedback action in the audit table
+      await apiClient.supabase
+        .from('swim_spots_audit')
+        .insert({
+          spot_id: swimSpotId,
+          action: 'flag',
+          user_id: user.id,
+          flag_type: 'user_feedback',
+          message: 'Spot flagged by user',
+          success: true
+        });
 
       return true;
     } catch (error) {
