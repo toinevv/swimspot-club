@@ -58,8 +58,8 @@ export const swimSpotsApi = {
         image_url: spot.image_url,
         water_type: spot.water_type,
         location: {
-          latitude: parseFloat(spot.latitude.toString()),
-          longitude: parseFloat(spot.longitude.toString()),
+          latitude: Number(spot.latitude),
+          longitude: Number(spot.longitude),
           address: spot.address
         },
         tags: spot.tags || [],
@@ -97,8 +97,8 @@ export const swimSpotsApi = {
         image_url: data.image_url,
         water_type: data.water_type,
         location: {
-          latitude: parseFloat(data.latitude.toString()),
-          longitude: parseFloat(data.longitude.toString()),
+          latitude: Number(data.latitude),
+          longitude: Number(data.longitude),
           address: data.address
         },
         tags: data.tags || [],
