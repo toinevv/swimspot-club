@@ -87,6 +87,9 @@ const SwimSpotDetail = () => {
     return <div className="min-h-screen bg-swimspot-drift-sand">Spot not found</div>;
   }
 
+  const visitsData = Array.isArray(visits) ? visits : [];
+  const visitCount = typeof visits === 'object' && visits?.count !== undefined ? visits.count : 0;
+
   return (
     <div className="min-h-screen bg-swimspot-drift-sand">
       <SwimSpotHero 
@@ -101,7 +104,7 @@ const SwimSpotDetail = () => {
         visitMutationPending={visitMutation.isPending}
         feedbackMutationPending={feedbackMutation.isPending}
         savedCount={0}
-        visitCount={Array.isArray(visits) ? visits.length : 0}
+        visitCount={visitCount}
       />
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -111,7 +114,7 @@ const SwimSpotDetail = () => {
               partners={partners}
             />
             <SwimSpotCommunity 
-              visitData={visits}
+              visitData={visitsData}
               groups={groups}
             />
           </div>

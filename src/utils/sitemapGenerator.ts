@@ -71,11 +71,11 @@ export const generateSitemap = async (): Promise<string> => {
 
   // Add swim spots to sitemap (for individual spot pages)
   try {
-    const swimSpots = await api.getSwimSpots({});
+    const swimSpots = await api.getSwimSpots();
     swimSpots.forEach(spot => {
       urls.push({
         url: `${baseUrl}/spot/${spot.id}`,
-        lastmod: new Date(spot.updated_at || spot.created_at).toISOString().split('T')[0],
+        lastmod: new Date(spot.updated_at || spot.created_at || '').toISOString().split('T')[0],
         changefreq: 'weekly',
         priority: '0.5'
       });

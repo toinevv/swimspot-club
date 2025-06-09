@@ -38,7 +38,7 @@ const SwimMap = () => {
   // Fetch all swim spots - always show all spots, let filters handle the filtering
   const { data: spots = [] } = useQuery<SwimSpot[]>({
     queryKey: ['swimSpots', filters],
-    queryFn: () => api.getSwimSpots(filters)
+    queryFn: api.getSwimSpots
   });
 
   const handleSpotClick = (spot: SwimSpot, mapCenter: [number, number], zoom: number) => {
@@ -104,7 +104,7 @@ const SwimMap = () => {
   }
 
   console.log('Current city parameter:', city);
-  console.log('Fetched spots:', spots.length);
+  console.log('Fetched spots:', spots?.length || 0);
 
   return (
     <>
@@ -121,7 +121,7 @@ const SwimMap = () => {
         />
         
         <InteractiveMap 
-          spots={spots}
+          spots={spots || []}
           onSpotClick={handleSpotClick}
           mapboxToken={mapboxToken || undefined}
           initialCenter={getMapCenter()}
@@ -133,7 +133,7 @@ const SwimMap = () => {
             <div className="pointer-events-auto">
               <CityContent 
                 cityData={cityData}
-                spotCount={spots.length}
+                spotCount={spots?.length || 0}
               />
             </div>
           </div>

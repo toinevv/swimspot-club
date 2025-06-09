@@ -80,3 +80,4 @@ export type { BlogArticle } from './blogPosts';
 export type { UserProfile, UserStats, SavedSpotData } from './profiles';
 export type { City } from './cities';
 export type { UserGroupData } from './userGroups';
+export type { SwimSpot } from './swimSpots';

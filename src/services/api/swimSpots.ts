@@ -5,17 +5,17 @@ export interface SwimSpot {
   id: string;
   name: string;
   description?: string;
+  summary?: string;
   latitude: number;
   longitude: number;
   image_url?: string;
   city?: string;
   country?: string;
   water_type?: string;
-  difficulty_level?: string;
-  accessibility?: string;
-  facilities?: string[];
-  best_time_to_visit?: string;
-  entry_fee?: number;
+  address?: string;
+  tags?: string[];
+  visibility?: string;
+  official_location?: boolean;
   created_at?: string;
   updated_at?: string;
 }
@@ -31,7 +31,24 @@ export const swimSpotsApi = {
       return [];
     }
 
-    return data || [];
+    return (data || []).map(spot => ({
+      id: spot.id,
+      name: spot.name,
+      description: spot.description,
+      summary: spot.summary || spot.description,
+      latitude: Number(spot.latitude),
+      longitude: Number(spot.longitude),
+      image_url: spot.image_url,
+      city: spot.city,
+      country: spot.country,
+      water_type: spot.water_type,
+      address: spot.address,
+      tags: spot.tags || [],
+      visibility: spot.visibility || 'public',
+      official_location: spot.official_location || false,
+      created_at: spot.created_at,
+      updated_at: spot.updated_at
+    }));
   },
 
   async getSwimSpotById(id: string): Promise<SwimSpot> {
@@ -46,7 +63,24 @@ export const swimSpotsApi = {
       throw error;
     }
 
-    return data;
+    return {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      summary: data.summary || data.description,
+      latitude: Number(data.latitude),
+      longitude: Number(data.longitude),
+      image_url: data.image_url,
+      city: data.city,
+      country: data.country,
+      water_type: data.water_type,
+      address: data.address,
+      tags: data.tags || [],
+      visibility: data.visibility || 'public',
+      official_location: data.official_location || false,
+      created_at: data.created_at,
+      updated_at: data.updated_at
+    };
   },
 
   async getSwimSpotsByCity(city: string): Promise<SwimSpot[]> {
@@ -60,7 +94,24 @@ export const swimSpotsApi = {
       return [];
     }
 
-    return data || [];
+    return (data || []).map(spot => ({
+      id: spot.id,
+      name: spot.name,
+      description: spot.description,
+      summary: spot.summary || spot.description,
+      latitude: Number(spot.latitude),
+      longitude: Number(spot.longitude),
+      image_url: spot.image_url,
+      city: spot.city,
+      country: spot.country,
+      water_type: spot.water_type,
+      address: spot.address,
+      tags: spot.tags || [],
+      visibility: spot.visibility || 'public',
+      official_location: spot.official_location || false,
+      created_at: spot.created_at,
+      updated_at: spot.updated_at
+    }));
   },
 
   async searchSwimSpots(query: string): Promise<SwimSpot[]> {
@@ -74,25 +125,23 @@ export const swimSpotsApi = {
       return [];
     }
 
-    return data || [];
-  },
-
-  async getSwimSpotsNearby(lat: number, lng: number, radius: number = 50): Promise<SwimSpot[]> {
-    const { data, error } = await apiClient.supabase
-      .from('swim_spots')
-      .select('*');
-
-    if (error) {
-      console.error('Error fetching nearby swim spots:', error);
-      return [];
-    }
-
-    // Simple distance filtering (in a real app, you'd use PostGIS)
-    return (data || []).filter(spot => {
-      const distance = Math.sqrt(
-        Math.pow(spot.latitude - lat, 2) + Math.pow(spot.longitude - lng, 2)
-      );
-      return distance <= radius / 111; // Rough conversion to degrees
-    });
+    return (data || []).map(spot => ({
+      id: spot.id,
+      name: spot.name,
+      description: spot.description,
+      summary: spot.summary || spot.description,
+      latitude: Number(spot.latitude),
+      longitude: Number(spot.longitude),
+      image_url: spot.image_url,
+      city: spot.city,
+      country: spot.country,
+      water_type: spot.water_type,
+      address: spot.address,
+      tags: spot.tags || [],
+      visibility: spot.visibility || 'public',
+      official_location: spot.official_location || false,
+      created_at: spot.created_at,
+      updated_at: spot.updated_at
+    }));
   }
 };
