@@ -29,13 +29,15 @@ const Profile = () => {
   });
 
   const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery({
-    queryKey: ['savedSpots'],
-    queryFn: api.getUserSavedSpots,
+    queryKey: ['savedSpots', profile?.id],
+    queryFn: ({ queryKey }) => api.getUserSavedSpots(queryKey[1] as string),
+    enabled: !!profile?.id,
   });
 
   const { data: groups = [], isLoading: groupsLoading } = useQuery({
-    queryKey: ['userGroups'],
-    queryFn: api.getUserGroups,
+    queryKey: ['userGroups', profile?.id],
+    queryFn: ({ queryKey }) => api.getUserGroups(queryKey[1] as string),
+    enabled: !!profile?.id,
   });
 
   const handleProfileUpdate = (updatedProfile: UserProfile) => {
@@ -72,6 +74,12 @@ const Profile = () => {
     );
   }
 
+  // Transform savedSpots to match expected format
+  const transformedSavedSpots = savedSpots.map(spot => ({
+    ...spot,
+    swim_spots: spot.swim_spots || {}
+  }));
+
   return (
     <div className="min-h-screen bg-swimspot-drift-sand">
       <div className="max-w-4xl mx-auto p-6">
@@ -86,7 +94,7 @@ const Profile = () => {
           </TabsList>
           
           <TabsContent value="saved" className="space-y-4">
-            <SavedSpotsTab savedSpots={savedSpots} isLoading={savedSpotsLoading} />
+            <SavedSpotsTab savedSpots={transformedSavedSpots} isLoading={savedSpotsLoading} />
           </TabsContent>
           
           <TabsContent value="groups" className="space-y-4">

@@ -40,7 +40,7 @@ const SwimSpotDetail = () => {
 
   // Mutations for spot interactions
   const saveMutation = useMutation({
-    mutationFn: () => api.toggleSaveSpot(id!),
+    mutationFn: () => api.toggleSaveSpot(id!, true),
     onSuccess: () => {
       setIsSaved(!isSaved);
       toast.success(isSaved ? "Spot removed from saved" : "Spot saved!");

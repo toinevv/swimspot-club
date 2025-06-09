@@ -1,117 +1,43 @@
 
 import { apiClient } from './client';
 
-export interface SwimSpotLocation {
+export interface SwimSpot {
+  id: number;
+  name: string;
+  description?: string;
   latitude: number;
   longitude: number;
-  address: string;
-}
-
-export interface SwimSpot {
-  id: string;
-  name: string;
-  description: string;
-  summary: string;
-  image_url: string;
-  water_type: string;
-  location: SwimSpotLocation;
-  tags: string[];
-  visibility: string;
-  city: string | null;
-  country: string | null;
-  official_location: boolean;
-  created_at: string;
-  updated_at: string;
+  image_url?: string;
+  city?: string;
+  country?: string;
+  water_type?: string;
+  difficulty_level?: string;
+  accessibility?: string;
+  facilities?: string[];
+  best_time_to_visit?: string;
+  entry_fee?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export const swimSpotsApi = {
-  async getSwimSpots(filters: any = {}): Promise<SwimSpot[]> {
-    try {
-      let query = apiClient.supabase
-        .from('swim_spots')
-        .select('*');
-
-      if (filters.waterType) {
-        query = query.eq('water_type', filters.waterType);
-      }
-
-      if (filters.city) {
-        query = query.eq('city', filters.city);
-      }
-
-      if (filters.isPremium) {
-        query = query.eq('is_premium', true);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error('Error fetching swim spots:', error);
-        return [];
-      }
-
-      return (data || []).map(spot => ({
-        id: spot.id,
-        name: spot.name,
-        description: spot.description,
-        summary: spot.summary,
-        image_url: spot.image_url,
-        water_type: spot.water_type,
-        location: {
-          latitude: Number(spot.latitude),
-          longitude: Number(spot.longitude),
-          address: spot.address
-        },
-        tags: spot.tags || [],
-        visibility: spot.visibility,
-        city: spot.city,
-        country: spot.country,
-        official_location: spot.official_location,
-        created_at: spot.created_at,
-        updated_at: spot.updated_at
-      }));
-    } catch (error) {
-      console.error('Error fetching swim spots:', error);
-      return [];
-    }
+  async getAllSwimSpots(): Promise<SwimSpot[]> {
+    return apiClient.get('/swim-spots');
   },
 
   async getSwimSpotById(id: string): Promise<SwimSpot> {
-    try {
-      const { data, error } = await apiClient.supabase
-        .from('swim_spots')
-        .select('*')
-        .eq('id', id)
-        .single();
+    return apiClient.get(`/swim-spots/${id}`);
+  },
 
-      if (error) {
-        console.error(`Error fetching swim spot with id ${id}:`, error);
-        throw new Error(`Failed to fetch swim spot with id ${id}`);
-      }
+  async getSwimSpotsByCity(city: string): Promise<SwimSpot[]> {
+    return apiClient.get(`/swim-spots?city=${encodeURIComponent(city)}`);
+  },
 
-      return {
-        id: data.id,
-        name: data.name,
-        description: data.description,
-        summary: data.summary,
-        image_url: data.image_url,
-        water_type: data.water_type,
-        location: {
-          latitude: Number(data.latitude),
-          longitude: Number(data.longitude),
-          address: data.address
-        },
-        tags: data.tags || [],
-        visibility: data.visibility,
-        city: data.city,
-        country: data.country,
-        official_location: data.official_location,
-        created_at: data.created_at,
-        updated_at: data.updated_at
-      };
-    } catch (error) {
-      console.error(`Error fetching swim spot with id ${id}:`, error);
-      throw error;
-    }
+  async searchSwimSpots(query: string): Promise<SwimSpot[]> {
+    return apiClient.get(`/swim-spots/search?q=${encodeURIComponent(query)}`);
+  },
+
+  async getSwimSpotsNearby(lat: number, lng: number, radius: number = 50): Promise<SwimSpot[]> {
+    return apiClient.get(`/swim-spots/nearby?lat=${lat}&lng=${lng}&radius=${radius}`);
   }
 };
