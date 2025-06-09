@@ -1,6 +1,19 @@
 
 import { apiClient } from './client';
 
+export interface BlogArticle {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  cover_image_url: string;
+  tags?: string[];
+  created_at: string;
+  published_at: string;
+  keyword?: string;
+  author: string;
+}
+
 export const blogPostsApi = {
   async getAllBlogPosts() {
     try {

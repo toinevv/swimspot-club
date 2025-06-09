@@ -28,7 +28,27 @@ export const swimSpotsApi = {
         return [];
       }
 
-      return data || [];
+      // Transform database data to match SwimSpot interface
+      return (data || []).map(spot => ({
+        id: spot.id,
+        name: spot.name,
+        description: spot.description,
+        summary: spot.summary,
+        image_url: spot.image_url,
+        water_type: spot.water_type,
+        location: {
+          latitude: parseFloat(spot.latitude),
+          longitude: parseFloat(spot.longitude),
+          address: spot.address
+        },
+        tags: spot.tags || [],
+        visibility: spot.visibility,
+        city: spot.city,
+        country: spot.country,
+        official_location: spot.official_location,
+        created_at: spot.created_at,
+        updated_at: spot.updated_at
+      }));
     } catch (error) {
       console.error('Error fetching swim spots:', error);
       return [];
@@ -48,7 +68,27 @@ export const swimSpotsApi = {
         throw new Error(`Failed to fetch swim spot with id ${id}`);
       }
 
-      return data;
+      // Transform database data to match SwimSpot interface
+      return {
+        id: data.id,
+        name: data.name,
+        description: data.description,
+        summary: data.summary,
+        image_url: data.image_url,
+        water_type: data.water_type,
+        location: {
+          latitude: parseFloat(data.latitude),
+          longitude: parseFloat(data.longitude),
+          address: data.address
+        },
+        tags: data.tags || [],
+        visibility: data.visibility,
+        city: data.city,
+        country: data.country,
+        official_location: data.official_location,
+        created_at: data.created_at,
+        updated_at: data.updated_at
+      };
     } catch (error) {
       console.error(`Error fetching swim spot with id ${id}:`, error);
       throw error;

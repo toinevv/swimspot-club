@@ -41,3 +41,7 @@ export {
   feedbackApi,
   apiClient
 };
+
+// Export types
+export type { BlogArticle } from './blogPosts';
+export type { UserProfile, UserStats } from './profiles';

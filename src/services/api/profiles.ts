@@ -102,12 +102,12 @@ export const profilesApi = {
 
       // Get spots visited and total visits from spot_visits table
       const { data: visitData } = await apiClient.supabase
-        .from('spot_visits')
-        .select('count')
+        .from('swim_spot_visits')
+        .select('*')
         .eq('user_id', user.id);
 
       const spotsVisited = visitData?.length || 0;
-      const totalVisits = visitData?.reduce((sum, visit) => sum + (visit.count || 0), 0) || 0;
+      const totalVisits = visitData?.length || 0;
 
       return {
         spotsVisited,
@@ -134,15 +134,18 @@ export const profilesApi = {
         return [];
       }
 
+      // Fix the relationship query by being more explicit
       const { data, error } = await apiClient.supabase
         .from('swim_spot_saves')
         .select(`
-          swim_spots (
+          swim_spots!swim_spot_saves_swim_spot_id_fkey (
             id,
             name,
             image_url,
             city,
-            water_type
+            water_type,
+            address,
+            tags
           )
         `)
         .eq('user_id', user.id);
@@ -155,6 +158,51 @@ export const profilesApi = {
       return data?.map(save => save.swim_spots).filter(Boolean) || [];
     } catch (error) {
       console.error('Error fetching saved spots:', error);
+      return [];
+    }
+  },
+
+  async getUserGroups() {
+    try {
+      const { data: { user } } = await apiClient.supabase.auth.getUser();
+
+      if (!user) {
+        return [];
+      }
+
+      const { data, error } = await apiClient.supabase
+        .from('user_groups')
+        .select(`
+          role,
+          groups!user_groups_group_id_fkey (
+            id,
+            name,
+            description,
+            image_url,
+            location,
+            type,
+            is_premium
+          )
+        `)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error fetching user groups:', error);
+        return [];
+      }
+
+      return data?.map(userGroup => ({
+        id: userGroup.groups.id,
+        name: userGroup.groups.name,
+        description: userGroup.groups.description,
+        image_url: userGroup.groups.image_url,
+        location: userGroup.groups.location,
+        type: userGroup.groups.type,
+        is_premium: userGroup.groups.is_premium,
+        role: userGroup.role
+      })) || [];
+    } catch (error) {
+      console.error('Error fetching user groups:', error);
       return [];
     }
   }
