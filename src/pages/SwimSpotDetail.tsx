@@ -17,30 +17,30 @@ const SwimSpotDetail = () => {
 
   const { data: spot, isLoading: spotLoading, error: spotError } = useQuery({
     queryKey: ['swimSpot', id],
-    queryFn: () => api.getSwimSpotById(id!),
+    queryFn: ({ queryKey }) => api.getSwimSpotById(queryKey[1] as string),
     enabled: !!id,
   });
 
   const { data: partners = [], isLoading: partnersLoading } = useQuery({
     queryKey: ['spotPartners', id],
-    queryFn: () => api.getSpotPartners(id!),
+    queryFn: ({ queryKey }) => api.getSpotPartners(queryKey[1] as string),
     enabled: !!id,
   });
 
   const { data: visits = [], isLoading: visitsLoading } = useQuery({
     queryKey: ['spotVisits', id],
-    queryFn: () => api.getSpotVisits(id!),
+    queryFn: ({ queryKey }) => api.getSpotVisits(queryKey[1] as string),
     enabled: !!id,
   });
 
   const { data: groups = [], isLoading: groupsLoading } = useQuery({
     queryKey: ['groups'],
-    queryFn: () => api.getGroups(),
+    queryFn: api.getGroups,
   });
 
   // Mutations for spot interactions
   const saveMutation = useMutation({
-    mutationFn: () => api.toggleSaveSpot(id!, true),
+    mutationFn: () => api.toggleSaveSpot(id!),
     onSuccess: () => {
       setIsSaved(!isSaved);
       toast.success(isSaved ? "Spot removed from saved" : "Spot saved!");
