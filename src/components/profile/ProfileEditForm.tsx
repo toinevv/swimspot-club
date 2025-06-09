@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Edit } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { api } from "@/services/api";
 import { UserProfile } from "@/services/api/profiles";
@@ -16,7 +15,6 @@ interface ProfileEditFormProps {
 }
 
 const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     full_name: profile.full_name || '',
@@ -33,7 +31,6 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
       const updatedProfile = await api.updateProfile(formData);
       onProfileUpdate(updatedProfile);
       toast.success("Profile updated successfully!");
-      setIsOpen(false);
     } catch (error) {
       console.error('Error updating profile:', error);
       toast.error("Failed to update profile");
@@ -43,13 +40,7 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="text-swimspot-blue-green border-swimspot-blue-green">
-          <Edit className="h-4 w-4 mr-2" />
-          Edit Profile
-        </Button>
-      </DialogTrigger>
+    <Dialog open={true} onOpenChange={() => onProfileUpdate(profile)}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
@@ -100,7 +91,7 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
             <Button 
               type="button" 
               variant="outline" 
-              onClick={() => setIsOpen(false)}
+              onClick={() => onProfileUpdate(profile)}
               disabled={isLoading}
             >
               Cancel
