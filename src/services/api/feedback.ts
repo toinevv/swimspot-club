@@ -6,10 +6,6 @@ export const feedbackApi = {
     try {
       const { data: { user } } = await apiClient.supabase.auth.getUser();
       
-      if (!user) {
-        throw new Error('User must be authenticated to submit feedback');
-      }
-
       // Get current spot data
       const { data: currentSpot } = await apiClient.supabase
         .from('swim_spots')
@@ -37,7 +33,7 @@ export const feedbackApi = {
         .from('swim_spots')
         .update({
           flagged: true,
-          flagged_by: user.id, // Keep last user who flagged
+          flagged_by: user?.id || 'anonymous', // Allow anonymous feedback
           flagged_at: new Date().toISOString(),
           flag_count: currentFlagCount + 1,
           feedback_flag: updatedFeedback
@@ -49,17 +45,31 @@ export const feedbackApi = {
         return false;
       }
 
-      // Log the feedback action in the audit table
-      await apiClient.supabase
-        .from('swim_spots_audit')
-        .insert({
-          spot_id: swimSpotId,
-          action: 'flag',
-          user_id: user.id,
-          flag_type: 'user_feedback',
-          message: `Feedback ${currentFlagCount + 1} submitted`,
-          success: true
-        });
+      // Log the feedback action in the audit table (only if user is authenticated)
+      if (user) {
+        await apiClient.supabase
+          .from('swim_spots_audit')
+          .insert({
+            spot_id: swimSpotId,
+            action: 'flag',
+            user_id: user.id,
+            flag_type: 'user_feedback',
+            message: `Feedback ${currentFlagCount + 1} submitted`,
+            success: true
+          });
+      } else {
+        // Log anonymous feedback
+        await apiClient.supabase
+          .from('swim_spots_audit')
+          .insert({
+            spot_id: swimSpotId,
+            action: 'flag',
+            user_id: 'anonymous',
+            flag_type: 'anonymous_feedback',
+            message: `Anonymous feedback ${currentFlagCount + 1} submitted`,
+            success: true
+          });
+      }
 
       return true;
     } catch (error) {
@@ -72,11 +82,12 @@ export const feedbackApi = {
     try {
       const { data: { user } } = await apiClient.supabase.auth.getUser();
       
+      // If no user, they can always submit feedback (no cooldown for anonymous users)
       if (!user) {
         return false;
       }
 
-      // Check if user has submitted feedback in the last hour (to prevent spam)
+      // Check if authenticated user has submitted feedback in the last hour (to prevent spam)
       const oneHourAgo = new Date();
       oneHourAgo.setHours(oneHourAgo.getHours() - 1);
 

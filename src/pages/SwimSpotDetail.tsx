@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2, ArrowLeft } from "lucide-react";
@@ -99,11 +98,11 @@ const SwimSpotDetail = () => {
       if (success) {
         toast.success("Thank you for your feedback!");
       } else {
-        toast.info("You've already provided feedback for this spot");
+        toast.error("Failed to submit feedback. Please try again.");
       }
     },
     onError: () => {
-      toast.error("Please sign in to provide feedback");
+      toast.error("Failed to submit feedback. Please try again.");
     }
   });
 
