@@ -13,6 +13,10 @@ import { spotSavesApi } from './spotSaves';
 import { userGroupsApi } from './userGroups';
 import { apiClient } from './client';
 
+/**
+ * Unified API interface for the SwimSpot application
+ * All API calls should go through this interface to ensure consistency
+ */
 export const api = {
   // Swim spots
   getAllSwimSpots: swimSpotsApi.getAllSwimSpots,
@@ -58,7 +62,7 @@ export const api = {
   apiClient
 };
 
-// Export individual APIs
+// Export individual APIs for specific use cases
 export { 
   swimSpotsApi, 
   groupsApi, 
@@ -75,9 +79,5 @@ export {
   apiClient
 };
 
-// Export types
-export type { BlogArticle } from './blogPosts';
-export type { UserProfile, UserStats, SavedSpotData } from './profiles';
-export type { City } from './cities';
-export type { UserGroupData } from './userGroups';
-export type { SwimSpot } from './swimSpots';
+// Export all types from entities
+export type * from '../types/entities';

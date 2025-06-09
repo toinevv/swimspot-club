@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
 import { api } from "@/services/api";
+import { createSimpleQueryFn } from "@/services/api/utils";
 import ProfileEditForm from "@/components/profile/ProfileEditForm";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileStats from "@/components/profile/ProfileStats";
 import SavedSpotsTab from "@/components/profile/SavedSpotsTab";
 import GroupsTab from "@/components/profile/GroupsTab";
-import { UserProfile } from "@/services/api/profiles";
+import type { UserProfile } from "@/services/api";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -19,23 +20,23 @@ const Profile = () => {
 
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['profile'],
-    queryFn: api.getCurrentUserProfile,
+    queryFn: createSimpleQueryFn(api.getCurrentUserProfile),
   });
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['userStats'],
-    queryFn: api.getUserStats,
+    queryFn: createSimpleQueryFn(api.getUserStats),
   });
 
   const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery({
     queryKey: ['savedSpots'],
-    queryFn: api.getUserSavedSpots,
+    queryFn: createSimpleQueryFn(api.getUserSavedSpots),
     enabled: !!profile?.id,
   });
 
   const { data: groups = [], isLoading: groupsLoading } = useQuery({
     queryKey: ['userGroups'],
-    queryFn: api.getUserGroups,
+    queryFn: createSimpleQueryFn(api.getUserGroups),
     enabled: !!profile?.id,
   });
 

@@ -1,31 +1,16 @@
 
 import { apiClient } from './client';
+import type { SwimSpot } from '../types/entities';
 
-export interface SwimSpot {
-  id: string;
-  name: string;
-  description: string;
-  summary: string;
-  latitude: number;
-  longitude: number;
-  image_url: string;
-  city?: string;
-  country?: string;
-  water_type: string;
-  address: string;
-  tags: string[];
-  visibility: string;
-  official_location: boolean;
-  created_at: string;
-  updated_at: string;
-  location: {
-    latitude: number;
-    longitude: number;
-    address: string;
-  };
-}
-
+/**
+ * API functions for swim spots
+ * All functions return data that matches the SwimSpot interface
+ */
 export const swimSpotsApi = {
+  /**
+   * Fetch all swim spots from the database
+   * @returns Promise<SwimSpot[]> Array of swim spots with consistent structure
+   */
   async getAllSwimSpots(): Promise<SwimSpot[]> {
     const { data, error } = await apiClient.supabase
       .from('swim_spots')
@@ -61,6 +46,11 @@ export const swimSpotsApi = {
     }));
   },
 
+  /**
+   * Fetch a single swim spot by ID
+   * @param id - The swim spot ID
+   * @returns Promise<SwimSpot> Single swim spot data
+   */
   async getSwimSpotById(id: string): Promise<SwimSpot> {
     const { data, error } = await apiClient.supabase
       .from('swim_spots')
@@ -98,42 +88,11 @@ export const swimSpotsApi = {
     };
   },
 
-  async getSwimSpotsByCity(city: string): Promise<SwimSpot[]> {
-    const { data, error } = await apiClient.supabase
-      .from('swim_spots')
-      .select('*')
-      .eq('city', city);
-
-    if (error) {
-      console.error('Error fetching swim spots by city:', error);
-      return [];
-    }
-
-    return (data || []).map(spot => ({
-      id: spot.id,
-      name: spot.name,
-      description: spot.description || '',
-      summary: spot.summary || spot.description || '',
-      latitude: Number(spot.latitude),
-      longitude: Number(spot.longitude),
-      image_url: spot.image_url || '',
-      city: spot.city,
-      country: spot.country,
-      water_type: spot.water_type || '',
-      address: spot.address || '',
-      tags: spot.tags || [],
-      visibility: spot.visibility || 'public',
-      official_location: spot.official_location || false,
-      created_at: spot.created_at || '',
-      updated_at: spot.updated_at || '',
-      location: {
-        latitude: Number(spot.latitude),
-        longitude: Number(spot.longitude),
-        address: spot.address || ''
-      }
-    }));
-  },
-
+  /**
+   * Search swim spots by name
+   * @param query - Search query string
+   * @returns Promise<SwimSpot[]> Array of matching swim spots
+   */
   async searchSwimSpots(query: string): Promise<SwimSpot[]> {
     const { data, error } = await apiClient.supabase
       .from('swim_spots')

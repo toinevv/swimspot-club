@@ -8,6 +8,10 @@ interface SitemapUrl {
   priority: string;
 }
 
+/**
+ * Generate a sitemap for the SwimSpot application
+ * Uses the unified API to fetch data consistently
+ */
 export const generateSitemap = async (): Promise<string> => {
   const baseUrl = window.location.origin;
   const currentDate = new Date().toISOString().split('T')[0];

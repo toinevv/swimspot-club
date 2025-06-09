@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
+import { createSimpleQueryFn } from "@/services/api/utils";
 import { convertCityToCityData } from "@/utils/cityData";
 import InteractiveMap from "@/components/map/InteractiveMap";
 import FiltersDropdown from "@/components/map/FiltersDropdown";
@@ -11,7 +12,7 @@ import SEOHead from "@/components/seo/SEOHead";
 import CityContent from "@/components/seo/CityContent";
 import { useMapboxToken } from "@/hooks/useMapboxToken";
 import { useUserLocation } from "@/hooks/useUserLocation";
-import { SwimSpot } from "@/types";
+import type { SwimSpot } from "@/services/api";
 
 const SwimMap = () => {
   const navigate = useNavigate();
@@ -36,9 +37,9 @@ const SwimMap = () => {
   });
   
   // Fetch all swim spots - always show all spots, let filters handle the filtering
-  const { data: spotsData = [] } = useQuery({
+  const { data: spotsData = [], isLoading: spotsLoading } = useQuery({
     queryKey: ['swimSpots', filters],
-    queryFn: api.getAllSwimSpots
+    queryFn: createSimpleQueryFn(api.getAllSwimSpots)
   });
 
   // Ensure spots is always an array of SwimSpot
