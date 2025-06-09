@@ -1,6 +1,6 @@
 
 import { apiClient } from './client';
-import type { SwimSpot } from '../types/entities';
+import type { SwimSpot } from '@/types/entities';
 
 /**
  * API functions for swim spots
@@ -113,7 +113,7 @@ export const swimSpotsApi = {
       longitude: Number(spot.longitude),
       image_url: spot.image_url || '',
       city: spot.city,
-      country: spot.country,
+      country: data.country,
       water_type: spot.water_type || '',
       address: spot.address || '',
       tags: spot.tags || [],

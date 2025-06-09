@@ -38,7 +38,7 @@ const SwimMap = () => {
   
   // Fetch all swim spots - always show all spots, let filters handle the filtering
   const { data: spotsData = [], isLoading: spotsLoading } = useQuery({
-    queryKey: ['swimSpots', filters],
+    queryKey: ['swimSpots'],
     queryFn: createSimpleQueryFn(api.getAllSwimSpots)
   });
 

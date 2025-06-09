@@ -12,7 +12,7 @@ import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileStats from "@/components/profile/ProfileStats";
 import SavedSpotsTab from "@/components/profile/SavedSpotsTab";
 import GroupsTab from "@/components/profile/GroupsTab";
-import type { UserProfile } from "@/services/api";
+import type { UserProfile, SavedSpotData, UserGroupData } from "@/services/api";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -88,11 +88,11 @@ const Profile = () => {
           </TabsList>
           
           <TabsContent value="saved" className="space-y-4">
-            <SavedSpotsTab savedSpots={savedSpots} isLoading={savedSpotsLoading} />
+            <SavedSpotsTab savedSpots={savedSpots as SavedSpotData[]} isLoading={savedSpotsLoading} />
           </TabsContent>
           
           <TabsContent value="groups" className="space-y-4">
-            <GroupsTab groups={groups} isLoading={groupsLoading} />
+            <GroupsTab groups={groups as UserGroupData[]} isLoading={groupsLoading} />
           </TabsContent>
         </Tabs>
 

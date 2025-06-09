@@ -79,5 +79,5 @@ export {
   apiClient
 };
 
-// Export all types from entities
-export type * from '../types/entities';
+// Export all types from entities - this is the single source of truth
+export type * from '@/types/entities';
