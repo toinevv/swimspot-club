@@ -30,21 +30,21 @@ export const api = {
   getAllBlogPosts: blogPostsApi.getAllBlogPosts,
   getBlogPostBySlug: blogPostsApi.getBlogPostBySlug,
   
-  // Profiles
+  // Profiles - Fixed signatures to match implementations
   getCurrentUserProfile: profilesApi.getCurrentUserProfile,
   updateProfile: profilesApi.updateProfile,
-  getUserSavedSpots: profilesApi.getUserSavedSpots,
-  getUserStats: profilesApi.getUserStats,
+  getUserSavedSpots: profilesApi.getUserSavedSpots, // No parameters needed
+  getUserStats: profilesApi.getUserStats, // No parameters needed
   
-  // Spot interactions
-  getSpotPartners: spotPartnersApi.getSpotPartners,
-  getSpotVisits: spotVisitsApi.getSpotVisits,
-  markAsVisited: spotVisitsApi.markAsVisited,
-  toggleSaveSpot: spotSavesApi.toggleSaveSpot,
-  checkIfSaved: spotSavesApi.checkIfSaved,
+  // Spot interactions - Fixed signatures
+  getSpotPartners: spotPartnersApi.getSpotPartners, // Takes spotId
+  getSpotVisits: spotVisitsApi.getSpotVisits, // Takes spotId  
+  markAsVisited: spotVisitsApi.markAsVisited, // Takes spotId
+  toggleSaveSpot: spotSavesApi.toggleSaveSpot, // Takes spotId
+  checkIfSaved: spotSavesApi.checkIfSaved, // Takes spotId
   
   // User groups
-  getUserGroups: userGroupsApi.getUserGroups,
+  getUserGroups: userGroupsApi.getUserGroups, // No parameters needed
   
   // Groups
   getGroups: groupsApi.getGroups,

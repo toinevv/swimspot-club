@@ -406,6 +406,7 @@ export type Database = {
       swim_spots: {
         Row: {
           address: string
+          auto_imported: boolean
           city: string | null
           country: string | null
           created_at: string
@@ -418,9 +419,15 @@ export type Database = {
           id: string
           image_url: string
           latitude: number
+          local_name: string | null
+          location_hint: string | null
           longitude: number
           name: string
           official_location: boolean
+          original_language: string | null
+          quality_score: number | null
+          review_notes: string[] | null
+          source_url: string | null
           summary: string
           tags: string[]
           updated_at: string
@@ -429,6 +436,7 @@ export type Database = {
         }
         Insert: {
           address: string
+          auto_imported?: boolean
           city?: string | null
           country?: string | null
           created_at?: string
@@ -441,9 +449,15 @@ export type Database = {
           id?: string
           image_url: string
           latitude: number
+          local_name?: string | null
+          location_hint?: string | null
           longitude: number
           name: string
           official_location?: boolean
+          original_language?: string | null
+          quality_score?: number | null
+          review_notes?: string[] | null
+          source_url?: string | null
           summary: string
           tags?: string[]
           updated_at?: string
@@ -452,6 +466,7 @@ export type Database = {
         }
         Update: {
           address?: string
+          auto_imported?: boolean
           city?: string | null
           country?: string | null
           created_at?: string
@@ -464,9 +479,15 @@ export type Database = {
           id?: string
           image_url?: string
           latitude?: number
+          local_name?: string | null
+          location_hint?: string | null
           longitude?: number
           name?: string
           official_location?: boolean
+          original_language?: string | null
+          quality_score?: number | null
+          review_notes?: string[] | null
+          source_url?: string | null
           summary?: string
           tags?: string[]
           updated_at?: string
