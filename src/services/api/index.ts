@@ -30,11 +30,11 @@ export const api = {
   getAllBlogPosts: blogPostsApi.getAllBlogPosts,
   getBlogPostBySlug: blogPostsApi.getBlogPostBySlug,
   
-  // Profiles - Fixed signatures to match implementations
+  // Profiles - Fixed to match actual implementations (no parameters)
   getCurrentUserProfile: profilesApi.getCurrentUserProfile,
   updateProfile: profilesApi.updateProfile,
-  getUserSavedSpots: profilesApi.getUserSavedSpots, // No parameters needed
-  getUserStats: profilesApi.getUserStats, // No parameters needed
+  getUserSavedSpots: profilesApi.getUserSavedSpots, // No parameters - gets current user's spots
+  getUserStats: profilesApi.getUserStats, // No parameters - gets current user's stats
   
   // Spot interactions - Fixed signatures
   getSpotPartners: spotPartnersApi.getSpotPartners, // Takes spotId
@@ -44,7 +44,7 @@ export const api = {
   checkIfSaved: spotSavesApi.checkIfSaved, // Takes spotId
   
   // User groups
-  getUserGroups: userGroupsApi.getUserGroups, // No parameters needed
+  getUserGroups: userGroupsApi.getUserGroups, // No parameters - gets current user's groups
   
   // Groups
   getGroups: groupsApi.getGroups,

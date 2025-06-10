@@ -40,7 +40,7 @@ const SwimSpotDetail = () => {
     queryFn: createSimpleQueryFn(api.getGroups),
   });
 
-  // Check if spot is saved
+  // Check if spot is saved - fixed to pass the id parameter
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
     queryFn: createQueryFn(api.checkIfSaved),
