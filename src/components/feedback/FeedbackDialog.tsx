@@ -33,7 +33,7 @@ const FeedbackDialog = ({
   const feedbackOptions = [
     { value: "location_incorrect", label: "Location incorrect" },
     { value: "info_incorrect", label: "Info incorrect" },
-    { value: "other", label: "Other..." }
+    { value: "other", label: "Other:[]" }
   ];
 
   const handleSubmit = () => {

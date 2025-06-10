@@ -4,8 +4,8 @@ import { api } from "@/services/api";
 import { createSimpleQueryFn } from "@/services/api/utils";
 
 export const useProfileData = () => {
-  const { data: profile, isLoading: profileLoading } = useQuery({
-    queryKey: ['profile'],
+  const { data: profile, isLoading: profileLoading, error: profileError } = useQuery({
+    queryKey: ['currentUserProfile'],
     queryFn: createSimpleQueryFn(api.getCurrentUserProfile),
   });
 
@@ -15,25 +15,21 @@ export const useProfileData = () => {
   });
 
   const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery({
-    queryKey: ['savedSpots'],
+    queryKey: ['userSavedSpots'],
     queryFn: createSimpleQueryFn(api.getUserSavedSpots),
-    enabled: !!profile?.id,
   });
 
-  const { data: groups = [], isLoading: groupsLoading } = useQuery({
+  const { data: userGroups = [], isLoading: groupsLoading } = useQuery({
     queryKey: ['userGroups'],
     queryFn: createSimpleQueryFn(api.getUserGroups),
-    enabled: !!profile?.id,
   });
 
   return {
     profile,
-    profileLoading,
-    stats: stats || { spots_saved: 0, spots_visited: 0, groups_joined: 0 },
-    statsLoading,
+    stats,
     savedSpots,
-    savedSpotsLoading,
-    groups,
-    groupsLoading
+    userGroups,
+    isLoading: profileLoading || statsLoading || savedSpotsLoading || groupsLoading,
+    error: profileError
   };
 };
