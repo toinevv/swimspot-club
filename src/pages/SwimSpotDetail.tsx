@@ -1,5 +1,5 @@
 
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import { createQueryFn, createSimpleQueryFn } from "@/services/api/utils";
@@ -7,12 +7,16 @@ import SwimSpotHero from "@/components/swimspot/SwimSpotHero";
 import SwimSpotAbout from "@/components/swimspot/SwimSpotAbout";
 import SwimSpotCommunity from "@/components/swimspot/SwimSpotCommunity";
 import SwimSpotCTA from "@/components/swimspot/SwimSpotCTA";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import type { SpotVisitData } from "@/types/entities";
 
 const SwimSpotDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isSaved, setIsSaved] = useState(false);
   const [hasFeedback, setHasFeedback] = useState(false);
@@ -88,6 +92,25 @@ const SwimSpotDetail = () => {
     }
   };
 
+  const handleBackToMap = () => {
+    // Get return coordinates from URL params
+    const returnLat = searchParams.get('returnLat');
+    const returnLng = searchParams.get('returnLng');
+    const returnZoom = searchParams.get('returnZoom');
+    
+    if (returnLat && returnLng && returnZoom) {
+      // Navigate back to map with the stored coordinates
+      const params = new URLSearchParams();
+      params.set('lat', returnLat);
+      params.set('lng', returnLng);
+      params.set('zoom', returnZoom);
+      navigate(`/?${params.toString()}`);
+    } else {
+      // Fallback to regular map view
+      navigate('/');
+    }
+  };
+
   if (spotLoading) {
     return <div className="min-h-screen bg-swimspot-drift-sand">Loading...</div>;
   }
@@ -102,6 +125,20 @@ const SwimSpotDetail = () => {
 
   return (
     <div className="min-h-screen bg-swimspot-drift-sand">
+      {/* Back button */}
+      <div className="sticky top-16 z-20 bg-swimspot-drift-sand/95 backdrop-blur-sm border-b border-swimspot-blue-green/10">
+        <div className="max-w-6xl mx-auto px-4 py-3">
+          <Button
+            variant="ghost"
+            onClick={handleBackToMap}
+            className="flex items-center gap-2 text-swimspot-blue-green hover:text-swimspot-blue-green hover:bg-swimspot-blue-green/10"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Map
+          </Button>
+        </div>
+      </div>
+
       <SwimSpotHero 
         swimSpot={spot}
         isSaved={savedCheck || false}

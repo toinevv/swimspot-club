@@ -45,12 +45,14 @@ const SwimMap = () => {
   // Ensure spots is always an array of SwimSpot
   const spots: SwimSpot[] = Array.isArray(spotsData) ? spotsData : [];
 
-  const handleSpotClick = (spot: SwimSpot, mapCenter: [number, number], zoom: number) => {
-    // Navigate to spot detail with current map position in URL
+  const handleSpotClick = (spot: SwimSpot, currentMapCenter: [number, number], currentZoom: number) => {
+    // Store the current map state before navigating to spot detail
     const params = new URLSearchParams();
-    params.set('lat', mapCenter[1].toString());
-    params.set('lng', mapCenter[0].toString());
-    params.set('zoom', zoom.toString());
+    params.set('returnLat', currentMapCenter[1].toString());
+    params.set('returnLng', currentMapCenter[0].toString());
+    params.set('returnZoom', currentZoom.toString());
+    
+    // Navigate to spot detail with return coordinates
     navigate(`/spot/${spot.id}?${params.toString()}`);
   };
 
@@ -67,9 +69,16 @@ const SwimMap = () => {
     ? cityData.description
     : 'Discover the best wild swimming locations across the Netherlands. Explore natural swim spots, lakes, and canals with our interactive map.';
 
-  // Determine map center - check URL params first, then city coordinates, user location, or default
+  // Determine map center - check return coordinates first, then URL params, then other sources
   const getMapCenter = (): [number, number] => {
-    // Check URL parameters first
+    // Check for return coordinates first (when coming back from spot detail)
+    const returnLat = searchParams.get('returnLat');
+    const returnLng = searchParams.get('returnLng');
+    if (returnLat && returnLng) {
+      return [parseFloat(returnLng), parseFloat(returnLat)];
+    }
+    
+    // Check regular URL parameters
     const lat = searchParams.get('lat');
     const lng = searchParams.get('lng');
     if (lat && lng) {
@@ -89,12 +98,20 @@ const SwimMap = () => {
     return [6.0, 48.7];
   };
 
-  // Get initial zoom from URL params or use default
+  // Get initial zoom - check return zoom first, then URL params, then defaults
   const getInitialZoom = (): number => {
+    // Check for return zoom first (when coming back from spot detail)
+    const returnZoom = searchParams.get('returnZoom');
+    if (returnZoom) {
+      return parseFloat(returnZoom);
+    }
+    
+    // Check regular URL zoom parameter
     const zoom = searchParams.get('zoom');
     if (zoom) {
       return parseFloat(zoom);
     }
+    
     // Use different zoom levels based on context
     if (cityData?.coordinates) return 13;
     if (userLocation) return 12;
