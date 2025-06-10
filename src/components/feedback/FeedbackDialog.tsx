@@ -10,7 +10,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
@@ -29,7 +28,6 @@ const FeedbackDialog = ({
   isSubmitting
 }: FeedbackDialogProps) => {
   const [selectedType, setSelectedType] = useState("");
-  const [details, setDetails] = useState("");
   const [otherText, setOtherText] = useState("");
 
   const feedbackOptions = [
@@ -44,8 +42,6 @@ const FeedbackDialog = ({
       
       if (selectedType === "other" && otherText.trim()) {
         feedbackDetails = otherText.trim();
-      } else if (selectedType === "other" && details.trim()) {
-        feedbackDetails = details.trim();
       }
       
       onSubmit({
@@ -55,7 +51,6 @@ const FeedbackDialog = ({
       
       // Reset form
       setSelectedType("");
-      setDetails("");
       setOtherText("");
     }
   };
@@ -64,8 +59,11 @@ const FeedbackDialog = ({
     onOpenChange(false);
     // Reset form when closing
     setSelectedType("");
-    setDetails("");
     setOtherText("");
+  };
+
+  const handleOptionClick = (value: string) => {
+    setSelectedType(value);
   };
 
   return (
@@ -81,10 +79,15 @@ const FeedbackDialog = ({
           <RadioGroup value={selectedType} onValueChange={setSelectedType}>
             {feedbackOptions.map((option) => (
               <div key={option.value} className="flex items-center space-x-2">
-                <RadioGroupItem value={option.value} id={option.value} />
-                <Label htmlFor={option.value} className="cursor-pointer">
-                  {option.label}
-                </Label>
+                <div 
+                  className="flex items-center space-x-2 flex-1 cursor-pointer"
+                  onClick={() => handleOptionClick(option.value)}
+                >
+                  <RadioGroupItem value={option.value} id={option.value} />
+                  <Label htmlFor={option.value} className="cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
                 {option.value === "other" && (
                   <Input
                     placeholder="Please specify..."
@@ -92,25 +95,12 @@ const FeedbackDialog = ({
                     onChange={(e) => setOtherText(e.target.value)}
                     className="ml-2 flex-1"
                     disabled={selectedType !== "other" || isSubmitting}
+                    onClick={(e) => e.stopPropagation()}
                   />
                 )}
               </div>
             ))}
           </RadioGroup>
-          
-          {selectedType === "other" && (
-            <div className="space-y-2">
-              <Label htmlFor="details">Additional details (optional):</Label>
-              <Textarea
-                id="details"
-                placeholder="Please provide more details about the issue..."
-                value={details}
-                onChange={(e) => setDetails(e.target.value)}
-                className="min-h-[80px]"
-                disabled={isSubmitting}
-              />
-            </div>
-          )}
         </div>
         <DialogFooter>
           <Button 

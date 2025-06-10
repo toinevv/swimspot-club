@@ -1,3 +1,4 @@
+
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -47,7 +48,7 @@ const SwimSpotDetail = () => {
 
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
-    queryFn: () => api.checkIfSaved(id!),
+    queryFn: createQueryFn(api.checkIfSaved),
     enabled: !!id,
   });
 
