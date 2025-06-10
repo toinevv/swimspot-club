@@ -1,4 +1,3 @@
-
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -7,6 +6,7 @@ import SwimSpotHero from "@/components/swimspot/SwimSpotHero";
 import SwimSpotAbout from "@/components/swimspot/SwimSpotAbout";
 import SwimSpotCommunity from "@/components/swimspot/SwimSpotCommunity";
 import SwimSpotCTA from "@/components/swimspot/SwimSpotCTA";
+import FeedbackDialog from "@/components/feedback/FeedbackDialog";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
@@ -20,6 +20,7 @@ const SwimSpotDetail = () => {
   const queryClient = useQueryClient();
   const [isSaved, setIsSaved] = useState(false);
   const [hasFeedback, setHasFeedback] = useState(false);
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
 
   const { data: spot, isLoading: spotLoading, error: spotError } = useQuery({
     queryKey: ['swimSpot', id],
@@ -70,16 +71,18 @@ const SwimSpotDetail = () => {
   });
 
   const feedbackMutation = useMutation({
-    mutationFn: (feedbackData: any) => Promise.resolve(feedbackData),
+    mutationFn: (feedbackData: { type: string; details?: string }) => 
+      api.submitFeedbackWithText(id!, `${feedbackData.type}${feedbackData.details ? `: ${feedbackData.details}` : ''}`),
     onSuccess: () => {
       setHasFeedback(true);
+      setFeedbackDialogOpen(false);
       toast.success("Feedback submitted!");
     }
   });
 
   const handleSave = () => saveMutation.mutate();
   const handleMarkVisited = () => visitMutation.mutate();
-  const handleFeedback = () => feedbackMutation.mutate({ spotId: id, type: 'general' });
+  const handleFeedback = () => setFeedbackDialogOpen(true);
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
@@ -90,6 +93,10 @@ const SwimSpotDetail = () => {
       navigator.clipboard.writeText(window.location.href);
       toast.success("Link copied to clipboard!");
     }
+  };
+
+  const handleSubmitFeedback = (feedbackData: { type: string; details?: string }) => {
+    feedbackMutation.mutate(feedbackData);
   };
 
   const handleBackToMap = () => {
@@ -170,6 +177,13 @@ const SwimSpotDetail = () => {
           </div>
         </div>
       </div>
+
+      <FeedbackDialog
+        open={feedbackDialogOpen}
+        onOpenChange={setFeedbackDialogOpen}
+        onSubmit={handleSubmitFeedback}
+        isSubmitting={feedbackMutation.isPending}
+      />
     </div>
   );
 };
