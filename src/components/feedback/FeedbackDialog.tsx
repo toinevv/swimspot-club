@@ -13,6 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface FeedbackDialogProps {
   open: boolean;
@@ -83,7 +84,14 @@ const FeedbackDialog = ({
                   className="flex items-center space-x-2 flex-1 cursor-pointer"
                   onClick={() => handleOptionClick(option.value)}
                 >
-                  <RadioGroupItem value={option.value} id={option.value} />
+                  <RadioGroupItem 
+                    value={option.value} 
+                    id={option.value}
+                    className={cn(
+                      option.value === "other" && selectedType !== "other" && 
+                      "border-swimspot-burnt-coral text-swimspot-burnt-coral hover:border-swimspot-burnt-coral/80"
+                    )}
+                  />
                   <Label htmlFor={option.value} className="cursor-pointer">
                     {option.label}
                   </Label>
