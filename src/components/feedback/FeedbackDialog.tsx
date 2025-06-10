@@ -12,6 +12,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 
 interface FeedbackDialogProps {
@@ -29,22 +30,33 @@ const FeedbackDialog = ({
 }: FeedbackDialogProps) => {
   const [selectedType, setSelectedType] = useState("");
   const [details, setDetails] = useState("");
+  const [otherText, setOtherText] = useState("");
 
   const feedbackOptions = [
     { value: "location_incorrect", label: "Location incorrect" },
     { value: "info_incorrect", label: "Info incorrect" },
-    { value: "other", label: "Other:[]" }
+    { value: "other", label: "Other:" }
   ];
 
   const handleSubmit = () => {
     if (selectedType) {
+      let feedbackDetails = undefined;
+      
+      if (selectedType === "other" && otherText.trim()) {
+        feedbackDetails = otherText.trim();
+      } else if (selectedType === "other" && details.trim()) {
+        feedbackDetails = details.trim();
+      }
+      
       onSubmit({
         type: selectedType,
-        details: selectedType === "other" && details.trim() ? details.trim() : undefined
+        details: feedbackDetails
       });
+      
       // Reset form
       setSelectedType("");
       setDetails("");
+      setOtherText("");
     }
   };
 
@@ -53,6 +65,7 @@ const FeedbackDialog = ({
     // Reset form when closing
     setSelectedType("");
     setDetails("");
+    setOtherText("");
   };
 
   return (
@@ -72,13 +85,22 @@ const FeedbackDialog = ({
                 <Label htmlFor={option.value} className="cursor-pointer">
                   {option.label}
                 </Label>
+                {option.value === "other" && (
+                  <Input
+                    placeholder="Please specify..."
+                    value={otherText}
+                    onChange={(e) => setOtherText(e.target.value)}
+                    className="ml-2 flex-1"
+                    disabled={selectedType !== "other" || isSubmitting}
+                  />
+                )}
               </div>
             ))}
           </RadioGroup>
           
           {selectedType === "other" && (
             <div className="space-y-2">
-              <Label htmlFor="details">Please describe the issue:</Label>
+              <Label htmlFor="details">Additional details (optional):</Label>
               <Textarea
                 id="details"
                 placeholder="Please provide more details about the issue..."

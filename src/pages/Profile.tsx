@@ -19,7 +19,7 @@ const Profile = () => {
     statsLoading,
     savedSpots,
     savedSpotsLoading,
-    groups,
+    userGroups,
     groupsLoading
   } = useProfileData();
 
@@ -44,7 +44,7 @@ const Profile = () => {
         statsLoading={statsLoading}
         savedSpots={savedSpots}
         savedSpotsLoading={savedSpotsLoading}
-        groups={groups}
+        groups={userGroups}
         groupsLoading={groupsLoading}
         onEditClick={() => setIsEditing(true)}
       />

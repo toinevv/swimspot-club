@@ -80,9 +80,20 @@ const SwimSpotDetail = () => {
     }
   });
 
+  const flagClickMutation = useMutation({
+    mutationFn: () => api.submitFeedbackWithText(id!, "flag_clicked"),
+    onSuccess: () => {
+      console.log("Flag click recorded");
+    }
+  });
+
   const handleSave = () => saveMutation.mutate();
   const handleMarkVisited = () => visitMutation.mutate();
-  const handleFeedback = () => setFeedbackDialogOpen(true);
+  const handleFeedback = () => {
+    // Record the flag click immediately when dialog opens
+    flagClickMutation.mutate();
+    setFeedbackDialogOpen(true);
+  };
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({

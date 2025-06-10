@@ -26,9 +26,13 @@ export const useProfileData = () => {
 
   return {
     profile,
+    profileLoading,
     stats,
+    statsLoading,
     savedSpots,
+    savedSpotsLoading,
     userGroups,
+    groupsLoading,
     isLoading: profileLoading || statsLoading || savedSpotsLoading || groupsLoading,
     error: profileError
   };
