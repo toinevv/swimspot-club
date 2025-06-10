@@ -30,21 +30,21 @@ export const api = {
   getAllBlogPosts: blogPostsApi.getAllBlogPosts,
   getBlogPostBySlug: blogPostsApi.getBlogPostBySlug,
   
-  // Profiles - Fixed to match actual implementations (no parameters)
+  // Profiles - These functions take no parameters and get current user's data
   getCurrentUserProfile: profilesApi.getCurrentUserProfile,
   updateProfile: profilesApi.updateProfile,
-  getUserSavedSpots: profilesApi.getUserSavedSpots, // No parameters - gets current user's spots
-  getUserStats: profilesApi.getUserStats, // No parameters - gets current user's stats
+  getUserSavedSpots: profilesApi.getUserSavedSpots,
+  getUserStats: profilesApi.getUserStats,
   
-  // Spot interactions - Fixed signatures
-  getSpotPartners: spotPartnersApi.getSpotPartners, // Takes spotId
-  getSpotVisits: spotVisitsApi.getSpotVisits, // Takes spotId  
-  markAsVisited: spotVisitsApi.markAsVisited, // Takes spotId
-  toggleSaveSpot: spotSavesApi.toggleSaveSpot, // Takes spotId
-  checkIfSaved: spotSavesApi.checkIfSaved, // Takes spotId
+  // Spot interactions - These functions take spotId parameter
+  getSpotPartners: spotPartnersApi.getSpotPartners,
+  getSpotVisits: spotVisitsApi.getSpotVisits,
+  markAsVisited: spotVisitsApi.markAsVisited,
+  toggleSaveSpot: spotSavesApi.toggleSaveSpot,
+  checkIfSaved: spotSavesApi.checkIfSaved,
   
-  // User groups
-  getUserGroups: userGroupsApi.getUserGroups, // No parameters - gets current user's groups
+  // User groups - No parameters, gets current user's groups
+  getUserGroups: userGroupsApi.getUserGroups,
   
   // Groups
   getGroups: groupsApi.getGroups,
