@@ -81,7 +81,7 @@ const FeedbackDialog = ({
             {feedbackOptions.map((option) => (
               <div key={option.value} className="flex items-center space-x-2">
                 <div 
-                  className="flex items-center space-x-2 flex-1 cursor-pointer"
+                  className="flex items-center space-x-2 cursor-pointer"
                   onClick={() => handleOptionClick(option.value)}
                 >
                   <RadioGroupItem 
@@ -102,7 +102,7 @@ const FeedbackDialog = ({
                     value={otherText}
                     onChange={(e) => setOtherText(e.target.value)}
                     className="ml-2 flex-1"
-                    disabled={selectedType !== "other" || isSubmitting}
+                    disabled={isSubmitting}
                     onClick={(e) => e.stopPropagation()}
                   />
                 )}
