@@ -1,7 +1,6 @@
 
-import { Bookmark, Share, Eye, Flag, ArrowLeft } from "lucide-react";
+import { Bookmark, Share, Eye, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 
 interface SwimSpotHeroProps {
   swimSpot: any;
@@ -32,12 +31,6 @@ const SwimSpotHero = ({
   savedCount = 0,
   visitCount = 0
 }: SwimSpotHeroProps) => {
-  const navigate = useNavigate();
-
-  const handleBackClick = () => {
-    navigate(-1);
-  };
-
   return (
     <div className="relative h-72 md:h-96 overflow-hidden">
       <img 
@@ -47,18 +40,6 @@ const SwimSpotHero = ({
         style={{ filter: 'contrast(1.05) saturate(0.95)' }}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-      
-      {/* Back Button - Top Left */}
-      <div className="absolute top-6 left-6">
-        <Button
-          size="icon"
-          onClick={handleBackClick}
-          className="h-11 w-11 rounded-full bg-white/15 backdrop-blur-md border border-white/20 hover:bg-white/25 transition-all duration-300"
-          style={{ backdropFilter: 'blur(12px)' }}
-        >
-          <ArrowLeft className="h-5 w-5 text-white" />
-        </Button>
-      </div>
       
       <div className="absolute bottom-8 left-6 right-6">
         <div className="flex justify-between items-end">

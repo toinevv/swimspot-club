@@ -1,3 +1,4 @@
+
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -47,7 +48,7 @@ const SwimSpotDetail = () => {
 
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
-    queryFn: createQueryFn(api.checkIfSaved),
+    queryFn: createQueryFn((spotId: string) => api.checkIfSaved(spotId)),
     enabled: !!id,
   });
 
@@ -143,7 +144,7 @@ const SwimSpotDetail = () => {
 
   return (
     <div className="min-h-screen bg-swimspot-drift-sand">
-      {/* Back button */}
+      {/* Back button - Only one, positioned at the top */}
       <div className="sticky top-16 z-20 bg-swimspot-drift-sand/95 backdrop-blur-sm border-b border-swimspot-blue-green/10">
         <div className="max-w-6xl mx-auto px-4 py-3">
           <Button

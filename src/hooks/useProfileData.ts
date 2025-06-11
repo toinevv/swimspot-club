@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
-import { createSimpleQueryFn } from "@/services/api/utils";
+import { createSimpleQueryFn, createQueryFn } from "@/services/api/utils";
 
 export const useProfileData = () => {
   const { data: profile, isLoading: profileLoading, error: profileError } = useQuery({
@@ -16,7 +16,7 @@ export const useProfileData = () => {
 
   const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery({
     queryKey: ['userSavedSpots'],
-    queryFn: createSimpleQueryFn(api.getUserSavedSpots),
+    queryFn: createQueryFn(api.getUserSavedSpots),
   });
 
   const { data: userGroups = [], isLoading: groupsLoading } = useQuery({
