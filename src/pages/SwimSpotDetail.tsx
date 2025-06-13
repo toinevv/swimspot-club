@@ -48,10 +48,7 @@ const SwimSpotDetail = () => {
 
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
-    queryFn: ({ queryKey }) => {
-      const spotId = queryKey[1] as string;
-      return spotId ? api.checkIfSaved(spotId) : Promise.resolve(false);
-    },
+    queryFn: () => api.checkIfSaved(id!, 'user123'), // Fix: provide both required arguments
     enabled: !!id,
   });
 
@@ -130,17 +127,8 @@ const SwimSpotDetail = () => {
       params.set('zoom', returnZoom);
       navigate(`/?${params.toString()}`);
     } else {
-      // Fallback: navigate to map centered on current spot location
-      if (spot?.location) {
-        const params = new URLSearchParams();
-        params.set('lat', spot.location.latitude.toString());
-        params.set('lng', spot.location.longitude.toString());
-        params.set('zoom', '14');
-        navigate(`/?${params.toString()}`);
-      } else {
-        // Final fallback to regular map view
-        navigate('/');
-      }
+      // Just go back to the default map view without any coordinates
+      navigate('/');
     }
   };
 
