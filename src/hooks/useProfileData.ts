@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
-import { createSimpleQueryFn, createQueryFn } from "@/services/api/utils";
+import { createSimpleQueryFn } from "@/services/api/utils";
 
 export const useProfileData = () => {
   const { data: profile, isLoading: profileLoading, error: profileError } = useQuery({
@@ -14,7 +14,7 @@ export const useProfileData = () => {
     queryFn: createSimpleQueryFn(api.getUserStats),
   });
 
-  // Fix: Get saved spots as SavedSpotData format directly - no user ID needed since API gets current user internally
+  // Get saved spots - API returns SavedSpotData[] with joined swim spot details
   const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery({
     queryKey: ['userSavedSpots'],
     queryFn: createSimpleQueryFn(api.getUserSavedSpots),

@@ -50,6 +50,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initia
       );
 
       map.current.on('load', () => {
+        console.log('Map loaded successfully');
         setMapLoaded(true);
       });
 
@@ -64,7 +65,21 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initia
 
     return () => {
       try {
-        map.current?.remove();
+        // Clean up existing markers first
+        Object.values(markersRef.current).forEach(marker => {
+          try {
+            marker.remove();
+          } catch (e) {
+            console.warn('Error removing marker:', e);
+          }
+        });
+        markersRef.current = {};
+        
+        // Remove map
+        if (map.current) {
+          map.current.remove();
+          map.current = null;
+        }
       } catch (error) {
         console.error('Error cleaning up map:', error);
       }
@@ -72,36 +87,56 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initia
   }, [mapboxToken, initialCenter, initialZoom]);
 
   useEffect(() => {
-    if (!mapLoaded || !map.current) return;
+    // Only proceed if map is loaded and we have a valid map reference
+    if (!mapLoaded || !map.current || !spots.length) {
+      console.log('Map not ready or no spots:', { mapLoaded, hasMap: !!map.current, spotsCount: spots.length });
+      return;
+    }
+
+    console.log('Adding markers for', spots.length, 'spots');
 
     // Clear existing markers
-    Object.values(markersRef.current).forEach(marker => marker.remove());
+    Object.values(markersRef.current).forEach(marker => {
+      try {
+        marker.remove();
+      } catch (e) {
+        console.warn('Error removing existing marker:', e);
+      }
+    });
     markersRef.current = {};
 
     // Add new markers
     spots.forEach(spot => {
-      const markerDiv = document.createElement('div');
-      const root = createRoot(markerDiv);
-      
-      root.render(
-        <SwimSpotMarker 
-          spot={spot}
-          onClick={() => {
-            // Get CURRENT map center and zoom when clicking a spot
-            if (map.current) {
-              const center = map.current.getCenter();
-              const zoom = map.current.getZoom();
-              onSpotClick(spot, [center.lng, center.lat], zoom);
-            }
-          }}
-        />
-      );
+      try {
+        const markerDiv = document.createElement('div');
+        const root = createRoot(markerDiv);
+        
+        root.render(
+          <SwimSpotMarker 
+            spot={spot}
+            onClick={() => {
+              // Get CURRENT map center and zoom when clicking a spot
+              if (map.current) {
+                const center = map.current.getCenter();
+                const zoom = map.current.getZoom();
+                console.log('Spot clicked, saving map state:', { center: [center.lng, center.lat], zoom });
+                onSpotClick(spot, [center.lng, center.lat], zoom);
+              }
+            }}
+          />
+        );
 
-      const marker = new mapboxgl.Marker(markerDiv)
-        .setLngLat([spot.location.longitude, spot.location.latitude])
-        .addTo(map.current!);
+        // Ensure map is still valid before adding marker
+        if (map.current) {
+          const marker = new mapboxgl.Marker(markerDiv)
+            .setLngLat([spot.location.longitude, spot.location.latitude])
+            .addTo(map.current);
 
-      markersRef.current[spot.id] = marker;
+          markersRef.current[spot.id] = marker;
+        }
+      } catch (error) {
+        console.error('Error adding marker for spot:', spot.id, error);
+      }
     });
   }, [spots, mapLoaded, onSpotClick]);
 
