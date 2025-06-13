@@ -30,7 +30,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initia
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/outdoors-v12',
-        center: initialCenter || [4.9041, 52.3676],
+        center: initialCenter || [10.0, 50.0], // Default to Central Europe
         zoom: initialZoom
       });
 
@@ -87,7 +87,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initia
         <SwimSpotMarker 
           spot={spot}
           onClick={() => {
-            // Get current map center and zoom when clicking a spot
+            // Get CURRENT map center and zoom when clicking a spot
             if (map.current) {
               const center = map.current.getCenter();
               const zoom = map.current.getZoom();

@@ -1,4 +1,3 @@
-
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -22,6 +21,12 @@ const SwimSpotDetail = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [hasFeedback, setHasFeedback] = useState(false);
   const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
+
+  // Get current user profile for userId
+  const { data: profile } = useQuery({
+    queryKey: ['currentUserProfile'],
+    queryFn: createSimpleQueryFn(api.getCurrentUserProfile),
+  });
 
   const { data: spot, isLoading: spotLoading, error: spotError } = useQuery({
     queryKey: ['swimSpot', id],
@@ -52,11 +57,12 @@ const SwimSpotDetail = () => {
     enabled: !!id,
   });
 
-  // Mutations for spot interactions
+  // Mutations for spot interactions - now with proper userId
   const saveMutation = useMutation({
     mutationFn: () => {
       if (!id) throw new Error("No spot ID");
-      return api.toggleSaveSpot(id);
+      if (!profile?.id) throw new Error("No user ID");
+      return api.toggleSaveSpot(id, profile.id);
     },
     onSuccess: () => {
       setIsSaved(!isSaved);
@@ -102,7 +108,6 @@ const SwimSpotDetail = () => {
   const handleSave = () => saveMutation.mutate();
   const handleMarkVisited = () => visitMutation.mutate();
   const handleFeedback = () => {
-    // Record the flag click immediately when dialog opens
     flagClickMutation.mutate();
     setFeedbackDialogOpen(true);
   };
@@ -136,8 +141,12 @@ const SwimSpotDetail = () => {
       params.set('zoom', returnZoom);
       navigate(`/?${params.toString()}`);
     } else {
-      // Fallback to regular map view
-      navigate('/');
+      // Fallback to default Central Europe view
+      const params = new URLSearchParams();
+      params.set('lat', '50.0');
+      params.set('lng', '10.0');
+      params.set('zoom', '4');
+      navigate(`/?${params.toString()}`);
     }
   };
 

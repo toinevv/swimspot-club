@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -19,7 +18,6 @@ const SwimMap = () => {
   const { city } = useParams();
   const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState({});
-  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   
   // Custom hooks
   const { mapboxToken, isTokenLoading } = useMapboxToken();
@@ -69,44 +67,29 @@ const SwimMap = () => {
     ? cityData.description
     : 'Discover the best wild swimming locations across the Netherlands. Explore natural swim spots, lakes, and canals with our interactive map.';
 
-  // Determine map center - check return coordinates first, then URL params, then other sources
+  // Determine map center with proper fallback
   const getMapCenter = (): [number, number] => {
-    // Check for return coordinates first (when coming back from spot detail)
-    const returnLat = searchParams.get('returnLat');
-    const returnLng = searchParams.get('returnLng');
-    if (returnLat && returnLng) {
-      return [parseFloat(returnLng), parseFloat(returnLat)];
-    }
-    
-    // Check regular URL parameters
+    // Check regular URL parameters first
     const lat = searchParams.get('lat');
     const lng = searchParams.get('lng');
     if (lat && lng) {
       return [parseFloat(lng), parseFloat(lat)];
     }
     
-    if (mapCenter) {
-      return mapCenter;
-    }
+    // Then check other sources
     if (cityData?.coordinates) {
       return cityData.coordinates;
     }
     if (userLocation) {
       return userLocation;
     }
-    // Default to France-Switzerland border area
-    return [6.0, 48.7];
+    // Default to Central Europe view
+    return [10.0, 50.0];
   };
 
-  // Get initial zoom - check return zoom first, then URL params, then defaults
+  // Get initial zoom with proper fallback
   const getInitialZoom = (): number => {
-    // Check for return zoom first (when coming back from spot detail)
-    const returnZoom = searchParams.get('returnZoom');
-    if (returnZoom) {
-      return parseFloat(returnZoom);
-    }
-    
-    // Check regular URL zoom parameter
+    // Check URL zoom parameter
     const zoom = searchParams.get('zoom');
     if (zoom) {
       return parseFloat(zoom);
@@ -115,7 +98,7 @@ const SwimMap = () => {
     // Use different zoom levels based on context
     if (cityData?.coordinates) return 13;
     if (userLocation) return 12;
-    // More zoomed out view for Central Europe
+    // Central Europe view zoom
     return 4;
   };
 

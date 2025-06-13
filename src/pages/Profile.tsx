@@ -36,10 +36,18 @@ const Profile = () => {
     return <ProfileNotFound />;
   }
 
-  // Transform saved spots to the expected format
+  // Transform saved spots to the expected format with proper type conversion
   const transformedSavedSpots = savedSpots.map(spot => ({
-    ...spot,
-    swim_spots: spot
+    id: String(spot.id), // Convert number to string
+    created_at: spot.created_at,
+    swim_spots: {
+      id: String(spot.swim_spot_id), // Convert number to string
+      name: spot.name || 'Unknown Spot',
+      image_url: spot.image_url || '',
+      water_type: spot.water_type || 'unknown',
+      address: spot.address || '',
+      tags: spot.tags || []
+    }
   }));
 
   return (
