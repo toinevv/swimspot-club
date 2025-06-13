@@ -1,4 +1,3 @@
-
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -48,7 +47,10 @@ const SwimSpotDetail = () => {
 
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
-    queryFn: () => api.checkIfSaved(id!),
+    queryFn: () => {
+      if (!id) return Promise.resolve(false);
+      return api.checkIfSaved(id);
+    },
     enabled: !!id,
   });
 
@@ -110,19 +112,7 @@ const SwimSpotDetail = () => {
   };
 
   const handleBackToMap = () => {
-    const returnLat = searchParams.get('returnLat');
-    const returnLng = searchParams.get('returnLng');
-    const returnZoom = searchParams.get('returnZoom');
-    
-    if (returnLat && returnLng && returnZoom) {
-      const params = new URLSearchParams();
-      params.set('lat', returnLat);
-      params.set('lng', returnLng);
-      params.set('zoom', returnZoom);
-      navigate(`/?${params.toString()}`);
-    } else {
-      navigate('/');
-    }
+    navigate('/');
   };
 
   if (spotLoading) {
