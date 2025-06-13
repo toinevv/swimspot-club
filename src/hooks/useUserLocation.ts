@@ -8,15 +8,35 @@ export const useUserLocation = (city?: string) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Don't automatically get location - let the map show the default zoomed out Europe view
-    // Only get location if specifically requested by user interaction
+    // If there's a specific city, don't try to get user location
     if (city) {
-      // If there's a specific city, don't try to get user location
       return;
     }
     
-    // Set default to Central Europe coordinates for zoomed out view
-    setUserLocation([6.0, 48.7]);
+    // Try to get user's current location on app start
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation([longitude, latitude]);
+          console.log('User location retrieved:', { latitude, longitude });
+        },
+        (error) => {
+          console.log('Location access denied or failed:', error);
+          setLocationPermissionDenied(true);
+          // Fallback to Central Europe coordinates for zoomed out view
+          setUserLocation([10.0, 50.0]);
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 300000 // 5 minutes
+        }
+      );
+    } else {
+      // Geolocation not supported, use Europe fallback
+      setUserLocation([10.0, 50.0]);
+    }
   }, [city, navigate]);
 
   return { userLocation, locationPermissionDenied };
