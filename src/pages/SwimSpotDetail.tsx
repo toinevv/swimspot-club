@@ -57,7 +57,7 @@ const SwimSpotDetail = () => {
     enabled: !!id,
   });
 
-  // Fix: All API functions expect string IDs, not numbers
+  // Mutations for spot interactions - fix the ID type conversion
   const saveMutation = useMutation({
     mutationFn: () => {
       if (!id) throw new Error("No spot ID");

@@ -36,14 +36,27 @@ const Profile = () => {
     return <ProfileNotFound />;
   }
 
-  // savedSpots is now already in SavedSpotData[] format from the API
+  // Transform saved spots to match SavedSpotData format expected by ProfileContent
+  const transformedSavedSpots = savedSpots.map(spot => ({
+    id: spot.id.toString(),
+    created_at: spot.created_at,
+    swim_spots: {
+      id: spot.id.toString(),
+      name: spot.name || 'Unknown Spot',
+      image_url: spot.image_url || '/placeholder.svg',
+      water_type: spot.water_type || 'unknown',
+      address: spot.address || 'Address not available',
+      tags: spot.tags || []
+    }
+  }));
+
   return (
     <div className="min-h-screen bg-swimspot-drift-sand">
       <ProfileContent
         profile={profile}
         stats={stats}
         statsLoading={statsLoading}
-        savedSpots={savedSpots}
+        savedSpots={transformedSavedSpots}
         savedSpotsLoading={savedSpotsLoading}
         groups={userGroups}
         groupsLoading={groupsLoading}
