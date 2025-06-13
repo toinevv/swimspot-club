@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -67,11 +68,24 @@ const SwimMap = () => {
     ? cityData.description
     : 'Discover the best wild swimming locations across the Netherlands. Explore natural swim spots, lakes, and canals with our interactive map.';
 
+  // Check for fallback coordinates and redirect to default view
+  const lat = searchParams.get('lat');
+  const lng = searchParams.get('lng');
+  const zoom = searchParams.get('zoom');
+  
+  // If these are the fallback coordinates from geolocation failure, redirect to default view
+  if (lat === '52.045155' && lng === '5.8718234' && zoom === '12') {
+    const defaultParams = new URLSearchParams();
+    defaultParams.set('lat', '50.0');
+    defaultParams.set('lng', '10.0');
+    defaultParams.set('zoom', '4');
+    navigate(`/?${defaultParams.toString()}`, { replace: true });
+    return <MapLoadingState />;
+  }
+
   // Determine map center with proper fallback
   const getMapCenter = (): [number, number] => {
     // Check regular URL parameters first
-    const lat = searchParams.get('lat');
-    const lng = searchParams.get('lng');
     if (lat && lng) {
       return [parseFloat(lng), parseFloat(lat)];
     }
@@ -90,7 +104,6 @@ const SwimMap = () => {
   // Get initial zoom with proper fallback
   const getInitialZoom = (): number => {
     // Check URL zoom parameter
-    const zoom = searchParams.get('zoom');
     if (zoom) {
       return parseFloat(zoom);
     }
