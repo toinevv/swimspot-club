@@ -14,9 +14,9 @@ export const useProfileData = () => {
     queryFn: createSimpleQueryFn(api.getUserStats),
   });
 
-  // Fix: Get saved spots as SavedSpotData format directly
+  // Fix: Get saved spots as SavedSpotData format directly - no user ID needed since API gets current user internally
   const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery({
-    queryKey: ['userSavedSpots', profile?.id],
+    queryKey: ['userSavedSpots'],
     queryFn: createSimpleQueryFn(api.getUserSavedSpots),
     enabled: !!profile?.id,
   });

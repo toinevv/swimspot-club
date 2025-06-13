@@ -40,6 +40,7 @@ const SwimSpotDetail = () => {
     enabled: !!id,
   });
 
+  // Fix: Use createQueryFn for getSpotVisits since it takes a spot ID parameter
   const { data: visitsData } = useQuery({
     queryKey: ['spotVisits', id],
     queryFn: createQueryFn(api.getSpotVisits),
@@ -57,7 +58,7 @@ const SwimSpotDetail = () => {
     enabled: !!id,
   });
 
-  // Mutations for spot interactions - keep string IDs
+  // Mutations for spot interactions - keep string IDs and proper API signatures
   const saveMutation = useMutation({
     mutationFn: () => {
       if (!id) throw new Error("No spot ID");
@@ -126,6 +127,7 @@ const SwimSpotDetail = () => {
     feedbackMutation.mutate(feedbackData);
   };
 
+  // CRITICAL: Preserve the back navigation logic that saves map coordinates
   const handleBackToMap = () => {
     // Get return coordinates from URL params (saved when pin was clicked)
     const returnLat = searchParams.get('returnLat');
