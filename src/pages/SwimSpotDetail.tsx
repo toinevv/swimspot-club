@@ -1,3 +1,4 @@
+
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -63,7 +64,7 @@ const SwimSpotDetail = () => {
   });
 
   const visitMutation = useMutation({
-    mutationFn: () => api.markAsVisited(id!, 'user123'),
+    mutationFn: () => api.markAsVisited(id!),
     onSuccess: () => {
       toast.success("Marked as visited!");
       queryClient.invalidateQueries({ queryKey: ['spotVisits', id] });
@@ -111,7 +112,7 @@ const SwimSpotDetail = () => {
   };
 
   const handleBackToMap = () => {
-    // Get return coordinates from URL params - these are set when clicking a pin
+    // Get return coordinates from URL params - these are the EXACT coordinates where the pin was clicked
     const returnLat = searchParams.get('returnLat');
     const returnLng = searchParams.get('returnLng');
     const returnZoom = searchParams.get('returnZoom');
@@ -119,14 +120,14 @@ const SwimSpotDetail = () => {
     console.log('Return coordinates from URL:', { returnLat, returnLng, returnZoom });
     
     if (returnLat && returnLng && returnZoom) {
-      // Navigate back to map with the exact coordinates where the pin was clicked
+      // Navigate back to map with the EXACT coordinates where the pin was clicked
       const params = new URLSearchParams();
       params.set('lat', returnLat);
       params.set('lng', returnLng);
       params.set('zoom', returnZoom);
       navigate(`/?${params.toString()}`);
     } else {
-      // Just go back to the default map view - this will show the zoomed out Europe view
+      // Fallback to default map view
       navigate('/');
     }
   };
