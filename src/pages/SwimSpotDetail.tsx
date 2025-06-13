@@ -47,10 +47,7 @@ const SwimSpotDetail = () => {
 
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
-    queryFn: ({ queryKey }) => {
-      const spotId = queryKey[1] as string;
-      return spotId ? api.checkIfSaved(spotId) : Promise.resolve(false);
-    },
+    queryFn: () => api.checkIfSaved(id!, 'user123'),
     enabled: !!id,
   });
 
@@ -66,10 +63,7 @@ const SwimSpotDetail = () => {
   });
 
   const visitMutation = useMutation({
-    mutationFn: ({ queryKey }) => {
-      const spotId = queryKey[1] as string;
-      return api.markAsVisited(spotId);
-    },
+    mutationFn: () => api.markAsVisited(id!),
     onSuccess: () => {
       toast.success("Marked as visited!");
       queryClient.invalidateQueries({ queryKey: ['spotVisits', id] });
@@ -94,7 +88,7 @@ const SwimSpotDetail = () => {
   });
 
   const handleSave = () => saveMutation.mutate();
-  const handleMarkVisited = () => visitMutation.mutate({ queryKey: ['spotVisits', id] });
+  const handleMarkVisited = () => visitMutation.mutate();
   const handleFeedback = () => {
     // Record the flag click immediately when dialog opens
     flagClickMutation.mutate();
@@ -132,7 +126,7 @@ const SwimSpotDetail = () => {
       params.set('zoom', returnZoom);
       navigate(`/?${params.toString()}`);
     } else {
-      // Just go back to the default map view without any coordinates - this will show the zoomed out Europe view
+      // Just go back to the default map view - this will show the zoomed out Europe view
       navigate('/');
     }
   };
