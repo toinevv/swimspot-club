@@ -1,8 +1,6 @@
 
 import { useState, useEffect } from 'react';
 
-const MAP_POSITION_KEY = 'swimspot_last_map_position';
-
 interface MapPosition {
   lat: number;
   lng: number;
@@ -14,7 +12,7 @@ export const useMapPosition = () => {
 
   useEffect(() => {
     // Load saved position from localStorage on init
-    const saved = localStorage.getItem(MAP_POSITION_KEY);
+    const saved = localStorage.getItem('swimspot_last_map_position');
     if (saved) {
       try {
         setLastPosition(JSON.parse(saved));
@@ -27,7 +25,7 @@ export const useMapPosition = () => {
   const saveMapPosition = (lat: number, lng: number, zoom: number) => {
     const position = { lat, lng, zoom };
     setLastPosition(position);
-    localStorage.setItem(MAP_POSITION_KEY, JSON.stringify(position));
+    localStorage.setItem('swimspot_last_map_position', JSON.stringify(position));
   };
 
   const getMapPosition = (): MapPosition | null => {

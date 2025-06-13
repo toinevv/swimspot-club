@@ -1,6 +1,6 @@
 
-import { useState, useEffect } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import { createSimpleQueryFn } from "@/services/api/utils";
@@ -12,18 +12,15 @@ import SEOHead from "@/components/seo/SEOHead";
 import CityContent from "@/components/seo/CityContent";
 import { useMapboxToken } from "@/hooks/useMapboxToken";
 import { useUserLocation } from "@/hooks/useUserLocation";
-import { useMapPosition } from "@/hooks/useMapPosition";
 import type { SwimSpot } from "@/services/api";
 
 const SwimMap = () => {
   const navigate = useNavigate();
   const { city } = useParams();
-  const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState({});
   
   const { mapboxToken, isTokenLoading } = useMapboxToken();
   const { userLocation } = useUserLocation();
-  const { saveMapPosition, getMapPosition } = useMapPosition();
   
   const { data: cityData } = useQuery({
     queryKey: ['city', city],
@@ -42,17 +39,8 @@ const SwimMap = () => {
 
   const spots: SwimSpot[] = Array.isArray(spotsData) ? spotsData : [];
 
-  const handleSpotClick = (spot: SwimSpot, currentMapCenter: [number, number], currentZoom: number) => {
-    // Save current map position
-    saveMapPosition(currentMapCenter[1], currentMapCenter[0], currentZoom);
-    
-    // Navigate to spot with return coordinates
-    const params = new URLSearchParams();
-    params.set('returnLat', currentMapCenter[1].toString());
-    params.set('returnLng', currentMapCenter[0].toString());
-    params.set('returnZoom', currentZoom.toString());
-    
-    navigate(`/spot/${spot.id}?${params.toString()}`);
+  const handleSpotClick = (spot: SwimSpot) => {
+    navigate(`/spot/${spot.id}`);
   };
 
   const handleFilterChange = (newFilters: any) => {
@@ -67,55 +55,21 @@ const SwimMap = () => {
     ? cityData.description
     : 'Discover the best wild swimming locations across Europe. Explore natural swim spots, lakes, and rivers with our interactive map.';
 
+  // Simple map center logic
   const getMapCenter = (): [number, number] => {
-    // Priority 1: URL parameters (for returns from spot details)
-    const lat = searchParams.get('lat') || searchParams.get('returnLat');
-    const lng = searchParams.get('lng') || searchParams.get('returnLng');
-    if (lat && lng) {
-      return [parseFloat(lng), parseFloat(lat)];
-    }
-    
-    // Priority 2: City-specific coordinates
     if (cityData?.coordinates) {
       return cityData.coordinates;
     }
-    
-    // Priority 3: Last saved map position
-    const lastPosition = getMapPosition();
-    if (lastPosition) {
-      return [lastPosition.lng, lastPosition.lat];
-    }
-    
-    // Priority 4: User location
     if (userLocation) {
       return userLocation;
     }
-    
-    // Priority 5: Europe fallback
-    return [10.0, 50.0];
+    return [10.0, 50.0]; // Europe fallback
   };
 
   const getInitialZoom = (): number => {
-    // Priority 1: URL zoom parameter
-    const zoom = searchParams.get('zoom') || searchParams.get('returnZoom');
-    if (zoom) {
-      return parseFloat(zoom);
-    }
-    
-    // Priority 2: City-specific zoom
     if (cityData?.coordinates) return 13;
-    
-    // Priority 3: Last saved zoom
-    const lastPosition = getMapPosition();
-    if (lastPosition) {
-      return lastPosition.zoom;
-    }
-    
-    // Priority 4: User location zoom
     if (userLocation) return 10;
-    
-    // Priority 5: Europe fallback zoom (zoomed out)
-    return 4;
+    return 4; // Europe fallback zoom
   };
 
   if (isTokenLoading) {
@@ -142,7 +96,6 @@ const SwimMap = () => {
           mapboxToken={mapboxToken || undefined}
           initialCenter={getMapCenter()}
           initialZoom={getInitialZoom()}
-          onMapMove={saveMapPosition}
         />
         
         {cityData && (

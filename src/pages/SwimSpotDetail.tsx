@@ -1,3 +1,4 @@
+
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -47,17 +48,14 @@ const SwimSpotDetail = () => {
 
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
-    queryFn: () => {
-      if (!id) return Promise.resolve(false);
-      return api.checkIfSaved(id);
-    },
+    queryFn: createQueryFn(api.checkIfSaved),
     enabled: !!id,
   });
 
   const saveMutation = useMutation({
     mutationFn: () => {
       if (!id) throw new Error('No spot ID provided');
-      return api.toggleSaveSpot(id);
+      return api.saveSpot(id);
     },
     onSuccess: () => {
       setIsSaved(!isSaved);
@@ -115,6 +113,7 @@ const SwimSpotDetail = () => {
   };
 
   const handleBackToMap = () => {
+    // Simple back navigation - just go to home
     navigate('/');
   };
 

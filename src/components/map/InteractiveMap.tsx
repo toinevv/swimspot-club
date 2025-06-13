@@ -8,11 +8,10 @@ import { createRoot } from 'react-dom/client';
 
 interface InteractiveMapProps {
   spots: SwimSpot[];
-  onSpotClick: (spot: SwimSpot, mapCenter: [number, number], zoom: number) => void;
+  onSpotClick: (spot: SwimSpot) => void;
   mapboxToken?: string;
   initialCenter?: [number, number];
   initialZoom?: number;
-  onMapMove?: (lat: number, lng: number, zoom: number) => void;
 }
 
 const InteractiveMap = ({ 
@@ -20,8 +19,7 @@ const InteractiveMap = ({
   onSpotClick, 
   mapboxToken, 
   initialCenter, 
-  initialZoom = 12,
-  onMapMove 
+  initialZoom = 12
 }: InteractiveMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -61,15 +59,6 @@ const InteractiveMap = ({
         setMapLoaded(true);
       });
 
-      // Save map position when user moves the map
-      map.current.on('moveend', () => {
-        if (map.current && onMapMove) {
-          const center = map.current.getCenter();
-          const zoom = map.current.getZoom();
-          onMapMove(center.lat, center.lng, zoom);
-        }
-      });
-
       map.current.on('error', (e) => {
         console.error('Mapbox error:', e);
         setMapError('There was an error loading the map. Please check your Mapbox token.');
@@ -86,7 +75,7 @@ const InteractiveMap = ({
         console.error('Error cleaning up map:', error);
       }
     };
-  }, [mapboxToken, initialCenter, initialZoom, onMapMove]);
+  }, [mapboxToken, initialCenter, initialZoom]);
 
   useEffect(() => {
     if (!mapLoaded || !map.current) return;
@@ -103,13 +92,7 @@ const InteractiveMap = ({
       root.render(
         <SwimSpotMarker 
           spot={spot}
-          onClick={() => {
-            if (map.current) {
-              const center = map.current.getCenter();
-              const zoom = map.current.getZoom();
-              onSpotClick(spot, [center.lng, center.lat], zoom);
-            }
-          }}
+          onClick={() => onSpotClick(spot)}
         />
       );
 
