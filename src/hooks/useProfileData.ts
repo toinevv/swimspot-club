@@ -16,7 +16,7 @@ export const useProfileData = () => {
 
   const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery({
     queryKey: ['userSavedSpots'],
-    queryFn: createQueryFn(api.getUserSavedSpots),
+    queryFn: createSimpleQueryFn(api.getUserSavedSpots),
   });
 
   const { data: userGroups = [], isLoading: groupsLoading } = useQuery({

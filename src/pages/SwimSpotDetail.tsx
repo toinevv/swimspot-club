@@ -54,7 +54,10 @@ const SwimSpotDetail = () => {
 
   // Mutations for spot interactions
   const saveMutation = useMutation({
-    mutationFn: () => api.toggleSaveSpot(id!),
+    mutationFn: () => {
+      if (!id) throw new Error("No spot ID");
+      return api.toggleSaveSpot(id);
+    },
     onSuccess: () => {
       setIsSaved(!isSaved);
       toast.success(isSaved ? "Spot removed from saved" : "Spot saved!");
@@ -64,7 +67,10 @@ const SwimSpotDetail = () => {
   });
 
   const visitMutation = useMutation({
-    mutationFn: () => api.markAsVisited(id!),
+    mutationFn: () => {
+      if (!id) throw new Error("No spot ID");
+      return api.markAsVisited(id);
+    },
     onSuccess: () => {
       toast.success("Marked as visited!");
       queryClient.invalidateQueries({ queryKey: ['spotVisits', id] });
@@ -72,8 +78,10 @@ const SwimSpotDetail = () => {
   });
 
   const feedbackMutation = useMutation({
-    mutationFn: (feedbackData: { type: string; details?: string }) => 
-      api.submitFeedbackWithText(id!, `${feedbackData.type}${feedbackData.details ? `: ${feedbackData.details}` : ''}`),
+    mutationFn: (feedbackData: { type: string; details?: string }) => {
+      if (!id) throw new Error("No spot ID");
+      return api.submitFeedbackWithText(id, `${feedbackData.type}${feedbackData.details ? `: ${feedbackData.details}` : ''}`);
+    },
     onSuccess: () => {
       setHasFeedback(true);
       setFeedbackDialogOpen(false);
@@ -82,7 +90,10 @@ const SwimSpotDetail = () => {
   });
 
   const flagClickMutation = useMutation({
-    mutationFn: () => api.submitFeedbackWithText(id!, "flag_clicked"),
+    mutationFn: () => {
+      if (!id) throw new Error("No spot ID");
+      return api.submitFeedbackWithText(id, "flag_clicked");
+    },
     onSuccess: () => {
       console.log("Flag click recorded");
     }
@@ -112,13 +123,13 @@ const SwimSpotDetail = () => {
   };
 
   const handleBackToMap = () => {
-    // Get return coordinates from URL params
+    // Get return coordinates from URL params (saved when pin was clicked)
     const returnLat = searchParams.get('returnLat');
     const returnLng = searchParams.get('returnLng');
     const returnZoom = searchParams.get('returnZoom');
     
     if (returnLat && returnLng && returnZoom) {
-      // Navigate back to map with the stored coordinates
+      // Navigate back to map with the saved coordinates
       const params = new URLSearchParams();
       params.set('lat', returnLat);
       params.set('lng', returnLng);

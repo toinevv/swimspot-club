@@ -36,13 +36,19 @@ const Profile = () => {
     return <ProfileNotFound />;
   }
 
+  // Transform saved spots to the expected format
+  const transformedSavedSpots = savedSpots.map(spot => ({
+    ...spot,
+    swim_spots: spot
+  }));
+
   return (
     <div className="min-h-screen bg-swimspot-drift-sand">
       <ProfileContent
         profile={profile}
         stats={stats}
         statsLoading={statsLoading}
-        savedSpots={savedSpots}
+        savedSpots={transformedSavedSpots}
         savedSpotsLoading={savedSpotsLoading}
         groups={userGroups}
         groupsLoading={groupsLoading}
