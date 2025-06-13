@@ -55,7 +55,10 @@ const SwimSpotDetail = () => {
   });
 
   const saveMutation = useMutation({
-    mutationFn: () => api.toggleSaveSpot(id!),
+    mutationFn: () => {
+      if (!id) throw new Error('No spot ID provided');
+      return api.toggleSaveSpot(id);
+    },
     onSuccess: () => {
       setIsSaved(!isSaved);
       toast.success(isSaved ? "Spot removed from saved" : "Spot saved!");
