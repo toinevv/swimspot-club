@@ -1,4 +1,3 @@
-
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -44,7 +43,7 @@ const SwimSpotDetail = () => {
   // Fix: Use createQueryFn for getSpotVisits with proper parameters
   const { data: visitsData } = useQuery({
     queryKey: ['spotVisits', id],
-    queryFn: createQueryFn((spotId: string) => api.getSpotVisits(spotId)),
+    queryFn: createQueryFn(api.getSpotVisits),
     enabled: !!id,
   });
 
@@ -55,7 +54,7 @@ const SwimSpotDetail = () => {
 
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
-    queryFn: createQueryFn((spotId: string) => api.checkIfSaved(spotId)),
+    queryFn: createQueryFn(api.checkIfSaved),
     enabled: !!id,
   });
 
@@ -135,7 +134,7 @@ const SwimSpotDetail = () => {
     const returnLng = searchParams.get('returnLng');
     const returnZoom = searchParams.get('returnZoom');
     
-    console.log('Back button clicked, coordinates from URL:', { returnLat, returnLng, returnZoom });
+    console.log('🔄 Back button clicked, coordinates from URL:', { returnLat, returnLng, returnZoom });
     
     if (returnLat && returnLng && returnZoom) {
       // Navigate back to map with the saved coordinates
@@ -143,11 +142,11 @@ const SwimSpotDetail = () => {
       params.set('lat', returnLat);
       params.set('lng', returnLng);
       params.set('zoom', returnZoom);
-      console.log('Navigating back to saved map position:', { lat: returnLat, lng: returnLng, zoom: returnZoom });
+      console.log('🗺️ Navigating back to saved map position:', { lat: returnLat, lng: returnLng, zoom: returnZoom });
       navigate(`/?${params.toString()}`);
     } else {
       // Fallback to default Central Europe view
-      console.log('No saved coordinates, using default view');
+      console.log('⚠️ No saved coordinates, using default view');
       const params = new URLSearchParams();
       params.set('lat', '50.0');
       params.set('lng', '10.0');

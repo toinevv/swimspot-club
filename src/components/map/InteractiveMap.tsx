@@ -50,7 +50,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initia
       );
 
       map.current.on('load', () => {
-        console.log('Map loaded successfully');
+        console.log('🗺️ Map loaded successfully');
         setMapLoaded(true);
       });
 
@@ -119,7 +119,11 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initia
               if (map.current) {
                 const center = map.current.getCenter();
                 const zoom = map.current.getZoom();
-                console.log('Spot clicked, saving map state:', { center: [center.lng, center.lat], zoom });
+                console.log('📍 Spot clicked, saving map state:', { 
+                  spotName: spot.name,
+                  center: [center.lng, center.lat], 
+                  zoom 
+                });
                 onSpotClick(spot, [center.lng, center.lat], zoom);
               }
             }}

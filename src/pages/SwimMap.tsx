@@ -51,6 +51,14 @@ const SwimMap = () => {
     params.set('returnLng', currentMapCenter[0].toString());
     params.set('returnZoom', currentZoom.toString());
     
+    console.log('🚀 Navigating to spot detail with return coordinates:', {
+      spotId: spot.id,
+      spotName: spot.name,
+      returnLat: currentMapCenter[1],
+      returnLng: currentMapCenter[0],
+      returnZoom: currentZoom
+    });
+    
     // Navigate to spot detail with return coordinates
     navigate(`/spot/${spot.id}?${params.toString()}`);
   };
@@ -87,17 +95,21 @@ const SwimMap = () => {
   const getMapCenter = (): [number, number] => {
     // Check regular URL parameters first
     if (lat && lng) {
+      console.log('🗺️ Using URL coordinates:', { lat: parseFloat(lat), lng: parseFloat(lng) });
       return [parseFloat(lng), parseFloat(lat)];
     }
     
     // Then check other sources
     if (cityData?.coordinates) {
+      console.log('🏙️ Using city coordinates:', cityData.coordinates);
       return cityData.coordinates;
     }
     if (userLocation) {
+      console.log('📍 Using user location:', userLocation);
       return userLocation;
     }
     // Default to Central Europe view
+    console.log('🌍 Using default Central Europe coordinates');
     return [10.0, 50.0];
   };
 
@@ -105,6 +117,7 @@ const SwimMap = () => {
   const getInitialZoom = (): number => {
     // Check URL zoom parameter
     if (zoom) {
+      console.log('🔍 Using URL zoom:', parseFloat(zoom));
       return parseFloat(zoom);
     }
     
