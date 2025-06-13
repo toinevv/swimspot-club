@@ -48,7 +48,10 @@ const SwimSpotDetail = () => {
 
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
-    queryFn: createQueryFn(api.checkIfSaved),
+    queryFn: ({ queryKey }) => {
+      const spotId = queryKey[1] as string;
+      return spotId ? api.checkIfSaved(spotId) : Promise.resolve(false);
+    },
     enabled: !!id,
   });
 
@@ -117,6 +120,8 @@ const SwimSpotDetail = () => {
     const returnLng = searchParams.get('returnLng');
     const returnZoom = searchParams.get('returnZoom');
     
+    console.log('Return coordinates from URL:', { returnLat, returnLng, returnZoom });
+    
     if (returnLat && returnLng && returnZoom) {
       // Navigate back to map with the exact coordinates where the pin was clicked
       const params = new URLSearchParams();
@@ -125,8 +130,17 @@ const SwimSpotDetail = () => {
       params.set('zoom', returnZoom);
       navigate(`/?${params.toString()}`);
     } else {
-      // Fallback to regular map view if no return coordinates
-      navigate('/');
+      // Fallback: navigate to map centered on current spot location
+      if (spot?.location) {
+        const params = new URLSearchParams();
+        params.set('lat', spot.location.latitude.toString());
+        params.set('lng', spot.location.longitude.toString());
+        params.set('zoom', '14');
+        navigate(`/?${params.toString()}`);
+      } else {
+        // Final fallback to regular map view
+        navigate('/');
+      }
     }
   };
 

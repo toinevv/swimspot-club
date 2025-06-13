@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
-import { createSimpleQueryFn } from "@/services/api/utils";
+import { createSimpleQueryFn, createQueryFn } from "@/services/api/utils";
 
 export const useProfileData = () => {
   const { data: profile, isLoading: profileLoading, error: profileError } = useQuery({
@@ -14,10 +14,14 @@ export const useProfileData = () => {
     queryFn: createSimpleQueryFn(api.getUserStats),
   });
 
-  // Use the correct API function that returns SavedSpotData[]
+  // Fix: Get current user ID from profile and use it for saved spots query
   const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery({
-    queryKey: ['userSavedSpots'],
-    queryFn: createSimpleQueryFn(api.getUserSavedSpots),
+    queryKey: ['userSavedSpots', profile?.id],
+    queryFn: ({ queryKey }) => {
+      const userId = queryKey[1] as string;
+      return userId ? api.getUserSavedSpots(userId) : Promise.resolve([]);
+    },
+    enabled: !!profile?.id,
   });
 
   const { data: userGroups = [], isLoading: groupsLoading } = useQuery({
