@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -69,7 +68,7 @@ const SwimMap = () => {
     ? cityData.description
     : 'Discover the best wild swimming locations across the Netherlands. Explore natural swim spots, lakes, and canals with our interactive map.';
 
-  // Determine map center - check return coordinates first, then URL params, then other sources
+  // Determine map center - prioritize URL params, then user location, then city data
   const getMapCenter = (): [number, number] => {
     // Check for return coordinates first (when coming back from spot detail)
     const returnLat = searchParams.get('returnLat');
@@ -92,8 +91,8 @@ const SwimMap = () => {
       return cityData.coordinates;
     }
     
-    // Use user location if available, otherwise fallback to Central Europe
-    if (userLocation) {
+    // Use user location if available and no city is specified
+    if (userLocation && !city) {
       return userLocation;
     }
     
@@ -118,8 +117,8 @@ const SwimMap = () => {
     // Use different zoom levels based on context
     if (cityData?.coordinates) return 13;
     
-    // If we have user location, zoom in closer
-    if (userLocation && !cityData) return 10;
+    // If we have user location and no city, zoom in closer
+    if (userLocation && !city) return 10;
     
     // Zoomed out view for Central/Western Europe
     return 4;

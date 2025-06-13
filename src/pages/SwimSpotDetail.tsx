@@ -47,11 +47,10 @@ const SwimSpotDetail = () => {
 
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
-    queryFn: createQueryFn(api.checkIfSaved),
+    queryFn: createQueryFn(() => api.checkIfSaved(id!)),
     enabled: !!id,
   });
 
-  // Mutations for spot interactions
   const saveMutation = useMutation({
     mutationFn: () => api.toggleSaveSpot(id!),
     onSuccess: () => {
@@ -139,7 +138,6 @@ const SwimSpotDetail = () => {
     return <div className="min-h-screen bg-swimspot-drift-sand">Spot not found</div>;
   }
 
-  // Handle visit count safely with proper type checking
   const visitCount = (visitsData as SpotVisitData)?.count || 0;
   const visits = Array.isArray(visitsData) ? visitsData : [];
 
