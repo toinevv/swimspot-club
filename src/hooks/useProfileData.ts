@@ -14,14 +14,10 @@ export const useProfileData = () => {
     queryFn: createSimpleQueryFn(api.getUserStats),
   });
 
-  // Fix: Get userId from profile and use it properly
+  // Fix: Get saved spots as SavedSpotData format directly
   const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery({
     queryKey: ['userSavedSpots', profile?.id],
-    queryFn: ({ queryKey }) => {
-      const userId = queryKey[1];
-      if (!userId) throw new Error("No user ID");
-      return api.getUserSavedSpots(userId);
-    },
+    queryFn: createSimpleQueryFn(api.getUserSavedSpots),
     enabled: !!profile?.id,
   });
 

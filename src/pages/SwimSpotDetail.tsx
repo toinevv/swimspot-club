@@ -57,12 +57,11 @@ const SwimSpotDetail = () => {
     enabled: !!id,
   });
 
-  // Mutations for spot interactions - fix the ID type conversion
+  // Mutations for spot interactions - keep string IDs
   const saveMutation = useMutation({
     mutationFn: () => {
       if (!id) throw new Error("No spot ID");
-      if (!profile?.id) throw new Error("No user ID");
-      return api.toggleSaveSpot(id, profile.id);
+      return api.toggleSaveSpot(id);
     },
     onSuccess: () => {
       setIsSaved(!isSaved);
