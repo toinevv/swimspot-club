@@ -1,16 +1,11 @@
 
 import { useState, useEffect } from 'react';
 
-export const useUserLocation = (city?: string) => {
+export const useUserLocation = () => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [locationPermissionDenied, setLocationPermissionDenied] = useState(false);
 
   useEffect(() => {
-    // If there's a specific city, don't try to get user location
-    if (city) {
-      return;
-    }
-    
     // Try to get user's current location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -22,7 +17,6 @@ export const useUserLocation = (city?: string) => {
         (error) => {
           console.log('Location access denied or failed:', error);
           setLocationPermissionDenied(true);
-          // No fallback here - let the calling component handle it
         },
         {
           enableHighAccuracy: false,
@@ -31,7 +25,7 @@ export const useUserLocation = (city?: string) => {
         }
       );
     }
-  }, [city]);
+  }, []);
 
   return { userLocation, locationPermissionDenied };
 };

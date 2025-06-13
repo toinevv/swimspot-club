@@ -12,9 +12,17 @@ interface InteractiveMapProps {
   mapboxToken?: string;
   initialCenter?: [number, number];
   initialZoom?: number;
+  onMapMove?: (lat: number, lng: number, zoom: number) => void;
 }
 
-const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initialZoom = 12 }: InteractiveMapProps) => {
+const InteractiveMap = ({ 
+  spots, 
+  onSpotClick, 
+  mapboxToken, 
+  initialCenter, 
+  initialZoom = 12,
+  onMapMove 
+}: InteractiveMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
@@ -30,7 +38,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initia
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/outdoors-v12',
-        center: initialCenter || [4.9041, 52.3676],
+        center: initialCenter || [10.0, 50.0],
         zoom: initialZoom
       });
 
@@ -53,6 +61,15 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initia
         setMapLoaded(true);
       });
 
+      // Save map position when user moves the map
+      map.current.on('moveend', () => {
+        if (map.current && onMapMove) {
+          const center = map.current.getCenter();
+          const zoom = map.current.getZoom();
+          onMapMove(center.lat, center.lng, zoom);
+        }
+      });
+
       map.current.on('error', (e) => {
         console.error('Mapbox error:', e);
         setMapError('There was an error loading the map. Please check your Mapbox token.');
@@ -69,7 +86,7 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initia
         console.error('Error cleaning up map:', error);
       }
     };
-  }, [mapboxToken, initialCenter, initialZoom]);
+  }, [mapboxToken, initialCenter, initialZoom, onMapMove]);
 
   useEffect(() => {
     if (!mapLoaded || !map.current) return;
@@ -87,7 +104,6 @@ const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initia
         <SwimSpotMarker 
           spot={spot}
           onClick={() => {
-            // Get current map center and zoom when clicking a spot
             if (map.current) {
               const center = map.current.getCenter();
               const zoom = map.current.getZoom();

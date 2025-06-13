@@ -48,7 +48,7 @@ const SwimSpotDetail = () => {
 
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
-    queryFn: createQueryFn(api.checkIfSaved),
+    queryFn: () => api.checkIfSaved(id!),
     enabled: !!id,
   });
 
@@ -110,7 +110,6 @@ const SwimSpotDetail = () => {
   };
 
   const handleBackToMap = () => {
-    // Simple logic: if we have return coordinates, go back there. Otherwise, go to clean map.
     const returnLat = searchParams.get('returnLat');
     const returnLng = searchParams.get('returnLng');
     const returnZoom = searchParams.get('returnZoom');
