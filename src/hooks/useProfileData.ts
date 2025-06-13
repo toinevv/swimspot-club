@@ -14,14 +14,9 @@ export const useProfileData = () => {
     queryFn: createSimpleQueryFn(api.getUserStats),
   });
 
-  // Fix: Get current user ID from profile and use it for saved spots query
   const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery({
-    queryKey: ['userSavedSpots', profile?.id],
-    queryFn: ({ queryKey }) => {
-      const userId = queryKey[1] as string;
-      return userId ? api.getUserSavedSpots(userId) : Promise.resolve([]);
-    },
-    enabled: !!profile?.id,
+    queryKey: ['userSavedSpots'],
+    queryFn: createQueryFn(api.getUserSavedSpots),
   });
 
   const { data: userGroups = [], isLoading: groupsLoading } = useQuery({

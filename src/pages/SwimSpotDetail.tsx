@@ -48,15 +48,13 @@ const SwimSpotDetail = () => {
 
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
-    queryFn: createQueryFn(api.checkIfSaved),
+    queryFn: createQueryFn((spotId: string) => api.checkIfSaved(spotId)),
     enabled: !!id,
   });
 
+  // Mutations for spot interactions
   const saveMutation = useMutation({
-    mutationFn: () => {
-      if (!id) throw new Error('No spot ID provided');
-      return api.saveSpot(id);
-    },
+    mutationFn: () => api.toggleSaveSpot(id!),
     onSuccess: () => {
       setIsSaved(!isSaved);
       toast.success(isSaved ? "Spot removed from saved" : "Spot saved!");
@@ -93,6 +91,7 @@ const SwimSpotDetail = () => {
   const handleSave = () => saveMutation.mutate();
   const handleMarkVisited = () => visitMutation.mutate();
   const handleFeedback = () => {
+    // Record the flag click immediately when dialog opens
     flagClickMutation.mutate();
     setFeedbackDialogOpen(true);
   };
@@ -113,8 +112,22 @@ const SwimSpotDetail = () => {
   };
 
   const handleBackToMap = () => {
-    // Simple back navigation - just go to home
-    navigate('/');
+    // Get return coordinates from URL params
+    const returnLat = searchParams.get('returnLat');
+    const returnLng = searchParams.get('returnLng');
+    const returnZoom = searchParams.get('returnZoom');
+    
+    if (returnLat && returnLng && returnZoom) {
+      // Navigate back to map with the stored coordinates
+      const params = new URLSearchParams();
+      params.set('lat', returnLat);
+      params.set('lng', returnLng);
+      params.set('zoom', returnZoom);
+      navigate(`/?${params.toString()}`);
+    } else {
+      // Fallback to regular map view
+      navigate('/');
+    }
   };
 
   if (spotLoading) {
@@ -125,11 +138,13 @@ const SwimSpotDetail = () => {
     return <div className="min-h-screen bg-swimspot-drift-sand">Spot not found</div>;
   }
 
+  // Handle visit count safely with proper type checking
   const visitCount = (visitsData as SpotVisitData)?.count || 0;
   const visits = Array.isArray(visitsData) ? visitsData : [];
 
   return (
     <div className="min-h-screen bg-swimspot-drift-sand">
+      {/* Back button - Only one, positioned at the top */}
       <div className="sticky top-16 z-20 bg-swimspot-drift-sand/95 backdrop-blur-sm border-b border-swimspot-blue-green/10">
         <div className="max-w-6xl mx-auto px-4 py-3">
           <Button

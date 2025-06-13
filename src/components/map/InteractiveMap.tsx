@@ -8,19 +8,13 @@ import { createRoot } from 'react-dom/client';
 
 interface InteractiveMapProps {
   spots: SwimSpot[];
-  onSpotClick: (spot: SwimSpot) => void;
+  onSpotClick: (spot: SwimSpot, mapCenter: [number, number], zoom: number) => void;
   mapboxToken?: string;
   initialCenter?: [number, number];
   initialZoom?: number;
 }
 
-const InteractiveMap = ({ 
-  spots, 
-  onSpotClick, 
-  mapboxToken, 
-  initialCenter, 
-  initialZoom = 12
-}: InteractiveMapProps) => {
+const InteractiveMap = ({ spots, onSpotClick, mapboxToken, initialCenter, initialZoom = 12 }: InteractiveMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
@@ -36,7 +30,7 @@ const InteractiveMap = ({
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/outdoors-v12',
-        center: initialCenter || [10.0, 50.0],
+        center: initialCenter || [4.9041, 52.3676],
         zoom: initialZoom
       });
 
@@ -92,7 +86,14 @@ const InteractiveMap = ({
       root.render(
         <SwimSpotMarker 
           spot={spot}
-          onClick={() => onSpotClick(spot)}
+          onClick={() => {
+            // Get current map center and zoom when clicking a spot
+            if (map.current) {
+              const center = map.current.getCenter();
+              const zoom = map.current.getZoom();
+              onSpotClick(spot, [center.lng, center.lat], zoom);
+            }
+          }}
         />
       );
 
