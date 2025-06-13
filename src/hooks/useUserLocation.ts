@@ -1,11 +1,9 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 export const useUserLocation = (city?: string) => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [locationPermissionDenied, setLocationPermissionDenied] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     // If there's a specific city, don't try to get user location
@@ -13,7 +11,7 @@ export const useUserLocation = (city?: string) => {
       return;
     }
     
-    // Try to get user's current location on app start
+    // Try to get user's current location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -24,20 +22,16 @@ export const useUserLocation = (city?: string) => {
         (error) => {
           console.log('Location access denied or failed:', error);
           setLocationPermissionDenied(true);
-          // Fallback to Central Europe coordinates for zoomed out view
-          setUserLocation([10.0, 50.0]);
+          // No fallback here - let the calling component handle it
         },
         {
           enableHighAccuracy: false,
           timeout: 10000,
-          maximumAge: 300000 // 5 minutes
+          maximumAge: 300000
         }
       );
-    } else {
-      // Geolocation not supported, use Europe fallback
-      setUserLocation([10.0, 50.0]);
     }
-  }, [city, navigate]);
+  }, [city]);
 
   return { userLocation, locationPermissionDenied };
 };

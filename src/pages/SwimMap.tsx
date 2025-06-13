@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -18,13 +19,10 @@ const SwimMap = () => {
   const { city } = useParams();
   const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState({});
-  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   
-  // Custom hooks
   const { mapboxToken, isTokenLoading } = useMapboxToken();
   const { userLocation } = useUserLocation(city);
   
-  // Fetch city data from database
   const { data: cityData } = useQuery({
     queryKey: ['city', city],
     queryFn: async () => {
@@ -35,23 +33,19 @@ const SwimMap = () => {
     enabled: !!city
   });
   
-  // Fetch all swim spots - always show all spots, let filters handle the filtering
   const { data: spotsData = [], isLoading: spotsLoading } = useQuery({
     queryKey: ['swimSpots'],
     queryFn: createSimpleQueryFn(api.getAllSwimSpots)
   });
 
-  // Ensure spots is always an array of SwimSpot
   const spots: SwimSpot[] = Array.isArray(spotsData) ? spotsData : [];
 
   const handleSpotClick = (spot: SwimSpot, currentMapCenter: [number, number], currentZoom: number) => {
-    // Store the current map state before navigating to spot detail
     const params = new URLSearchParams();
     params.set('returnLat', currentMapCenter[1].toString());
     params.set('returnLng', currentMapCenter[0].toString());
     params.set('returnZoom', currentZoom.toString());
     
-    // Navigate to spot detail with return coordinates
     navigate(`/spot/${spot.id}?${params.toString()}`);
   };
 
@@ -59,7 +53,6 @@ const SwimMap = () => {
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
 
-  // Generate SEO content
   const seoTitle = cityData 
     ? `Swim Spots in ${cityData.displayName}` 
     : 'Wild Swimming Map - Netherlands';
@@ -68,69 +61,49 @@ const SwimMap = () => {
     ? cityData.description
     : 'Discover the best wild swimming locations across the Netherlands. Explore natural swim spots, lakes, and canals with our interactive map.';
 
-  // Determine map center - prioritize URL params, then user location, then city data
+  // Simple location logic: URL params first, then user location, then Europe fallback
   const getMapCenter = (): [number, number] => {
-    // Check for return coordinates first (when coming back from spot detail)
-    const returnLat = searchParams.get('returnLat');
-    const returnLng = searchParams.get('returnLng');
-    if (returnLat && returnLng) {
-      return [parseFloat(returnLng), parseFloat(returnLat)];
-    }
-    
-    // Check regular URL parameters
-    const lat = searchParams.get('lat');
-    const lng = searchParams.get('lng');
+    // Check URL parameters first (including return coordinates)
+    const lat = searchParams.get('lat') || searchParams.get('returnLat');
+    const lng = searchParams.get('lng') || searchParams.get('returnLng');
     if (lat && lng) {
       return [parseFloat(lng), parseFloat(lat)];
     }
     
-    if (mapCenter) {
-      return mapCenter;
-    }
+    // City-specific coordinates
     if (cityData?.coordinates) {
       return cityData.coordinates;
     }
     
-    // Use user location if available and no city is specified
+    // User location if available and no city specified
     if (userLocation && !city) {
       return userLocation;
     }
     
-    // Final fallback to Central Europe for zoomed out view
+    // Europe fallback
     return [10.0, 50.0];
   };
 
-  // Get initial zoom - check return zoom first, then URL params, then defaults
   const getInitialZoom = (): number => {
-    // Check for return zoom first (when coming back from spot detail)
-    const returnZoom = searchParams.get('returnZoom');
-    if (returnZoom) {
-      return parseFloat(returnZoom);
-    }
-    
-    // Check regular URL zoom parameter
-    const zoom = searchParams.get('zoom');
+    // Check URL zoom parameter first (including return zoom)
+    const zoom = searchParams.get('zoom') || searchParams.get('returnZoom');
     if (zoom) {
       return parseFloat(zoom);
     }
     
-    // Use different zoom levels based on context
+    // City-specific zoom
     if (cityData?.coordinates) return 13;
     
-    // If we have user location and no city, zoom in closer
+    // User location zoom
     if (userLocation && !city) return 10;
     
-    // Zoomed out view for Central/Western Europe
+    // Europe fallback zoom
     return 4;
   };
 
-  // Show loading state while token is being fetched
   if (isTokenLoading) {
     return <MapLoadingState />;
   }
-
-  console.log('Current city parameter:', city);
-  console.log('Fetched spots:', spots.length);
 
   return (
     <>
