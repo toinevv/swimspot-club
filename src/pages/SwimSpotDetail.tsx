@@ -47,7 +47,7 @@ const SwimSpotDetail = () => {
 
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
-    queryFn: () => api.checkIfSaved(id!, 'user123'),
+    queryFn: () => api.checkIfSaved(id!),
     enabled: !!id,
   });
 
@@ -63,7 +63,7 @@ const SwimSpotDetail = () => {
   });
 
   const visitMutation = useMutation({
-    mutationFn: () => api.markAsVisited(id!),
+    mutationFn: () => api.markAsVisited(id!, 'user123'),
     onSuccess: () => {
       toast.success("Marked as visited!");
       queryClient.invalidateQueries({ queryKey: ['spotVisits', id] });

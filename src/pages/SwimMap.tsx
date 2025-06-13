@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -91,11 +90,9 @@ const SwimMap = () => {
     if (cityData?.coordinates) {
       return cityData.coordinates;
     }
-    if (userLocation) {
-      return userLocation;
-    }
-    // Default to France-Switzerland border area
-    return [6.0, 48.7];
+    
+    // Default to Central Europe for zoomed out view - covers Western Europe and Mediterranean
+    return [10.0, 50.0];
   };
 
   // Get initial zoom - check return zoom first, then URL params, then defaults
@@ -114,8 +111,8 @@ const SwimMap = () => {
     
     // Use different zoom levels based on context
     if (cityData?.coordinates) return 13;
-    if (userLocation) return 12;
-    // More zoomed out view for Central Europe
+    
+    // Zoomed out view for Central/Western Europe
     return 4;
   };
 
