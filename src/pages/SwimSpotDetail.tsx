@@ -1,4 +1,3 @@
-
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -48,7 +47,10 @@ const SwimSpotDetail = () => {
 
   const { data: savedCheck } = useQuery({
     queryKey: ['spotSaved', id],
-    queryFn: () => api.checkIfSaved(id!, 'user123'), // Fix: provide both required arguments
+    queryFn: ({ queryKey }) => {
+      const spotId = queryKey[1] as string;
+      return spotId ? api.checkIfSaved(spotId) : Promise.resolve(false);
+    },
     enabled: !!id,
   });
 
@@ -64,7 +66,10 @@ const SwimSpotDetail = () => {
   });
 
   const visitMutation = useMutation({
-    mutationFn: () => api.markAsVisited(id!),
+    mutationFn: ({ queryKey }) => {
+      const spotId = queryKey[1] as string;
+      return api.markAsVisited(spotId);
+    },
     onSuccess: () => {
       toast.success("Marked as visited!");
       queryClient.invalidateQueries({ queryKey: ['spotVisits', id] });
@@ -89,7 +94,7 @@ const SwimSpotDetail = () => {
   });
 
   const handleSave = () => saveMutation.mutate();
-  const handleMarkVisited = () => visitMutation.mutate();
+  const handleMarkVisited = () => visitMutation.mutate({ queryKey: ['spotVisits', id] });
   const handleFeedback = () => {
     // Record the flag click immediately when dialog opens
     flagClickMutation.mutate();
@@ -127,7 +132,7 @@ const SwimSpotDetail = () => {
       params.set('zoom', returnZoom);
       navigate(`/?${params.toString()}`);
     } else {
-      // Just go back to the default map view without any coordinates
+      // Just go back to the default map view without any coordinates - this will show the zoomed out Europe view
       navigate('/');
     }
   };
