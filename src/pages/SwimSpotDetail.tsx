@@ -57,12 +57,12 @@ const SwimSpotDetail = () => {
     enabled: !!id,
   });
 
-  // Mutations for spot interactions - now with proper userId
+  // Mutations for spot interactions - fix the ID conversion
   const saveMutation = useMutation({
     mutationFn: () => {
       if (!id) throw new Error("No spot ID");
       if (!profile?.id) throw new Error("No user ID");
-      return api.toggleSaveSpot(id, profile.id);
+      return api.toggleSaveSpot(parseInt(id), profile.id);
     },
     onSuccess: () => {
       setIsSaved(!isSaved);
@@ -75,7 +75,7 @@ const SwimSpotDetail = () => {
   const visitMutation = useMutation({
     mutationFn: () => {
       if (!id) throw new Error("No spot ID");
-      return api.markAsVisited(id);
+      return api.markAsVisited(parseInt(id));
     },
     onSuccess: () => {
       toast.success("Marked as visited!");
@@ -86,7 +86,7 @@ const SwimSpotDetail = () => {
   const feedbackMutation = useMutation({
     mutationFn: (feedbackData: { type: string; details?: string }) => {
       if (!id) throw new Error("No spot ID");
-      return api.submitFeedbackWithText(id, `${feedbackData.type}${feedbackData.details ? `: ${feedbackData.details}` : ''}`);
+      return api.submitFeedbackWithText(parseInt(id), `${feedbackData.type}${feedbackData.details ? `: ${feedbackData.details}` : ''}`);
     },
     onSuccess: () => {
       setHasFeedback(true);
@@ -98,7 +98,7 @@ const SwimSpotDetail = () => {
   const flagClickMutation = useMutation({
     mutationFn: () => {
       if (!id) throw new Error("No spot ID");
-      return api.submitFeedbackWithText(id, "flag_clicked");
+      return api.submitFeedbackWithText(parseInt(id), "flag_clicked");
     },
     onSuccess: () => {
       console.log("Flag click recorded");
