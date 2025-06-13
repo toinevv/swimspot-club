@@ -14,6 +14,7 @@ export const useProfileData = () => {
     queryFn: createSimpleQueryFn(api.getUserStats),
   });
 
+  // Fix: Use the correct API function that returns SavedSpotData[]
   const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery({
     queryKey: ['userSavedSpots'],
     queryFn: createSimpleQueryFn(api.getUserSavedSpots),
