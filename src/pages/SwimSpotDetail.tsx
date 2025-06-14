@@ -53,9 +53,9 @@ const SwimSpotDetail = () => {
   });
 
   const { data: savedCheck } = useQuery({
-    queryKey: ['spotSaved', id],
+    queryKey: ['spotSaved', id, profile?.id],
     queryFn: createQueryFn(api.checkIfSaved),
-    enabled: !!id,
+    enabled: !!id && !!profile?.id,
   });
 
   // Mutations for spot interactions - keep string IDs and proper API signatures
