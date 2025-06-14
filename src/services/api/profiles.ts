@@ -1,4 +1,3 @@
-
 import { apiClient } from './client';
 import { mapRawProfileToUserProfile, mapRawSavedSpotToSavedSpotData } from './mappers';
 import type { UserProfile, UserStats, SavedSpotData } from '@/types/entities';
@@ -63,7 +62,7 @@ export const profilesApi = {
     }
   },
 
-  async getUserSavedSpots(): Promise<SavedSpotData[]> {
+  async getCurrentUserSavedSpots(): Promise<SavedSpotData[]> {
     try {
       const { data: { user } } = await apiClient.supabase.auth.getUser();
 

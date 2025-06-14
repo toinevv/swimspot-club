@@ -53,16 +53,16 @@ const SwimSpotDetail = () => {
   });
 
   const { data: savedCheck } = useQuery({
-    queryKey: ['spotSaved', id],
+    queryKey: ['spotSaved', id, profile?.id],
     queryFn: createQueryFn(api.checkIfSaved),
-    enabled: !!id,
+    enabled: !!id && !!profile?.id,
   });
 
   // Mutations for spot interactions - keep string IDs and proper API signatures
   const saveMutation = useMutation({
     mutationFn: () => {
-      if (!id) throw new Error("No spot ID");
-      return api.toggleSaveSpot(id);
+      if (!id || !profile?.id) throw new Error("No spot ID or user ID");
+      return api.toggleSaveSpot(id, profile.id);
     },
     onSuccess: () => {
       setIsSaved(!isSaved);

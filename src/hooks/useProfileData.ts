@@ -15,10 +15,9 @@ export const useProfileData = () => {
     queryFn: createSimpleQueryFn(api.getUserStats),
   });
 
-  // Correct: getUserSavedSpots returns SavedSpotData[] - no params needed.
   const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery<SavedSpotData[]>({
-    queryKey: ['userSavedSpots'],
-    queryFn: createSimpleQueryFn(api.getUserSavedSpots),
+    queryKey: ['currentUserSavedSpots'],
+    queryFn: createSimpleQueryFn(api.getCurrentUserSavedSpots),
     enabled: !!profile?.id,
   });
 
@@ -32,7 +31,7 @@ export const useProfileData = () => {
     profileLoading,
     stats,
     statsLoading,
-    savedSpots, // this type now matches everywhere!
+    savedSpots,
     savedSpotsLoading,
     userGroups,
     groupsLoading,
