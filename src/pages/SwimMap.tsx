@@ -76,27 +76,19 @@ const SwimMap = () => {
     ? cityData.description
     : 'Discover the best wild swimming locations across the Netherlands. Explore natural swim spots, lakes, and canals with our interactive map.';
 
-  // Check for fallback coordinates and redirect to default view
+  // Get URL parameters
   const lat = searchParams.get('lat');
   const lng = searchParams.get('lng');
   const zoom = searchParams.get('zoom');
-  
-  // If these are the fallback coordinates from geolocation failure, redirect to default view
-  if (lat === '52.045155' && lng === '5.8718234' && zoom === '12') {
-    const defaultParams = new URLSearchParams();
-    defaultParams.set('lat', '50.0');
-    defaultParams.set('lng', '10.0');
-    defaultParams.set('zoom', '4');
-    navigate(`/?${defaultParams.toString()}`, { replace: true });
-    return <MapLoadingState />;
-  }
 
   // Determine map center with proper fallback
   const getMapCenter = (): [number, number] => {
-    // Check regular URL parameters first
+    // Check URL parameters first (including saved coordinates from spot detail)
     if (lat && lng) {
-      console.log('🗺️ Using URL coordinates:', { lat: parseFloat(lat), lng: parseFloat(lng) });
-      return [parseFloat(lng), parseFloat(lat)];
+      const parsedLat = parseFloat(lat);
+      const parsedLng = parseFloat(lng);
+      console.log('🗺️ Using URL coordinates:', { lat: parsedLat, lng: parsedLng });
+      return [parsedLng, parsedLat];
     }
     
     // Then check other sources
@@ -115,10 +107,11 @@ const SwimMap = () => {
 
   // Get initial zoom with proper fallback
   const getInitialZoom = (): number => {
-    // Check URL zoom parameter
+    // Check URL zoom parameter first (including saved zoom from spot detail)
     if (zoom) {
-      console.log('🔍 Using URL zoom:', parseFloat(zoom));
-      return parseFloat(zoom);
+      const parsedZoom = parseFloat(zoom);
+      console.log('🔍 Using URL zoom:', parsedZoom);
+      return parsedZoom;
     }
     
     // Use different zoom levels based on context
