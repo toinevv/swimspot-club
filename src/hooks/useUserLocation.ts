@@ -1,21 +1,25 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export const useUserLocation = (city?: string) => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [locationPermissionDenied, setLocationPermissionDenied] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    if (!city && navigator.geolocation) {
+    // Don't get user location if we already have URL coordinates or a city
+    const hasUrlCoordinates = searchParams.get('lat') && searchParams.get('lng');
+    
+    if (!city && !hasUrlCoordinates && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const location: [number, number] = [position.coords.longitude, position.coords.latitude];
           setUserLocation(location);
           setLocationPermissionDenied(false);
           
-          // Immediately redirect to the user's location with map parameters
+          // Only redirect if we don't already have coordinates in URL
           const params = new URLSearchParams();
           params.set('lat', position.coords.latitude.toString());
           params.set('lng', position.coords.longitude.toString());
@@ -30,7 +34,7 @@ export const useUserLocation = (city?: string) => {
         }
       );
     }
-  }, [city, navigate]);
+  }, [city, navigate, searchParams]);
 
   return { userLocation, locationPermissionDenied };
 };
