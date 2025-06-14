@@ -1,7 +1,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
-import { createSimpleQueryFn, createQueryFn } from "@/services/api/utils";
+import { createSimpleQueryFn } from "@/services/api/utils";
+import type { SavedSpotData } from "@/types/entities";
 
 export const useProfileData = () => {
   const { data: profile, isLoading: profileLoading, error: profileError } = useQuery({
@@ -14,8 +15,8 @@ export const useProfileData = () => {
     queryFn: createSimpleQueryFn(api.getUserStats),
   });
 
-  // Get saved spots - API returns SavedSpotData[] with joined swim spot details
-  const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery({
+  // Correct: getUserSavedSpots returns SavedSpotData[] - no params needed.
+  const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery<SavedSpotData[]>({
     queryKey: ['userSavedSpots'],
     queryFn: createSimpleQueryFn(api.getUserSavedSpots),
     enabled: !!profile?.id,
@@ -31,7 +32,7 @@ export const useProfileData = () => {
     profileLoading,
     stats,
     statsLoading,
-    savedSpots,
+    savedSpots, // this type now matches everywhere!
     savedSpotsLoading,
     userGroups,
     groupsLoading,
