@@ -33,7 +33,7 @@ export const api = {
   // Profiles - These functions take no parameters and get current user's data
   getCurrentUserProfile: profilesApi.getCurrentUserProfile,
   updateProfile: profilesApi.updateProfile,
-  getUserSavedSpots: profilesApi.getUserSavedSpots,
+  getCurrentUserSavedSpots: profilesApi.getCurrentUserSavedSpots,
   getUserStats: profilesApi.getUserStats,
   
   // Spot interactions - These functions take spotId parameter
