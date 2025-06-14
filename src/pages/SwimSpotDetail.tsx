@@ -1,3 +1,4 @@
+
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -18,7 +19,6 @@ const SwimSpotDetail = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [isSaved, setIsSaved] = useState(false);
   const [hasFeedback, setHasFeedback] = useState(false);
   const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
 
@@ -40,7 +40,6 @@ const SwimSpotDetail = () => {
     enabled: !!id,
   });
 
-  // Fix: Use createQueryFn for getSpotVisits with proper parameters
   const { data: visitsData } = useQuery({
     queryKey: ['spotVisits', id],
     queryFn: createQueryFn(api.getSpotVisits),
@@ -52,26 +51,7 @@ const SwimSpotDetail = () => {
     queryFn: createSimpleQueryFn(api.getGroups),
   });
 
-  const { data: savedCheck } = useQuery({
-    queryKey: ['spotSaved', id],
-    queryFn: createQueryFn(api.checkIfSaved),
-    enabled: !!id && !!profile?.id,
-  });
-
-  // Mutations for spot interactions - keep string IDs and proper API signatures
-  const saveMutation = useMutation({
-    mutationFn: () => {
-      if (!id || !profile?.id) throw new Error("No spot ID or user ID");
-      return api.toggleSaveSpot(id, profile.id);
-    },
-    onSuccess: () => {
-      setIsSaved(!isSaved);
-      toast.success(isSaved ? "Spot removed from saved" : "Spot saved!");
-      queryClient.invalidateQueries({ queryKey: ['savedSpots'] });
-      queryClient.invalidateQueries({ queryKey: ['spotSaved', id] });
-    }
-  });
-
+  // Mutations for spot interactions
   const visitMutation = useMutation({
     mutationFn: () => {
       if (!id) throw new Error("No spot ID");
@@ -105,7 +85,6 @@ const SwimSpotDetail = () => {
     }
   });
 
-  const handleSave = () => saveMutation.mutate();
   const handleMarkVisited = () => visitMutation.mutate();
   const handleFeedback = () => {
     flagClickMutation.mutate();
@@ -127,9 +106,7 @@ const SwimSpotDetail = () => {
     feedbackMutation.mutate(feedbackData);
   };
 
-  // CRITICAL: Preserve the back navigation logic that saves map coordinates
   const handleBackToMap = () => {
-    // Get return coordinates from URL params (saved when pin was clicked)
     const returnLat = searchParams.get('returnLat');
     const returnLng = searchParams.get('returnLng');
     const returnZoom = searchParams.get('returnZoom');
@@ -137,7 +114,6 @@ const SwimSpotDetail = () => {
     console.log('🔄 Back button clicked, coordinates from URL:', { returnLat, returnLng, returnZoom });
     
     if (returnLat && returnLng && returnZoom) {
-      // Navigate back to map with the saved coordinates
       const params = new URLSearchParams();
       params.set('lat', returnLat);
       params.set('lng', returnLng);
@@ -145,7 +121,6 @@ const SwimSpotDetail = () => {
       console.log('🗺️ Navigating back to saved map position:', { lat: returnLat, lng: returnLng, zoom: returnZoom });
       navigate(`/?${params.toString()}`);
     } else {
-      // Fallback to default Central Europe view
       console.log('⚠️ No saved coordinates, using default view');
       const params = new URLSearchParams();
       params.set('lat', '50.0');
@@ -163,13 +138,11 @@ const SwimSpotDetail = () => {
     return <div className="min-h-screen bg-swimspot-drift-sand">Spot not found</div>;
   }
 
-  // Handle visit count safely with proper type checking
   const visitCount = (visitsData as SpotVisitData)?.count || 0;
   const visits = Array.isArray(visitsData) ? visitsData : [];
 
   return (
     <div className="min-h-screen bg-swimspot-drift-sand">
-      {/* Back button - Only one, positioned at the top */}
       <div className="sticky top-16 z-20 bg-swimspot-drift-sand/95 backdrop-blur-sm border-b border-swimspot-blue-green/10">
         <div className="max-w-6xl mx-auto px-4 py-3">
           <Button
@@ -185,13 +158,13 @@ const SwimSpotDetail = () => {
 
       <SwimSpotHero 
         swimSpot={spot}
-        isSaved={savedCheck || false}
+        isSaved={false}
         hasFeedback={hasFeedback}
-        onSave={handleSave}
+        onSave={() => {}} // Disabled save function
         onMarkVisited={handleMarkVisited}
         onFeedback={handleFeedback}
         onShare={handleShare}
-        saveMutationPending={saveMutation.isPending}
+        saveMutationPending={false}
         visitMutationPending={visitMutation.isPending}
         feedbackMutationPending={feedbackMutation.isPending}
         savedCount={0}

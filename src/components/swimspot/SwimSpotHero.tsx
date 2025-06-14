@@ -48,16 +48,8 @@ const SwimSpotHero = ({
               {swimSpot.name}
             </h1>
             
-            {/* Engagement Stats */}
+            {/* Engagement Stats - only showing visits now */}
             <div className="flex items-center gap-6 mt-4">
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-1 mb-1">
-                  <Bookmark className="h-4 w-4 text-white/70" />
-                  <div className="text-white font-semibold text-xl">{savedCount}</div>
-                </div>
-                <div className="text-white/70 text-sm font-medium">Saves</div>
-              </div>
-              <div className="w-px h-8 bg-white/30"></div>
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <Eye className="h-4 w-4 text-white/70" />
@@ -68,20 +60,8 @@ const SwimSpotHero = ({
             </div>
           </div>
           
-          {/* Action Buttons */}
+          {/* Action Buttons - removed save button */}
           <div className="flex items-center gap-3">
-            <Button
-              size="icon"
-              onClick={onSave}
-              disabled={saveMutationPending}
-              className="h-11 w-11 rounded-full bg-white/15 backdrop-blur-md border border-white/20 hover:bg-white/25 transition-all duration-300"
-              style={{ backdropFilter: 'blur(12px)' }}
-            >
-              <Bookmark 
-                className="h-5 w-5 text-white" 
-                fill={isSaved ? "currentColor" : "none"}
-              />
-            </Button>
             <Button
               size="icon"
               onClick={onMarkVisited}
