@@ -2,7 +2,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import { createSimpleQueryFn } from "@/services/api/utils";
-import type { SavedSpotData } from "@/types/entities";
 
 export const useProfileData = () => {
   const { data: profile, isLoading: profileLoading, error: profileError } = useQuery({
@@ -15,11 +14,9 @@ export const useProfileData = () => {
     queryFn: createSimpleQueryFn(api.getUserStats),
   });
 
-  const { data: savedSpots = [], isLoading: savedSpotsLoading } = useQuery<SavedSpotData[]>({
-    queryKey: ['currentUserSavedSpots'],
-    queryFn: createSimpleQueryFn(api.getCurrentUserSavedSpots),
-    enabled: !!profile?.id,
-  });
+  // Temporarily removed saved spots functionality
+  const savedSpots = [];
+  const savedSpotsLoading = false;
 
   const { data: userGroups = [], isLoading: groupsLoading } = useQuery({
     queryKey: ['userGroups'],
@@ -35,7 +32,7 @@ export const useProfileData = () => {
     savedSpotsLoading,
     userGroups,
     groupsLoading,
-    isLoading: profileLoading || statsLoading || savedSpotsLoading || groupsLoading,
+    isLoading: profileLoading || statsLoading || groupsLoading,
     error: profileError
   };
 };

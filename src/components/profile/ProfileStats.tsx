@@ -1,6 +1,6 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Bookmark, Users, Droplet } from "lucide-react";
+import { Plus, Users, Droplet } from "lucide-react";
 import type { UserStats } from "@/types/entities";
 
 interface ProfileStatsProps {
@@ -10,7 +10,7 @@ interface ProfileStatsProps {
 
 const ProfileStats = ({ stats, isLoading }: ProfileStatsProps) => {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
       <Card>
         <CardContent className="p-6 text-center">
           <div className="flex justify-center mb-2">
@@ -20,18 +20,6 @@ const ProfileStats = ({ stats, isLoading }: ProfileStatsProps) => {
             {isLoading ? "..." : stats?.spots_visited || 0}
           </div>
           <div className="text-sm text-gray-600">Spots Visited</div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardContent className="p-6 text-center">
-          <div className="flex justify-center mb-2">
-            <Bookmark className="h-8 w-8 text-swimspot-blue-green" />
-          </div>
-          <div className="text-2xl font-bold text-swimspot-blue-green">
-            {isLoading ? "..." : stats?.spots_saved || 0}
-          </div>
-          <div className="text-sm text-gray-600">Saved Spots</div>
         </CardContent>
       </Card>
       

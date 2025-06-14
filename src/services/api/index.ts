@@ -9,7 +9,7 @@ import { partnersApi } from './partners';
 import { feedbackApi } from './feedback';
 import { spotPartnersApi } from './spotPartners';
 import { spotVisitsApi } from './spotVisits';
-import { spotSavesApi } from './spotSaves';
+// import { spotSavesApi } from './spotSaves'; // Temporarily disabled
 import { userGroupsApi } from './userGroups';
 import { apiClient } from './client';
 
@@ -33,15 +33,15 @@ export const api = {
   // Profiles - These functions take no parameters and get current user's data
   getCurrentUserProfile: profilesApi.getCurrentUserProfile,
   updateProfile: profilesApi.updateProfile,
-  getCurrentUserSavedSpots: profilesApi.getCurrentUserSavedSpots,
+  // getCurrentUserSavedSpots: profilesApi.getCurrentUserSavedSpots, // Temporarily disabled
   getUserStats: profilesApi.getUserStats,
   
   // Spot interactions - These functions take spotId parameter
   getSpotPartners: spotPartnersApi.getSpotPartners,
   getSpotVisits: spotVisitsApi.getSpotVisits,
   markAsVisited: spotVisitsApi.markAsVisited,
-  toggleSaveSpot: spotSavesApi.toggleSaveSpot,
-  checkIfSaved: spotSavesApi.checkIfSaved,
+  // toggleSaveSpot: spotSavesApi.toggleSaveSpot, // Temporarily disabled
+  // checkIfSaved: spotSavesApi.checkIfSaved, // Temporarily disabled
   
   // User groups - No parameters, gets current user's groups
   getUserGroups: userGroupsApi.getUserGroups,
@@ -74,7 +74,7 @@ export {
   feedbackApi,
   spotPartnersApi,
   spotVisitsApi,
-  spotSavesApi,
+  // spotSavesApi, // Temporarily disabled
   userGroupsApi,
   apiClient
 };
